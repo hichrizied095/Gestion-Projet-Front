@@ -1,0 +1,43 @@
+.modal-header {
+  background-color: #f44336; /* rouge clair */
+  color: white;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.modal-body {
+  font-size: 16px;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.modal-footer {
+  border-top: none;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-secondary {
+  background-color: #9e9e9e;
+  border: none;
+}
+
+.btn-danger {
+  background-color: #d32f2f;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #b71c1c;
+}
+.modal-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,179 @@
+<ng-container *ngIf="task">
+  <div class="modal-header">
+    <h5 class="modal-title">{{ task.title }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <p><strong>Description :</strong> {{ task.description || 'Aucune description' }}</p>
+    <ul class="list-unstyled">
+      <li><strong>Statut :</strong> {{ getTaskStatus() }}</li>
+      <li><strong>Début :</strong> {{ task.startDate | date: 'mediumDate' }}</li>
+
+      <!-- Édition de la date d'échéance -->
+      <li>
+        <strong>Échéance :</strong>
+
+        <ng-container *ngIf="!isEditingDueDate">
+          {{ task.dueDate | date: 'mediumDate' }}
+          <button *ngIf="canEdit()"
+                  class="btn btn-sm btn-outline-primary ms-2"
+                  (click)="enableDueDateEdit()">
+            <i class="bi bi-pencil"></i> Modifier
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="isEditingDueDate">
+          <div class="d-flex align-items-center mt-1">
+            <input type="date"
+                   [(ngModel)]="newDueDate"
+                   class="form-control form-control-sm w-auto me-2"
+                   style="max-width: 150px;">
+            <button class="btn btn-sm btn-success me-1" (click)="saveDueDate()">
+              <i class="bi bi-check"></i> Valider
+            </button>
+            <button class="btn btn-sm btn-secondary" (click)="cancelDueDateEdit()">
+              <i class="bi bi-x"></i> Annuler
+            </button>
+          </div>
+        </ng-container>
+      </li>
+
+      <li *ngIf="task.assignedUsername"><strong>Assignée à :</strong> {{ task.assignedUsername }}</li>
+
+      <div *ngIf="getTaskStatus() === 'En retard'">
+        <strong>Cause du retard :</strong>
+        <p *ngIf="task.delayReason; else noReason">{{ task.delayReason }}</p>
+        <ng-template #noReason>
+          <p class="text-muted fst-italic">Aucune cause renseignée.</p>
+        </ng-template>
+      </div>
+
+      <div class="mb-3">
+        <label for="assignedUser">Réaffecter à :</label>
+        <select [(ngModel)]="task.assignedUserId"
+                name="assignedUser"
+                class="form-select"
+                (change)="updateAssignment()">
+          <option [ngValue]="null">-- Aucun utilisateur --</option>
+          <option *ngFor="let user of users" [value]="user.id">
+            {{ user.username }}
+          </option>
+        </select>
+      </div>
+    </ul>
+
+    <!-- SECTION FICHIERS ATTACHÉS (MULTIPLES) -->
+    <div class="mt-4">
+      <h6 class="mb-3">
+        <i class="bi bi-paperclip me-2"></i>
+        Fichiers attachés
+        <span *ngIf="hasAttachments" class="badge bg-secondary ms-2">
+          {{ task.attachments.length }}
+        </span>
+      </h6>
+
+      <!-- Liste des fichiers existants -->
+      <div *ngIf="hasAttachments; else noAttachments">
+        <div class="list-group mb-3">
+          <div *ngFor="let attachment of task.attachments; let i = index"
+               class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <i class="bi bi-file-earmark me-2"></i>
+                <strong>{{ getFileName(attachment.name) }}</strong>
+                <small *ngIf="attachment.size" class="text-muted ms-2">
+                  ({{ formatFileSize(attachment.size) }})
+                </small>
+              </div>
+              <div>
+                <a [href]="getFileUrl(attachment.name)"
+                   target="_blank"
+                   class="btn btn-sm btn-primary me-1"
+                   [title]="'Télécharger ' + attachment.name">
+                  <i class="bi bi-download"></i>
+                </a>
+                <button class="btn btn-sm btn-danger"
+                        (click)="deleteAttachment(i)"
+                        title="Supprimer le fichier">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noAttachments>
+        <p class="text-muted mb-3">Aucun fichier attaché.</p>
+      </ng-template>
+
+      <!-- Formulaire d'upload -->
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title mb-3">
+            <i class="bi bi-upload me-2"></i>Ajouter un fichier
+          </h6>
+
+          <div class="mb-3">
+            <input type="file"
+                   #fileInput
+                   class="form-control"
+                   (change)="onFileSelected($event)"
+                   accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                   [disabled]="uploadingFile">
+          </div>
+
+          <div *ngIf="uploadingFile" class="alert alert-info mb-0">
+            <div class="d-flex align-items-center">
+              <div class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <span>Upload en cours...</span>
+            </div>
+          </div>
+
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Formats acceptés : images, PDF, Word, Excel, texte (max 10MB)
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Section commentaires -->
+    <h6 class="mb-3">
+      <i class="bi bi-chat-left-text me-2"></i>
+      Commentaires
+      <span *ngIf="hasComments" class="badge bg-primary ms-2">
+        {{ task.comments.length }}
+      </span>
+    </h6>
+
+    <ng-container *ngIf="hasComments; else noComments">
+      <ul class="list-group mb-3">
+        <li *ngFor="let comment of task.comments" class="list-group-item">
+          <strong>{{ comment.username }}</strong>
+          <small class="text-muted"> - {{ comment.createdAt | date:'short' }}</small>
+          <p class="mb-0">{{ comment.text }}</p>
+        </li>
+      </ul>
+    </ng-container>
+    
+    <ng-template #noComments>
+      <p class="text-muted">Aucun commentaire pour le moment.</p>
+    </ng-template>
+
+    <textarea [(ngModel)]="newCommentText"
+              class="form-control"
+              rows="3"
+              placeholder="Ajouter un commentaire..."></textarea>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="activeModal.close()">Fermer</button>
+    <button class="btn btn-primary" (click)="addComment()">Ajouter</button>
+  </div>
+</ng-container>

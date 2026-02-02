@@ -1,0 +1,699 @@
+/* ========================================
+   TASK DETAILS MODAL - CSS PROFESSIONNEL
+   ======================================== */
+
+/* ========================================
+   🎨 MODAL HEADER
+   ======================================== */
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+  border-radius: 0;
+}
+
+.modal-header .modal-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+/* ========================================
+   📋 MODAL BODY
+   ======================================== */
+
+.modal-body {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+}
+
+/* Scrollbar personnalisée */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}
+
+/* ========================================
+   📝 DESCRIPTION SECTION
+   ======================================== */
+
+.modal-body > p:first-child {
+  background: white;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.modal-body > p:first-child strong {
+  color: #667eea;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ========================================
+   📊 INFORMATIONS PRINCIPALES
+   ======================================== */
+
+.list-unstyled {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.list-unstyled li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.list-unstyled li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.list-unstyled li strong {
+  color: #495057;
+  font-weight: 600;
+  min-width: 120px;
+  display: inline-block;
+}
+
+/* ========================================
+   ⏰ ÉDITION DATE D'ÉCHÉANCE
+   ======================================== */
+
+.list-unstyled li:has(.form-control) {
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.d-flex.align-items-center.mt-1 {
+  margin-top: 0.5rem !important;
+}
+
+input[type="date"].form-control-sm {
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+input[type="date"].form-control-sm:focus {
+  border-color: #764ba2;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Boutons d'édition date */
+.btn-sm.btn-outline-primary {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 2px solid #667eea;
+  color: #667eea;
+  transition: all 0.2s ease;
+}
+
+.btn-sm.btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-sm.btn-success,
+.btn-sm.btn-secondary {
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-sm.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border: none;
+}
+
+.btn-sm.btn-secondary {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  border: none;
+}
+
+.btn-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   🔴 CAUSE DU RETARD
+   ======================================== */
+
+.list-unstyled div:has(strong:contains('Cause du retard')) {
+  background: #fff5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
+  margin-top: 0.5rem;
+}
+
+.text-muted.fst-italic {
+  color: #6c757d !important;
+  font-style: italic;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ========================================
+   👤 RÉAFFECTATION UTILISATEUR
+   ======================================== */
+
+.mb-3:has(label[for="assignedUser"]) {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.mb-3:has(label[for="assignedUser"]):hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
+}
+
+.mb-3 label[for="assignedUser"] {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.form-select {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+/* ========================================
+   📎 SECTION FICHIERS ATTACHÉS
+   ======================================== */
+
+.mt-4 {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem;
+}
+
+.mt-4 h6 {
+  color: #495057;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.mt-4 h6 i {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.mt-4 h6 .badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+}
+
+/* Liste des fichiers */
+.list-group {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+  border: 1px solid #e9ecef;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  background: #fafbfc;
+}
+
+.list-group-item:hover {
+  background: #f0f9ff;
+  border-left: 4px solid #667eea;
+  padding-left: calc(1rem - 3px);
+  transform: translateX(3px);
+}
+
+.list-group-item i.bi-file-earmark {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.list-group-item strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.list-group-item small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* Boutons de fichier */
+.list-group-item .btn {
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.list-group-item .btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+}
+
+.list-group-item .btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border: none;
+}
+
+.list-group-item .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Message "Aucun fichier" */
+.text-muted.mb-3 {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-style: italic;
+  border: 2px dashed #dee2e6;
+}
+
+/* ========================================
+   📤 FORMULAIRE D'UPLOAD
+   ======================================== */
+
+.card {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  color: #495057;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-title i {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+/* Input file */
+input[type="file"].form-control {
+  border: 2px dashed #dee2e6;
+  border-radius: 10px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="file"].form-control:hover {
+  border-color: #667eea;
+  background: #f0f9ff;
+}
+
+input[type="file"].form-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Alert upload */
+.alert-info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  border: none;
+  border-left: 4px solid #17a2b8;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15rem;
+}
+
+/* Info text */
+.card-body small.text-muted {
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #fff3cd;
+  border-radius: 6px;
+  border-left: 3px solid #ffc107;
+}
+
+/* ========================================
+   💬 SECTION COMMENTAIRES
+   ======================================== */
+
+hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+  margin: 2rem 0;
+}
+
+.modal-body > h6 {
+  color: #495057;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.modal-body > h6 i {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.modal-body > h6 .badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+}
+
+/* Liste des commentaires */
+.list-group.mb-3 {
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.list-group.mb-3::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-group.mb-3::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.list-group.mb-3::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.list-group.mb-3 .list-group-item {
+  border: none;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  background: white;
+  margin-bottom: 0.5rem;
+  border-radius: 8px !important;
+}
+
+.list-group.mb-3 .list-group-item:hover {
+  background: #f0f9ff;
+  border-left-color: #667eea;
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.list-group-item strong {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.list-group-item small {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.list-group-item p {
+  margin-top: 0.5rem;
+  color: #495057;
+  line-height: 1.5;
+}
+
+/* Message "Aucun commentaire" */
+.modal-body > p.text-muted {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  font-style: italic;
+  border: 2px dashed #dee2e6;
+  margin: 1rem 0;
+}
+
+/* Textarea commentaire */
+textarea.form-control {
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  padding: 1rem;
+  resize: vertical;
+  min-height: 100px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+}
+
+textarea.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+textarea.form-control::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* ========================================
+   🔘 MODAL FOOTER
+   ======================================== */
+
+.modal-footer {
+  background: #f8f9fa;
+  border-top: 2px solid #e9ecef;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0;
+}
+
+.modal-footer .btn {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+}
+
+.modal-footer .btn-secondary {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  border: none;
+}
+
+.modal-footer .btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.modal-footer .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .modal-body {
+    padding: 1.25rem;
+  }
+
+  .list-unstyled {
+    padding: 1rem;
+  }
+
+  .list-unstyled li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list-unstyled li strong {
+    margin-bottom: 0.25rem;
+  }
+
+  .d-flex.align-items-center.mt-1 {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .d-flex.align-items-center.mt-1 input {
+    max-width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.align-items-center.mt-1 button {
+    width: 100%;
+  }
+
+  .list-group-item .d-flex {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .list-group-item .btn {
+    width: 100%;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-footer .btn:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ========================================
+   ✨ ANIMATIONS
+   ======================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-body > * {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animation pour les éléments qui apparaissent */
+.list-group-item,
+.card,
+.list-unstyled {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* ========================================
+   🎨 TOUCHES FINALES
+   ======================================== */
+
+/* Icônes Bootstrap Icons */
+.bi {
+  transition: all 0.2s ease;
+}
+
+.btn:hover .bi {
+  transform: scale(1.1);
+}
+
+/* Smooth scroll */
+.modal-body {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible pour accessibilité */
+*:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Sélection de texte */
+::selection {
+  background: #667eea;
+  color: white;
+}
+
+::-moz-selection {
+  background: #667eea;
+  color: white;
+}

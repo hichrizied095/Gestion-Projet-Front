@@ -1,0 +1,431 @@
+/* ========================================
+   GANTT MODAL - STYLES AMÉLIORÉS
+   ======================================== */
+
+/* ✅ NOUVEAU: Header avec gradient */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ✅ NOUVEAU: Cartes de statistiques */
+.stats-dashboard {
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.stat-details {
+  flex-grow: 1;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: #2c3e50;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ✅ NOUVEAU: Section filtres moderne */
+.filters-section .card {
+  border: none;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.filters-section .form-label {
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #495057;
+}
+
+.filters-section .form-select {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.filters-section .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+/* ✅ AMÉLIORÉ: Barre d'actions */
+.actions-bar {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border-left: 4px solid #667eea;
+}
+
+.actions-bar .btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.actions-bar .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ AMÉLIORÉ: Conteneur Gantt */
+.gantt-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.gantt-container {
+  min-height: 400px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ✅ NOUVEAU: Légende moderne */
+.legend-section .card {
+  border: none;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.legend-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.legend-item:hover {
+  transform: scale(1.05);
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.legend-text {
+  color: #2c3e50;
+}
+
+/* ✅ AMÉLIORÉ: Popup personnalisée */
+.gantt-popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  overflow: hidden;
+  min-width: 320px;
+  max-width: 400px;
+}
+
+.popup-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.status-terminée {
+  background: #4CAF50;
+  color: white;
+}
+
+.status-badge.status-en-cours {
+  background: #FF9800;
+  color: white;
+}
+
+.status-badge.status-planifiée {
+  background: #2196F3;
+  color: white;
+}
+
+.status-badge.status-en-retard {
+  background: #F44336;
+  color: white;
+}
+
+.popup-content {
+  padding: 15px;
+}
+
+.popup-field {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.popup-field:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.popup-field strong {
+  color: #495057;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+/* ✅ AMÉLIORÉ: Barres de progression dans popup */
+.progress {
+  height: 8px;
+  border-radius: 10px;
+  background: #e9ecef;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+/* ✅ NOUVEAU: Pied de page informatif */
+.info-footer {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px dashed #dee2e6;
+}
+
+/* ✅ RESPONSIVE: Adaptation mobile */
+@media (max-width: 768px) {
+  .stats-dashboard .row {
+    flex-direction: column;
+  }
+  
+  .stat-card {
+    margin-bottom: 10px;
+  }
+  
+  .filters-section .row {
+    flex-direction: column;
+  }
+  
+  .actions-bar {
+    flex-direction: column;
+  }
+  
+  .actions-bar .d-flex {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .actions-bar .btn {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .legend-grid {
+    flex-direction: column;
+  }
+}
+
+/* ✅ AMÉLIORATION: Barres Gantt plus visibles */
+::ng-deep .gantt .bar {
+  rx: 6;
+  ry: 6;
+  stroke-width: 2;
+  opacity: 0.95;
+  transition: opacity 0.2s;
+}
+
+::ng-deep .gantt .bar:hover {
+  opacity: 1;
+  filter: brightness(1.1);
+}
+
+::ng-deep .gantt .bar-progress {
+  opacity: 0.7;
+}
+
+::ng-deep .gantt .bar-label {
+  fill: #2c3e50;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* ✅ AMÉLIORATION: Grid plus lisible */
+::ng-deep .gantt .grid-row {
+  fill: transparent;
+}
+
+::ng-deep .gantt .grid-row:nth-child(even) {
+  fill: #f8f9fa;
+}
+
+::ng-deep .gantt .grid-header {
+  fill: #667eea;
+  opacity: 0.1;
+}
+
+::ng-deep .gantt .today-highlight {
+  fill: #ff4444;
+  opacity: 0.1;
+}
+
+/* ✅ NOUVEAU: Animation de chargement */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.gantt-container:empty::after {
+  content: "Chargement du diagramme...";
+  display: block;
+  text-align: center;
+  padding: 60px;
+  color: #999;
+  animation: pulse 1.5s infinite;
+}
+
+/* ✅ AMÉLIORATION: Scrollbar personnalisée */
+.gantt-container::-webkit-scrollbar {
+  height: 10px;
+}
+
+.gantt-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.gantt-container::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}
+
+/* ✅ NOUVEAU: Mode plein écran */
+.modal-fullscreen .gantt-container {
+  min-height: 70vh;
+}
+
+/* ✅ AMÉLIORATION: Tooltip moderne */
+::ng-deep .gantt .popup-wrapper {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ NOUVEAU: État vide stylisé */
+.gantt-container .text-center {
+  padding: 80px 20px !important;
+}
+
+.gantt-container .text-muted {
+  font-size: 18px;
+  color: #6c757d !important;
+}
+
+.gantt-container .text-muted::before {
+  content: "📊";
+  display: block;
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+/* ✅ PRINT STYLES */
+@media print {
+  .actions-bar,
+  .filters-section,
+  .modal-header,
+  .modal-footer {
+    display: none !important;
+  }
+  
+  .gantt-container {
+    overflow: visible !important;
+  }
+  
+  ::ng-deep .gantt svg {
+    max-width: 100% !important;
+  }
+}

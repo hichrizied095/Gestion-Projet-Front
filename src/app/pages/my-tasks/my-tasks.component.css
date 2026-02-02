@@ -1,0 +1,606 @@
+/* ========================================
+   MY TASKS - CSS AMÉLIORÉ AVEC COULEURS PAR STATUT
+   ======================================== */
+
+/* ✅ ANIMATIONS DE BASE */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulseWarning {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+}
+
+/* ✅ CONTENEUR PRINCIPAL */
+.container {
+  max-width: 1400px;
+}
+
+.row.g-3 {
+  row-gap: 2rem !important;
+}
+
+/* ========================================
+   🎨 CARTES AVEC COULEURS PAR STATUT
+   ======================================== */
+
+/* ✅ BASE CARTE */
+.card {
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 2px solid #e9ecef;
+  overflow: hidden;
+  position: relative;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-body {
+  position: relative;
+  padding: 1.75rem;
+  z-index: 2;
+}
+
+/* ✅ ANIMATION D'APPARITION */
+.col-12 {
+  animation: cardAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+}
+
+.col-12:nth-child(1) { animation-delay: 0.05s; }
+.col-12:nth-child(2) { animation-delay: 0.1s; }
+.col-12:nth-child(3) { animation-delay: 0.15s; }
+.col-12:nth-child(4) { animation-delay: 0.2s; }
+.col-12:nth-child(5) { animation-delay: 0.25s; }
+.col-12:nth-child(6) { animation-delay: 0.3s; }
+.col-12:nth-child(7) { animation-delay: 0.35s; }
+.col-12:nth-child(8) { animation-delay: 0.4s; }
+.col-12:nth-child(9) { animation-delay: 0.45s; }
+.col-12:nth-child(10) { animation-delay: 0.5s; }
+
+/* ========================================
+   🟢 STATUT: TERMINÉE (VERT)
+   ======================================== */
+
+/* Carte avec badge "Terminée" */
+.card:has(.badge.bg-success) {
+  border-left: 6px solid #28a745;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+  opacity: 0.95;
+}
+
+.card:has(.badge.bg-success)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, #28a745, #1e7e34);
+  z-index: 1;
+}
+
+.card:has(.badge.bg-success)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.card:has(.badge.bg-success):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(40, 167, 69, 0.2);
+  border-color: #28a745;
+}
+
+.card:has(.badge.bg-success) .card-title {
+  color: #1e7e34;
+  border-left: 4px solid #28a745;
+  padding-left: 12px;
+  background: linear-gradient(90deg, rgba(40, 167, 69, 0.08), transparent);
+}
+
+/* Badge Terminée */
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  border: 2px solid #1e7e34;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  font-weight: 600;
+}
+
+/* ========================================
+   🔴 STATUT: EN RETARD (ROUGE)
+   ======================================== */
+
+.card:has(.badge.bg-danger),
+.card.border-danger {
+  border-left: 6px solid #dc3545 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+  animation: pulseWarning 2s infinite;
+}
+
+.card:has(.badge.bg-danger)::before,
+.card.border-danger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, #dc3545, #c82333);
+  z-index: 1;
+}
+
+.card:has(.badge.bg-danger)::after,
+.card.border-danger::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc3545, #e74c3c);
+}
+
+.card:has(.badge.bg-danger):hover,
+.card.border-danger:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
+  border-color: #dc3545 !important;
+}
+
+.card:has(.badge.bg-danger) .card-title,
+.card.border-danger .card-title {
+  color: #c82333;
+  border-left: 4px solid #dc3545;
+  padding-left: 12px;
+  background: linear-gradient(90deg, rgba(220, 53, 69, 0.08), transparent);
+}
+
+/* Badge En retard */
+.badge.bg-danger {
+  background: linear-gradient(135deg, #dc3545, #e74c3c) !important;
+  border: 2px solid #c82333;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Section cause du retard */
+.card.border-danger .border-top,
+.card:has(.badge.bg-danger) .border-top {
+  background-color: #fff5f5;
+  border-top: 2px solid #f8d7da !important;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* ========================================
+   🔵 STATUT: PLANIFIÉE (BLEU)
+   ======================================== */
+
+.card:has(.badge.bg-info) {
+  border-left: 6px solid #17a2b8;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+}
+
+.card:has(.badge.bg-info)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, #17a2b8, #138496);
+  z-index: 1;
+}
+
+.card:has(.badge.bg-info)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #17a2b8, #5bc0de);
+}
+
+.card:has(.badge.bg-info):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(23, 162, 184, 0.2);
+  border-color: #17a2b8;
+}
+
+.card:has(.badge.bg-info) .card-title {
+  color: #138496;
+  border-left: 4px solid #17a2b8;
+  padding-left: 12px;
+  background: linear-gradient(90deg, rgba(23, 162, 184, 0.08), transparent);
+}
+
+/* Badge Planifiée */
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8, #5bc0de) !important;
+  border: 2px solid #138496;
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+  font-weight: 600;
+}
+
+/* ========================================
+   🟡 STATUT: EN COURS (ORANGE/JAUNE)
+   ======================================== */
+
+.card:has(.badge.bg-warning) {
+  border-left: 6px solid #ffc107;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbf0 100%);
+}
+
+.card:has(.badge.bg-warning)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, #ffc107, #e0a800);
+  z-index: 1;
+}
+
+.card:has(.badge.bg-warning)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffc107, #ff9800);
+}
+
+.card:has(.badge.bg-warning):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+}
+
+.card:has(.badge.bg-warning) .card-title {
+  color: #e0a800;
+  border-left: 4px solid #ffc107;
+  padding-left: 12px;
+  background: linear-gradient(90deg, rgba(255, 193, 7, 0.08), transparent);
+}
+
+/* Badge En cours */
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #ff9800) !important;
+  border: 2px solid #e0a800;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  font-weight: 600;
+  color: #000 !important; /* Texte noir pour meilleure lisibilité sur jaune */
+}
+
+/* ========================================
+   🎨 ÉLÉMENTS INTERNES DES CARTES
+   ======================================== */
+
+/* Titre de carte */
+.card-title {
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+/* Badge projet */
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* Badge de statut général */
+.badge.fs-6 {
+  font-size: 0.95rem !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+/* ========================================
+   📎 SECTIONS ATTACHMENTS ET COMMENTAIRES
+   ======================================== */
+
+.attachments-container,
+.comments-container {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  border-left: 4px solid #e9ecef;
+}
+
+/* Couleur selon le statut de la carte */
+.card:has(.badge.bg-success) .attachments-container,
+.card:has(.badge.bg-success) .comments-container {
+  background-color: #f0fff4;
+  border-left-color: #28a745;
+}
+
+.card:has(.badge.bg-danger) .attachments-container,
+.card:has(.badge.bg-danger) .comments-container,
+.card.border-danger .attachments-container,
+.card.border-danger .comments-container {
+  background-color: #fff5f5;
+  border-left-color: #dc3545;
+}
+
+.card:has(.badge.bg-info) .attachments-container,
+.card:has(.badge.bg-info) .comments-container {
+  background-color: #f0f9ff;
+  border-left-color: #17a2b8;
+}
+
+.card:has(.badge.bg-warning) .attachments-container,
+.card:has(.badge.bg-warning) .comments-container {
+  background-color: #fffbf0;
+  border-left-color: #ffc107;
+}
+
+.attachment-item,
+.comment-item {
+  background: white !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.attachment-item:hover,
+.comment-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   🔘 BOUTONS
+   ======================================== */
+
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border: none;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+  border: none;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  border: none;
+  color: #000;
+}
+
+/* ========================================
+   📋 FORMULAIRES ET INPUTS
+   ======================================== */
+
+.form-control,
+.form-floating textarea {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-floating textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ========================================
+   ⚠️ ALERTES
+   ======================================== */
+
+.alert {
+  animation: fadeIn 0.3s ease;
+  border-radius: 12px;
+  border-left: 4px solid;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border-left-color: #17a2b8;
+}
+
+.alert-light {
+  background-color: #f8f9fa;
+  border-left-color: #6c757d;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .badge.fs-6 {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+
+  .row.small > div {
+    margin-bottom: 8px;
+  }
+
+  .card::before {
+    width: 4px;
+  }
+
+  .card::after {
+    height: 3px;
+  }
+}
+
+@media (min-width: 992px) {
+  /* Légère rotation pour effet visuel */
+  .card:nth-child(odd) {
+    transform: rotate(-0.2deg);
+  }
+
+  .card:nth-child(even) {
+    transform: rotate(0.2deg);
+  }
+
+  .card:hover {
+    transform: rotate(0deg) translateY(-5px) !important;
+  }
+}
+
+/* ========================================
+   🎯 ÉLÉMENTS SPÉCIAUX
+   ======================================== */
+
+/* Icônes */
+.bi {
+  transition: all 0.2s ease;
+}
+
+.btn:hover .bi {
+  transform: scale(1.1);
+}
+
+/* Séparateur entre cartes */
+.col-12:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+  opacity: 0.5;
+}
+
+/* Message "Aucune tâche" */
+.text-center.py-5 {
+  padding: 4rem !important;
+}
+
+.text-center.py-5 i {
+  opacity: 0.3;
+}
+
+/* ========================================
+   ✨ EFFETS HOVER AVANCÉS
+   ======================================== */
+
+.card {
+  position: relative;
+  z-index: 1;
+}
+
+.card:hover {
+  z-index: 10;
+}
+
+/* Effet de lueur au hover selon le statut */
+.card:has(.badge.bg-success):hover {
+  box-shadow: 0 10px 40px rgba(40, 167, 69, 0.25);
+}
+
+.card:has(.badge.bg-danger):hover,
+.card.border-danger:hover {
+  box-shadow: 0 10px 40px rgba(220, 53, 69, 0.35);
+}
+
+.card:has(.badge.bg-info):hover {
+  box-shadow: 0 10px 40px rgba(23, 162, 184, 0.25);
+}
+
+.card:has(.badge.bg-warning):hover {
+  box-shadow: 0 10px 40px rgba(255, 193, 7, 0.25);
+}
+
+/* ========================================
+   🎨 TOUCHES FINALES
+   ======================================== */
+
+/* Scroll fluide */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Transition pour tous les éléments */
+* {
+  transition-property: transform, box-shadow, background-color, border-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* Désactiver transitions sur inputs pour performance */
+input,
+textarea,
+select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}

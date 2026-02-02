@@ -1,0 +1,58 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Tâches par utilisateur</h2>
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && userTasks.length === 0" class="alert alert-info">
+    Aucun utilisateur n'a de tâche assignée dans ce projet.
+  </div>
+
+  <div *ngFor="let group of userTasks" class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <strong>{{ group.user.username }}</strong>
+      <span class="badge bg-light text-dark">{{ group.tasks.length }} tâche(s)</span>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      <li *ngFor="let task of group.tasks" class="list-group-item"
+          [ngClass]="{
+            'border-danger': getTaskStatus(task) === 'En retard',
+            'border-warning': getTaskStatus(task) === 'En cours',
+            'border-info': getTaskStatus(task) === 'Planifiée',
+            'border-success': getTaskStatus(task) === 'Terminée'
+          }">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ task.title }}</strong>
+            <p class="mb-1 text-muted">{{ task.description || 'Pas de description' }}</p>
+            <small class="text-muted">
+              📅 Du {{ task.startDate | date:'mediumDate' }} au {{ task.dueDate | date:'mediumDate' }}
+            </small>
+          </div>
+
+          <!-- Afficher seulement le badge de statut (sans checkbox) -->
+          <span class="badge"
+                [ngClass]="{
+                  'bg-danger': getTaskStatus(task) === 'En retard',
+                  'bg-warning text-dark': getTaskStatus(task) === 'En cours',
+                  'bg-info': getTaskStatus(task) === 'Planifiée',
+                  'bg-success': getTaskStatus(task) === 'Terminée'
+                }"
+                style="font-size: 1em; padding: 0.5em 1em;">
+            {{ getTaskStatus(task) }}
+          </span>
+        </div>
+
+        <!-- Afficher la raison du retard si la tâche est en retard -->
+        <div *ngIf="getTaskStatus(task) === 'En retard' && task.delayReason"
+             class="mt-2 alert alert-danger py-1 px-2" style="font-size: 0.9em;">
+          <strong>Raison du retard :</strong> {{ task.delayReason }}
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

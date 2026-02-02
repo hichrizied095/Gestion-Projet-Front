@@ -1,0 +1,74 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Liste des projets</h2>
+
+
+  <!-- Barre de recherche et tri -->
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Rechercher un projet..."
+      [(ngModel)]="searchTerm"
+    />
+
+    <button (click)="sortByTitle()" class="btn btn-outline-secondary">
+      Trier par titre
+    </button>
+
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <form [formGroup]="projectForm" (ngSubmit)="createProject()" class="mb-4">
+    <div class="mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Titre du projet"
+        formControlName="title"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <textarea
+        class="form-control"
+        placeholder="Description (facultatif)"
+        formControlName="description"
+        rows="2"
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-success" [disabled]="projectForm.invalid">
+      Ajouter un projet
+    </button>
+
+
+  </form>
+
+  <!-- Liste -->
+  <div *ngIf="isLoading">Chargement...</div>
+
+  <div *ngIf="!isLoading && filteredProjects.length === 0">
+    Aucun projet trouvé.
+  </div>
+
+  <ul class="list-group" *ngIf="filteredProjects.length > 0">
+    <li class="list-group-item d-flex justify-content-between align-items-start flex-column flex-md-row" *ngFor="let project of filteredProjects">
+      <div class="flex-grow-1">
+        <h5>{{ project.title }}</h5>
+        <p *ngIf="project.description">{{ project.description }}</p>
+        <a [routerLink]="['/projects', project.id, 'columns']" class="btn btn-sm btn-outline-primary mt-2">
+          Voir les colonnes
+        </a>
+        <a
+        [routerLink]="['/projects', project.id, 'participants']"
+        class="btn btn-sm btn-outline-info mt-2"
+      >
+        Participants
+      </a>
+      </div>
+      <button class="btn btn-sm btn-outline-danger ms-2"
+        (click)="confirmDeleteProject(project)">
+  Supprimer
+</button>
+    </li>
+  </ul>
+</div>

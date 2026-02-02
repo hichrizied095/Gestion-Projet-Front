@@ -1,0 +1,237 @@
+<div class="modal-header bg-gradient-primary text-white">
+  <div class="d-flex align-items-center gap-3 w-100">
+    <i class="bi bi-calendar3-range fs-4"></i>
+    <div class="flex-grow-1">
+      <h5 class="modal-title mb-0">📊 {{ projectTitle || 'Diagramme de Gantt' }}</h5>
+      <small class="opacity-75">Visualisation chronologique des tâches</small>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  </div>
+</div>
+
+<div class="modal-body p-4">
+  
+  <!-- ✅ NOUVEAU: Statistiques en haut -->
+  <div class="stats-dashboard mb-4">
+    <div class="row g-3">
+      <div class="col">
+        <div class="stat-card">
+          <div class="stat-icon bg-primary">
+            <i class="bi bi-list-task"></i>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="stat-card">
+          <div class="stat-icon bg-success">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ stats.completed }}</div>
+            <div class="stat-label">Terminées</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="stat-card">
+          <div class="stat-icon bg-warning">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ stats.inProgress }}</div>
+            <div class="stat-label">En cours</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="stat-card">
+          <div class="stat-icon bg-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ stats.overdue }}</div>
+            <div class="stat-label">En retard</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="stat-card">
+          <div class="stat-icon bg-info">
+            <i class="bi bi-percent"></i>
+          </div>
+          <div class="stat-details">
+            <div class="stat-value">{{ stats.completionRate }}%</div>
+            <div class="stat-label">Taux achèvement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ AMÉLIORÉ: Filtres avancés avec design moderne -->
+  <div class="filters-section mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="row g-3">
+          
+          <!-- Filtre par statut -->
+          <div class="col-md-3">
+            <label class="form-label fw-bold">
+              <i class="bi bi-funnel me-2"></i>Statut
+            </label>
+            <select class="form-select" [(ngModel)]="selectedFilter" (change)="filterTasks()">
+              <option value="Toutes">📋 Toutes</option>
+              <option value="Planifiée">🔵 Planifiées</option>
+              <option value="En cours">🟡 En cours</option>
+              <option value="Terminée">🟢 Terminées</option>
+              <option value="En retard">🔴 En retard</option>
+            </select>
+          </div>
+
+          <!-- ✅ NOUVEAU: Filtre par utilisateur -->
+          <div class="col-md-3">
+            <label class="form-label fw-bold">
+              <i class="bi bi-person me-2"></i>Utilisateur
+            </label>
+            <select class="form-select" [(ngModel)]="selectedUser" (change)="filterTasks()">
+              <option value="Tous">👥 Tous</option>
+              <option *ngFor="let user of uniqueUsers" [value]="user">
+                {{ user }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ✅ NOUVEAU: Tri -->
+          <div class="col-md-3">
+            <label class="form-label fw-bold">
+              <i class="bi bi-sort-down me-2"></i>Trier par
+            </label>
+            <select class="form-select" [(ngModel)]="sortBy" (change)="changeSorting()">
+              <option value="date">📅 Date de début</option>
+              <option value="dueDate">⏰ Date d'échéance</option>
+              <option value="name">🔤 Nom alphabétique</option>
+              <option value="user">👤 Utilisateur</option>
+              <option value="status">📊 Statut</option>
+            </select>
+          </div>
+
+          <!-- Vue -->
+          <div class="col-md-3">
+            <label class="form-label fw-bold">
+              <i class="bi bi-eye me-2"></i>Vue
+            </label>
+            <select class="form-select" [(ngModel)]="selectedView" (change)="changeView()">
+              <option value="Day">📅 Jour</option>
+              <option value="Week">📆 Semaine</option>
+              <option value="Month">🗓️ Mois</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- ✅ NOUVEAU: Bouton reset -->
+        <div class="row mt-3">
+          <div class="col-12">
+            <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">
+              <i class="bi bi-arrow-clockwise me-1"></i>
+              Réinitialiser les filtres
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ NOUVEAU: Barre d'actions (export/impression) -->
+  <div class="actions-bar mb-3">
+    <div class="d-flex gap-2 justify-content-between align-items-center">
+      <div class="text-muted">
+        <i class="bi bi-info-circle me-1"></i>
+        {{ filteredTasks.length }} tâche(s) affichée(s)
+      </div>
+      
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-success btn-sm" (click)="exportAsCSV()">
+          <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+          Export CSV
+        </button>
+        
+        <button class="btn btn-outline-primary btn-sm" (click)="exportAsImage()">
+          <i class="bi bi-image me-1"></i>
+          Export Image
+        </button>
+        
+        <button class="btn btn-outline-info btn-sm" (click)="exportAsPDF()">
+          <i class="bi bi-file-pdf me-1"></i>
+          Export PDF
+        </button>
+        
+        <button class="btn btn-outline-secondary btn-sm" (click)="printDiagram()">
+          <i class="bi bi-printer me-1"></i>
+          Imprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagramme de Gantt -->
+  <div class="gantt-wrapper">
+    <div #ganttContainer class="gantt-container"></div>
+  </div>
+
+  <!-- Légende améliorée -->
+  <div class="legend-section mt-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="mb-3">
+          <i class="bi bi-palette me-2"></i>Légende
+        </h6>
+        <div class="legend-grid">
+          <div class="legend-item">
+            <span class="color-box" style="background: #2196F3;"></span>
+            <span class="legend-text">Planifiée</span>
+          </div>
+          <div class="legend-item">
+            <span class="color-box" style="background: #FF9800;"></span>
+            <span class="legend-text">En cours</span>
+          </div>
+          <div class="legend-item">
+            <span class="color-box" style="background: #4CAF50;"></span>
+            <span class="legend-text">Terminée</span>
+          </div>
+          <div class="legend-item">
+            <span class="color-box" style="background: #F44336;"></span>
+            <span class="legend-text">En retard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ NOUVEAU: Informations additionnelles -->
+  <div class="info-footer mt-3 text-muted text-center">
+    <small>
+      <i class="bi bi-lightbulb me-1"></i>
+      Astuce: Survolez les barres pour voir les détails
+    </small>
+  </div>
+</div>
+
+<div class="modal-footer bg-light">
+  <div class="d-flex justify-content-between w-100 align-items-center">
+    <small class="text-muted">
+      Dernière mise à jour: {{ getCurrentDateTime() }}
+    </small>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <i class="bi bi-x-circle me-1"></i>Fermer
+    </button>
+  </div>
+</div>

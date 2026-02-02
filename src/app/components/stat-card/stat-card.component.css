@@ -1,0 +1,23 @@
+.stat-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+.icon {
+  font-size: 2rem;
+  color: #0d6efd;
+  margin-right: 1rem;
+}
+.details h5 {
+  margin: 0;
+  font-size: 1rem;
+}
+.details p {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.4rem;
+}

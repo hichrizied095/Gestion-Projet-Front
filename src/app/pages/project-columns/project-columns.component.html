@@ -1,0 +1,161 @@
+<h2>Colonnes du projet</h2>
+
+<div class="columns-container">
+  <div *ngFor="let column of columnsWithTasks" class="column-card">
+    <h3>{{ column.name }}</h3>
+
+    <!-- Progression -->
+    <div class="progress-container" *ngIf="column.tasks.length > 0">
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="getCompletionPercentage(column.tasks)"
+        ></div>
+      </div>
+      <small>{{ getCompletionPercentage(column.tasks) }}% complété</small>
+
+      <!-- 🔘 Bouton Gantt -->
+      <button
+        class="btn btn-outline-primary btn-sm mt-2"
+        (click)="openGanttModal(column.tasks)"
+      >
+        📊 Voir le diagramme de Gantt
+      </button>
+    </div>
+
+    <!-- Liste des tâches avec DND -->
+    <ul
+      cdkDropList
+      [cdkDropListData]="column.tasks"
+      [cdkDropListConnectedTo]="connectedDropListsIds"
+      [id]="'list-' + column.id"
+      class="task-list"
+      (cdkDropListDropped)="onDrop($event, column.id)"
+    >
+      <li
+        *ngFor="let task of column.tasks"
+        cdkDrag
+        class="task-item"
+        (click)="openTaskDetails(task)"
+      >
+        <button
+          (click)="deleteTask(task.id); $event.stopPropagation()"
+          class="btn btn-sm btn-danger float-end"
+          title="Supprimer la tâche"
+        >
+          ❌
+        </button>
+
+        <label (click)="$event.stopPropagation()">
+          <input
+            type="checkbox"
+            [checked]="task.isCompleted"
+            (change)="toggleTaskCompletion(task)"
+          />
+          <span [class.completed]="task.isCompleted">{{ task.title }}</span>
+          <small *ngIf="task.assignedUserName" class="text-muted d-block">
+            👤 Assignée à : {{ task.assignedUserName }}
+          </small>
+        </label>
+
+        <!-- Upload fichier -->
+        <!-- Section fichier -->
+<div class="file-section" (click)="$event.stopPropagation()">
+
+  <!-- Bouton upload -->
+  <div *ngIf="!task.filePath">
+    <input
+      type="file"
+      #fileInput
+      style="display: none"
+      (change)="uploadFile($event, task.id)"
+    />
+    <button
+      class="btn btn-sm btn-outline-secondary"
+      (click)="fileInput.click(); $event.stopPropagation()"
+    >
+      📎 Joindre un fichier
+    </button>
+  </div>
+
+  <!-- Fichier existant -->
+  <div *ngIf="task.filePath" class="file-preview">
+    <a
+      [href]="getFileUrl(task.id)"
+      target="_blank"
+      class="btn btn-sm btn-link"
+      [title]="getFileName(task)"
+    >
+      📄 {{ getFileName(task) }}
+    </a>
+    <button
+      class="btn btn-sm btn-outline-danger ms-2"
+      (click)="deleteFile(task.id); $event.stopPropagation()"
+    >
+      ❌
+    </button>
+  </div>
+</div>
+
+        <!-- Statut -->
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'badge-planifiee': getTaskStatus(task) === 'Planifiée',
+            'badge-en-cours': getTaskStatus(task) === 'En cours',
+            'badge-terminee': getTaskStatus(task) === 'Terminée',
+            'badge-en-retard': getTaskStatus(task) === 'En retard'
+          }"
+        >
+          {{ getTaskStatus(task) }}
+        </span>
+
+        <span *ngIf="task.updated" class="saved-feedback">✔</span>
+      </li>
+    </ul>
+
+    <!-- Ajouter une tâche -->
+    <div class="add-task-form">
+      <button class="btn btn-primary w-100" (click)="openAddTaskModal(column.id)">
+        ➕ Ajouter une tâche
+      </button>
+    </div>
+
+    <!-- Supprimer colonne -->
+    <button class="delete-btn" (click)="deleteColumn(column.id)">
+      🗑️ Supprimer la colonne
+    </button>
+  </div>
+</div>
+
+<!-- Ajouter colonne -->
+<div class="add-column-form mt-3">
+  <input [(ngModel)]="newColumnName" placeholder="Nouvelle colonne" />
+  <button (click)="addColumn()">➕ Ajouter</button>
+</div>
+
+<!-- 🔶 Modale unique pour le diagramme de Gantt -->
+<div
+  class="modal fade"
+  id="ganttModal"
+  tabindex="-1"
+  aria-labelledby="ganttModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ganttModalLabel">Diagramme de Gantt</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Fermer"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <app-gantt-modal [tasks]="selectedTasks"></app-gantt-modal>
+      </div>
+    </div>
+  </div>
+</div>

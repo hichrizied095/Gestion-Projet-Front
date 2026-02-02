@@ -1,0 +1,53 @@
+/* Optionnel : ajouter des styles pour mieux visualiser l'ordre */
+.list-group-item {
+  border-left: 4px solid transparent;
+}
+
+/* Bordure colorée selon le statut */
+.list-group-item.border-danger {
+  border-left-color: #dc3545; /* En retard */
+}
+
+.list-group-item.border-warning {
+  border-left-color: #ffc107; /* En cours */
+}
+
+.list-group-item.border-info {
+  border-left-color: #0dcaf0; /* Planifiée */
+}
+
+.list-group-item.border-success {
+  border-left-color: #198754; /* Terminée */
+}
+/* Bordures colorées pour chaque statut */
+.list-group-item.border-danger {
+  border-left-width: 5px !important;
+  border-left-color: #dc3545 !important;
+}
+
+.list-group-item.border-warning {
+  border-left-width: 5px !important;
+  border-left-color: #ffc107 !important;
+}
+
+.list-group-item.border-info {
+  border-left-width: 5px !important;
+  border-left-color: #0dcaf0 !important;
+}
+
+.list-group-item.border-success {
+  border-left-width: 5px !important;
+  border-left-color: #198754 !important;
+}
+
+/* Styles pour les badges */
+.badge {
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Ajustement de l'espacement */
+.list-group-item {
+  padding: 1rem 1.25rem;
+}

@@ -1,0 +1,40 @@
+<div class="container mt-4">
+  <h2>Gestion des utilisateurs</h2>
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border"></div>
+  </div>
+
+  <table class="table table-striped mt-3" *ngIf="!isLoading">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nom d'utilisateur</th>
+        <th>Rôle</th>
+        <th>Changer le rôle</th>
+        <th>Supprimer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td><span class="badge bg-info text-dark">{{ user.role }}</span></td>
+        <td>
+          <select
+  class="form-select"
+  [value]="user.role"
+  (change)="updateUserRole(user, $event)"
+>
+  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+</select>
+
+
+        </td>
+        <td>
+          <button class="btn btn-sm btn-danger" (click)="deleteUser(user.id!)">🗑️</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

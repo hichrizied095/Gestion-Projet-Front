@@ -1,0 +1,59 @@
+<div class="modal-header">
+  <h5 class="modal-title">Ajouter une tâche</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+
+<div class="modal-body">
+  <form (ngSubmit)="submit()" #taskForm="ngForm">
+    <div class="mb-3">
+      <label for="title" class="form-label">Titre</label>
+      <input
+        #titleInput
+        id="title"
+        class="form-control"
+        [(ngModel)]="title"
+        name="title"
+        required
+      />
+    </div>
+    <label for="user">Assigner à :</label>
+<select [(ngModel)]="selectedUserId" name="user" class="form-select">
+  <option [value]="null">-- Aucun utilisateur --</option>
+  <option *ngFor="let user of users" [value]="user.id">
+    {{ user.username }}
+  </option>
+</select>
+
+
+    <div class="mb-3">
+      <label for="startDate" class="form-label">Date de début</label>
+      <input
+        id="startDate"
+        class="form-control"
+        type="date"
+        [(ngModel)]="startDate"
+        name="startDate"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="dueDate" class="form-label">Date limite</label>
+      <input
+        id="dueDate"
+        class="form-control"
+        type="date"
+        [(ngModel)]="dueDate"
+        name="dueDate"
+        required
+      />
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="cancel()">Annuler</button>
+  <button class="btn btn-primary" (click)="submit()" [disabled]="!title || !startDate || !dueDate">
+    Ajouter
+  </button>
+</div>

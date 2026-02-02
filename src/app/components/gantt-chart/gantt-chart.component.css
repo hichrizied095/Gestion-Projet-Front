@@ -1,0 +1,16 @@
+.task-completed .bar {
+  fill: #4CAF50 !important;
+}
+
+.task-in-progress .bar {
+  fill: #2196F3 !important;
+}
+
+.task-late .bar {
+  fill: #F44336 !important;
+}
+
+.gantt .bar-label {
+  fill: #fff !important;
+  font-size: 12px;
+}

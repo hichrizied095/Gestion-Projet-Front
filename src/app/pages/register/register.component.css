@@ -1,0 +1,610 @@
+/* ========================================
+   REGISTER PAGE - CSS ULTRA MODERNE
+   ======================================== */
+
+/* ========================================
+   🌐 FOND ET CONTENEUR GLOBAL
+   ======================================== */
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de vagues animées en arrière-plan */
+:host::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 35px,
+      rgba(255, 255, 255, 0.05) 35px,
+      rgba(255, 255, 255, 0.05) 70px
+    );
+  animation: wavesMove 20s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes wavesMove {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-50px, -50px) rotate(360deg); }
+}
+
+/* Cercles décoratifs */
+:host::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  bottom: -200px;
+  left: -200px;
+  animation: floatReverse 8s ease-in-out infinite;
+}
+
+@keyframes floatReverse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, -20px) scale(1.1); }
+}
+
+/* ========================================
+   📦 CONTENEUR PRINCIPAL
+   ======================================== */
+
+.register-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 100px rgba(118, 75, 162, 0.2);
+  position: relative;
+  z-index: 1;
+  animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Bordure animée */
+.register-container::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #764ba2, #667eea, #764ba2);
+  border-radius: 24px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: borderRotate 3s linear infinite;
+  background-size: 200% 200%;
+}
+
+.register-container:hover::before {
+  opacity: 1;
+}
+
+@keyframes borderRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========================================
+   📌 TITRE
+   ======================================== */
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  animation: titleBounce 0.8s ease-out 0.2s backwards;
+}
+
+@keyframes titleBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #764ba2, #667eea);
+  border-radius: 2px;
+  animation: lineGrow 0.6s ease-out 0.4s backwards;
+}
+
+@keyframes lineGrow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 80px;
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   📝 FORMULAIRE
+   ======================================== */
+
+form {
+  animation: formSlide 0.8s ease-out 0.3s backwards;
+}
+
+@keyframes formSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.mb-3 {
+  margin-bottom: 1.75rem;
+  position: relative;
+}
+
+/* Labels */
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+  display: block;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.form-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: linear-gradient(180deg, #764ba2, #667eea);
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.mb-3:focus-within .form-label::before {
+  height: 100%;
+}
+
+/* Inputs */
+.form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #f8f9fa;
+  position: relative;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #764ba2;
+  background: white;
+  box-shadow: 
+    0 0 0 0.25rem rgba(118, 75, 162, 0.15),
+    0 4px 12px rgba(118, 75, 162, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Animation de focus sur le label */
+.mb-3:focus-within .form-label {
+  color: #764ba2;
+  transform: translateX(3px);
+}
+
+/* Icône de validation */
+.form-control:valid:not(:placeholder-shown) {
+  border-color: #28a745;
+  padding-right: 3rem;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2rem;
+  animation: successPulse 0.5s ease-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* État invalide */
+.form-control.ng-invalid.ng-touched {
+  border-color: #dc3545;
+  animation: inputShake 0.5s ease-in-out;
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+/* Select personnalisé */
+.form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 0.875rem 2.5rem 0.875rem 1rem;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: #f8f9fa;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #764ba2;
+  background-color: white;
+  box-shadow: 
+    0 0 0 0.25rem rgba(118, 75, 162, 0.15),
+    0 4px 12px rgba(118, 75, 162, 0.1);
+  transform: translateY(-2px);
+}
+
+.form-select option {
+  padding: 0.75rem;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* ========================================
+   🔘 BOUTON D'INSCRIPTION
+   ======================================== */
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Effet de vague au clic */
+.btn-success::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-success:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-success:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(40, 167, 69, 0.5);
+}
+
+.btn-success:active:not(:disabled) {
+  transform: translateY(-1px) scale(1);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+}
+
+/* État désactivé */
+.btn-success:disabled {
+  background: linear-gradient(135deg, #adb5bd, #6c757d);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* Loading spinner */
+.btn-success:disabled::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   🔗 LIEN VERS LOGIN
+   ======================================== */
+
+.mt-3 {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.95rem;
+  animation: linkFade 0.8s ease-out 0.5s backwards;
+}
+
+@keyframes linkFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mt-3 a {
+  color: #764ba2;
+  text-decoration: none;
+  font-weight: 700;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+}
+
+.mt-3 a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #764ba2, #667eea);
+  transition: width 0.3s ease;
+}
+
+.mt-3 a:hover {
+  color: #667eea;
+  background: rgba(118, 75, 162, 0.05);
+}
+
+.mt-3 a:hover::after {
+  width: 100%;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 576px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .register-container {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .btn-success {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .mb-3 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* ========================================
+   🎨 TOUCHES FINALES
+   ======================================== */
+
+/* Smooth scroll */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible pour accessibilité */
+*:focus-visible {
+  outline: 2px solid #764ba2;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Sélection de texte */
+::selection {
+  background: #764ba2;
+  color: white;
+}
+
+::-moz-selection {
+  background: #764ba2;
+  color: white;
+}
+
+/* Désactiver le user-select sur les labels */
+label {
+  user-select: none;
+}
+
+/* ========================================
+   ✨ EFFETS SUPPLÉMENTAIRES
+   ======================================== */
+
+/* Effet de lueur progressive sur les inputs */
+.form-control:focus,
+.form-select:focus {
+  animation: inputGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes inputGlow {
+  from {
+    box-shadow: 
+      0 0 0 0.25rem rgba(118, 75, 162, 0.15),
+      0 4px 12px rgba(118, 75, 162, 0.1);
+  }
+  to {
+    box-shadow: 
+      0 0 0 0.25rem rgba(118, 75, 162, 0.25),
+      0 4px 20px rgba(118, 75, 162, 0.2);
+  }
+}
+
+/* Effet de pulse sur le bouton */
+.btn-success:hover:not(:disabled) {
+  animation: buttonPulse 1.5s infinite;
+}
+
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 12px 30px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 16px 40px rgba(40, 167, 69, 0.6);
+  }
+  100% {
+    box-shadow: 0 12px 30px rgba(40, 167, 69, 0.5);
+  }
+}
+
+/* Icônes d'émojis dans les options */
+.form-select option {
+  font-size: 1rem;
+}
+
+/* Animation d'apparition séquentielle des champs */
+.mb-3:nth-child(1) { animation: fieldAppear 0.5s ease-out 0.4s backwards; }
+.mb-3:nth-child(2) { animation: fieldAppear 0.5s ease-out 0.5s backwards; }
+.mb-3:nth-child(3) { animation: fieldAppear 0.5s ease-out 0.6s backwards; }
+.mb-3:nth-child(4) { animation: fieldAppear 0.5s ease-out 0.7s backwards; }
+
+@keyframes fieldAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Désactiver animations sur mobile pour performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   🎯 VALIDATION VISUELLE
+   ======================================== */
+
+/* Message de validation personnalisé */
+.form-control:invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 
+    0 0 0 0.25rem rgba(220, 53, 69, 0.15),
+    0 4px 12px rgba(220, 53, 69, 0.1);
+}
+
+/* Effet de succès sur tout le formulaire quand valide */
+form:valid .btn-success:not(:disabled) {
+  animation: successGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes successGlow {
+  from {
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+  }
+  to {
+    box-shadow: 0 12px 30px rgba(40, 167, 69, 0.6);
+  }
+}

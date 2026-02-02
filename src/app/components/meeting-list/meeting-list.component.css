@@ -1,0 +1,8 @@
+table tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+h3 {
+  color: #2c3e50;
+}

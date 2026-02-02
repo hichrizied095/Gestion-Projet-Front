@@ -1,0 +1,167 @@
+<div class="container py-4">
+
+  <!-- En-tête avec badge de notifications -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">📅 Liste des réunions</h2>
+
+    <div class="d-flex gap-2 align-items-center">
+      <!-- Dropdown des notifications -->
+      <div class="dropdown">
+        <button class="btn btn-outline-info position-relative dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+          <i class="bi bi-bell"></i> Notifications
+          <span *ngIf="notificationCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ notificationCount }}
+          </span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 300px;">
+          <li *ngIf="notificationCount === 0">
+            <a class="dropdown-item text-muted">
+              <i class="bi bi-check-circle me-2"></i>
+              Aucune notification
+            </a>
+          </li>
+
+          <!-- Notifications de réunions -->
+          <li *ngFor="let notif of notifications.slice(0, 5)">
+            <a class="dropdown-item"
+               [routerLink]="notif.link || '/meetings'"
+               (click)="markNotificationAsRead(notif.id)">
+              <div class="d-flex justify-content-between">
+                <small class="text-muted">
+                  <i class="bi bi-calendar-event me-1"></i>
+                  {{ notif.createdAt | date:'short' }}
+                </small>
+                <span *ngIf="!notif.isRead" class="badge bg-primary">Nouveau</span>
+              </div>
+              <div class="mt-1">{{ notif.message }}</div>
+              <small *ngIf="notif.taskTitle" class="text-muted">
+                Tâche: {{ notif.taskTitle }}
+              </small>
+            </a>
+          </li>
+
+          <li *ngIf="notifications.length > 5">
+            <a class="dropdown-item text-center small" routerLink="/notifications">
+              Voir toutes les notifications ({{ notifications.length }})
+            </a>
+          </li>
+
+          <li><hr class="dropdown-divider"></li>
+
+          <li>
+            <a class="dropdown-item text-danger" href="#" (click)="clearAllNotifications()">
+              <i class="bi bi-trash me-2"></i> Tout effacer
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Bouton créer réunion -->
+      <a *ngIf="canCreate()"
+         class="btn btn-primary"
+         routerLink="/meetings/create">
+         <i class="bi bi-plus-circle"></i> Créer une réunion
+      </a>
+    </div>
+  </div>
+
+  <!-- Message si aucune réunion -->
+  <div *ngIf="!isLoading && meetings.length === 0" class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    Aucune réunion à afficher.
+    <span *ngIf="!auth.isAdmin() && auth.getCurrentUserRole() !== 'Manager'">
+      Vous n'êtes pas invité à des réunions et aucune tâche ne vous est assignée.
+    </span>
+  </div>
+
+  <!-- Tableau des réunions -->
+  <div *ngIf="!isLoading && meetings.length > 0">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Projet</th>
+          <th>Date</th>
+          <th>Participants</th>
+          <th>Décisions/Tâches</th>
+          <th>Votre rôle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let m of meetings">
+          <td>
+            <strong>{{ m.projectTitle }}</strong>
+          </td>
+          <td>
+  <div class="fw-bold">{{ m.meetingDate | date:'dd/MM/yyyy' }}</div>
+  <div class="small text-muted">
+    <i class="bi bi-clock"></i> {{ m.startTime | slice:0:5 }} - {{ m.endTime | slice:0:5 }}
+  </div>
+  <div class="small">
+    <span class="badge bg-secondary">{{ m.durationMinutes }} min</span>
+  </div>
+</td>
+          <td>
+            <span class="badge bg-secondary">{{ m.attendees?.length || 0 }}</span>
+            <div *ngIf="m.attendees && m.attendees.length > 0" class="small mt-1">
+              {{ m.attendees.slice(0, 2).join(', ') }}
+              <span *ngIf="m.attendees.length > 2" class="text-muted">
+                +{{ m.attendees.length - 2 }} autres
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="badge bg-info">{{ m.decisions?.length || 0 }}</span>
+            <div *ngIf="m.decisions && m.decisions.length > 0" class="small mt-1">
+              {{ m.decisions.slice(0, 2).join(', ') }}
+            </div>
+          </td>
+          <td>
+            <div class="d-flex flex-column gap-1">
+              <span *ngIf="auth.getCurrentUserId() === m.projectOwnerId"
+                    class="badge bg-primary">
+                <i class="bi bi-star"></i> Chef de projet
+              </span>
+              <span *ngIf="m.attendeesIds && m.attendeesIds.includes(auth.getCurrentUserId())"
+                    class="badge bg-success">
+                <i class="bi bi-person-check"></i> Participant
+              </span>
+              <span *ngIf="m.taskAssignedUserIds && m.taskAssignedUserIds.includes(auth.getCurrentUserId())"
+                    class="badge bg-warning">
+                <i class="bi bi-card-checklist"></i> Assigné à une tâche
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <a [routerLink]="['/meetings', m.id]"
+                 class="btn btn-outline-primary">
+                <i class="bi bi-eye"></i> Voir
+              </a>
+              <button *ngIf="auth.isAdmin() || auth.getCurrentUserId() === m.projectOwnerId"
+                      class="btn btn-outline-danger"
+                      (click)="deleteMeeting(m.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des réunions...</p>
+  </div>
+
+</div>

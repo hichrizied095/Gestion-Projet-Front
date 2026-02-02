@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  padding: 2rem;
+}
+
+.full-calendar {
+  max-width: 1000px;
+  margin: 0 auto;
+}

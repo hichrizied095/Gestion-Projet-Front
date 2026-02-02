@@ -1,0 +1,62 @@
+<div class="chat-container">
+  <!-- Liste des utilisateurs -->
+  <div class="user-list">
+    <h5 class="p-2 border-bottom">Utilisateurs</h5>
+    <ul class="list-unstyled">
+      <li
+        *ngFor="let user of users"
+        (click)="selectUser(user)"
+        [class.active]="user === selectedUser"
+        class="p-2 user-item"
+      >
+        {{ user.username }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Fenêtre de discussion -->
+  <div class="chat-window">
+    <ng-container *ngIf="selectedUser; else noUser">
+      <!-- En-tête -->
+      <div class="chat-header border-bottom p-2">
+        <h6>💬 Discussion avec {{ selectedUser.username }}</h6>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages">
+        <div
+          *ngFor="let msg of messages"
+          class="message-item"
+          [ngClass]="{ 'me': msg.senderId === currentUserId, 'other': msg.senderId !== currentUserId }"
+        >
+          <div class="message-meta">
+            <strong>{{ msg.senderId === currentUserId ? 'Moi' : msg.senderName || selectedUser.username }}</strong>
+            <span class="timestamp">{{ msg.sentAt | date: 'shortTime' }}</span>
+          </div>
+          <div class="message-bubble">
+            {{ msg.content }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Saisie -->
+      <div class="chat-input border-top p-2 d-flex">
+        <input
+          [(ngModel)]="newMessage"
+          type="text"
+          class="form-control"
+          placeholder="Écrire un message..."
+          (keyup.enter)="sendMessage()"
+        />
+        <button class="btn btn-primary ms-2" (click)="sendMessage()">Envoyer</button>
+      </div>
+    </ng-container>
+
+    <!-- Aucun utilisateur sélectionné -->
+    <ng-template #noUser>
+      <div class="p-3 text-muted text-center">
+        💭 Sélectionnez un utilisateur pour commencer la discussion.
+      </div>
+    </ng-template>
+  </div>
+</div>

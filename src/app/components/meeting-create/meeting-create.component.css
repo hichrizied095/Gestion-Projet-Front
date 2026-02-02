@@ -1,0 +1,27 @@
+/* src/app/pages/meetings/meeting-create.component.css */
+.card { border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+.time-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.time-input-group .form-control {
+  flex: 1;
+}
+
+.duration-badge {
+  font-size: 0.9em;
+  padding: 4px 8px;
+  margin-left: 10px;
+}
+
+/* Validation styles */
+input.ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+
+.time-validation-message {
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+}

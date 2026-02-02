@@ -1,0 +1,212 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">Gestion Projets</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/projects" routerLinkActive="active">Projets</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/mes-taches" routerLinkActive="active">Mes Tâches</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/chat" routerLinkActive="active">Messages</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/meetings" routerLinkActive="active">Réunions</a>
+        </li>
+        <li *ngIf="role === 'Admin'" class="nav-item">
+          <a class="nav-link" routerLink="/admin-dashboard" routerLinkActive="active">Dashboard Admin</a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center text-light gap-3">
+
+        <!-- 🔔 NOTIFICATIONS GÉNÉRALES -->
+        <div class="position-relative notif-area">
+          <button class="notification-btn" (click)="toggleNotif()">
+            <i class="fas fa-bell" [class.new-notification]="unreadCount > 0"></i>
+            <span *ngIf="unreadCount > 0" class="badge bg-danger badge-notif">
+              {{ unreadCount }}
+            </span>
+          </button>
+
+          <div *ngIf="isNotifOpen" class="notif-dropdown show">
+            <div class="dropdown-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <strong>Notifications</strong>
+                <small class="text-muted">{{ notifications.length }} total</small>
+              </div>
+            </div>
+
+            <div class="dropdown-body">
+              <!-- État vide -->
+              <div *ngIf="notifications.length === 0" class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <p>Aucune notification</p>
+              </div>
+
+              <!-- Liste des notifications -->
+              <div *ngFor="let notif of notifications"
+                   class="dropdown-item notification-item"
+                   [class.unread]="!notif.isRead"
+                   (click)="markNotificationAsRead(notif)">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div class="d-flex align-items-center">
+                    <span *ngIf="notif.type === 'meeting' || notif.type === 'meeting_created' || notif.type === 'meeting_invitation' || notif.type === 'meeting_task'"
+                          class="badge bg-meeting notification-type-badge">
+                      <i class="fas fa-calendar-alt me-1"></i>Réunion
+                    </span>
+                    <span *ngIf="notif.type === 'task' || notif.taskId"
+                          class="badge bg-task notification-type-badge">
+                      <i class="fas fa-tasks me-1"></i>Tâche
+                    </span>
+                    <span *ngIf="notif.type === 'general'"
+                          class="badge bg-secondary notification-type-badge">
+                      <i class="fas fa-info-circle me-1"></i>Info
+                    </span>
+                    <small class="notification-details ms-auto">
+                      {{ formatNotificationDate(notif.createdAt) }}
+                    </small>
+                  </div>
+                </div>
+
+                <p class="notification-message">{{ notif.message }}</p>
+
+                <div class="notification-details">
+                  <div *ngIf="notif.projectTitle" class="mb-1">
+                    <i class="fas fa-project-diagram me-1"></i>{{ notif.projectTitle }}
+                  </div>
+                  <div *ngIf="notif.taskTitle" class="mb-1">
+                    <i class="fas fa-tasks me-1"></i>{{ notif.taskTitle }}
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <small *ngIf="!notif.isRead" class="badge bg-info">
+                    <i class="fas fa-circle me-1"></i>Nouveau
+                  </small>
+                  <small class="text-primary">
+                    <i class="fas fa-external-link-alt me-1"></i>Cliquer pour ouvrir
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-footer">
+              <button *ngIf="notifications.length > 0"
+                      class="btn btn-sm btn-outline-danger w-100"
+                      (click)="clearNotifications(); $event.stopPropagation()">
+                <i class="fas fa-trash-alt me-2"></i>Effacer toutes les notifications
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💬 NOTIFICATIONS DE CHAT -->
+        <div class="position-relative notif-area">
+          <button class="notification-btn" (click)="toggleChatNotif()">
+            <i class="fas fa-comment-dots"></i>
+            <span *ngIf="unreadChatCount > 0" class="badge bg-danger badge-notif">
+              {{ unreadChatCount }}
+            </span>
+          </button>
+
+          <div *ngIf="isChatNotifOpen" class="notif-dropdown show">
+            <div class="dropdown-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <strong>Messages</strong>
+                <small class="text-muted">{{ chatNotifications.length }} total</small>
+              </div>
+            </div>
+
+            <div class="dropdown-body">
+              <!-- État vide -->
+              <div *ngIf="chatNotifications.length === 0" class="empty-state">
+                <i class="fas fa-comment-slash"></i>
+                <p>Aucun nouveau message</p>
+              </div>
+
+              <!-- Liste des messages -->
+              <div *ngFor="let msg of chatNotifications"
+                   class="dropdown-item"
+                   [class.unread]="!msg.isRead"
+                   (click)="markChatAsRead(msg)">
+                <div class="d-flex align-items-start">
+                  <div class="avatar-circle">
+                    {{ msg.senderName?.charAt(0)?.toUpperCase() || '?' }}
+                  </div>
+                  <div class="flex-grow-1 ms-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <strong>{{ msg.senderName || 'Utilisateur' }}</strong>
+                      <small class="notification-details">
+                        {{ formatNotificationDate(msg.createdAt) }}
+                      </small>
+                    </div>
+                    <p class="notification-message mb-1">
+                      {{ msg.message }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <small *ngIf="!msg.isRead" class="badge bg-info">
+                        <i class="fas fa-circle me-1"></i>Non lu
+                      </small>
+                      <small class="text-primary">
+                        <i class="fas fa-reply me-1"></i>Répondre
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-footer">
+              <button *ngIf="chatNotifications.length > 0"
+                      class="btn btn-sm btn-outline-danger w-100"
+                      (click)="clearChatNotifications(); $event.stopPropagation()">
+                <i class="fas fa-trash-alt me-2"></i>Effacer tous les messages
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 👤 UTILISATEUR -->
+        <div class="dropdown">
+          <button class="btn btn-outline-light dropdown-toggle"
+                  type="button"
+                  id="userDropdown"
+                  data-bs-toggle="dropdown">
+            <i class="fas fa-user me-2"></i>
+            <span>{{ username || 'Utilisateur' }}</span>
+            <span *ngIf="role" class="badge ms-2"
+                  [ngClass]="{
+                    'bg-danger': role === 'Admin',
+                    'bg-primary': role === 'Manager',
+                    'bg-secondary': role === 'Member'
+                  }">
+              {{ role }}
+            </span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li>
+              <a class="dropdown-item" routerLink="/profile">
+                <i class="fas fa-user-cog me-2"></i>Mon profil
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+              </button>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</nav>

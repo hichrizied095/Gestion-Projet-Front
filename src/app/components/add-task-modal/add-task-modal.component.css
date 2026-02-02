@@ -1,0 +1,11 @@
+.modal-title {
+  font-weight: 600;
+}
+
+.modal-body {
+  padding-top: 0;
+}
+
+input:invalid.ng-dirty {
+  border-color: #dc3545;
+}
