@@ -1,364 +1,348 @@
-<div class="home-container">
-  <!-- Hero Section -->
-  <div class="hero-section">
-    <div class="hero-content animate__animated animate__fadeIn">
-      <!-- Logo et Badge Hôpital -->
-      <div class="hospital-logo">
-        <!-- Logo de l'hôpital -->
-        <img src="https://t4.ftcdn.net/jpg/08/44/82/55/360_F_844825587_MEoU8odal1uKKTjNOoFa0A4yLyZzJ0gG.jpg" 
-             alt="Hôpital Militaire de Bizerte" 
-             class="logo-img">
-        <div class="hospital-info">
-          <h3>Hôpital Militaire de Bizerte</h3>
-          <p class="hospital-subtitle">Excellence • Innovation • Service</p>
-        </div>
-      </div>
+<div class="modern-home">
+  <!-- Hero Section with Gradient Background -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6" data-aos="fade-right">
+            <div class="hero-badge">
+              <i class="fas fa-hospital-symbol"></i>
+              <span>Hôpital Militaire de Bizerte</span>
+            </div>
+            <h1 class="hero-title">
+              Gestion de Projets
+              <span class="gradient-text">Nouvelle Génération</span>
+            </h1>
+            <p class="hero-description">
+              Optimisez vos projets médicaux et administratifs avec notre plateforme intelligente.
+              Collaboration en temps réel, suivi avancé et sécurité maximale.
+            </p>
 
-      <h1 class="hero-title">EasyPM: Gestion de Projets Simplifiée</h1>
-      <p class="hero-subtitle">Organisez, collaborez et livrez vos projets avec efficacité</p>
+            <div class="hero-buttons" *ngIf="!username">
+              <a routerLink="/login" class="btn btn-primary-gradient">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Connexion
+              </a>
+              <a routerLink="/register" class="btn btn-outline-white">
+                <i class="fas fa-user-plus me-2"></i>
+                Créer un compte
+              </a>
+            </div>
 
-      <div *ngIf="username; else notLoggedIn" class="user-section animate__animated animate__fadeInUp">
-        <div class="welcome-message">
-          <p class="lead">Content de vous revoir, <strong>{{ username }}</strong> 👋</p>
-          <div class="user-buttons">
-            <a routerLink="/projects" class="btn btn-primary btn-lg me-3">
-              <i class="fas fa-project-diagram me-2"></i>Vos projets
-            </a>
-            <a routerLink="/mes-taches" class="btn btn-outline-warning btn-lg me-3 animate__animated animate__fadeInRight">
-              <i class="fas fa-tasks me-2"></i>Vos tâches
-            </a>
-            <a *ngIf="role === 'Admin'" routerLink="/admin-dashboard" class="btn btn-dark btn-lg me-3">
-              <i class="fas fa-tools me-2"></i>Dashboard Admin
-            </a>
-            <button (click)="logout()" class="btn btn-outline-light btn-lg">
-              <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
-            </button>
+            <div class="hero-buttons" *ngIf="username">
+              <a routerLink="/projects" class="btn btn-primary-gradient">
+                <i class="fas fa-project-diagram me-2"></i>
+                Mes Projets
+              </a>
+              <a routerLink="/mes-taches" class="btn btn-outline-white">
+                <i class="fas fa-tasks me-2"></i>
+                Mes Tâches
+              </a>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-item">
+                <h3>500+</h3>
+                <p>Projets Actifs</p>
+              </div>
+              <div class="stat-item">
+                <h3>150+</h3>
+                <p>Utilisateurs</p>
+              </div>
+              <div class="stat-item">
+                <h3>99.9%</h3>
+                <p>Disponibilité</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-left">
+            <div class="hero-image-wrapper">
+              <div class="floating-card card-1">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                  <h4>Tâche Complétée</h4>
+                  <p>Préparation des archives</p>
+                </div>
+              </div>
+              <div class="floating-card card-2">
+                <i class="fas fa-users"></i>
+                <div>
+                  <h4>Équipe Active</h4>
+                  <p>12 membres en ligne</p>
+                </div>
+              </div>
+              <div class="floating-card card-3">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                  <h4>Progression</h4>
+                  <p>85% complété</p>
+                </div>
+              </div>
+              <div class="hero-main-image">
+                <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800" alt="Project Management"
+                  class="img-fluid">
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <ng-template #notLoggedIn>
-        <div class="auth-section animate__animated animate__fadeInUp">
-          <p class="features-intro">Rejoignez notre plateforme et boostez votre productivité</p>
-          <div class="auth-buttons">
-            <a routerLink="/login" class="btn btn-primary btn-lg me-3">
-              <i class="fas fa-sign-in-alt me-2"></i>Connexion
-            </a>
-            <a routerLink="/register" class="btn btn-outline-light btn-lg">
-              <i class="fas fa-user-plus me-2"></i>Inscription
-            </a>
-          </div>
-        </div>
-      </ng-template>
     </div>
-
-    <div class="hero-image">
-      <img src="https://www.projectmanager.com/wp-content/uploads/2023/03/Operations-management.jpg" 
-           alt="Gestion de projets" 
-           class="img-fluid"
-           (error)="onImageError($event)">
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#ffffff"
+          d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z">
+        </path>
+      </svg>
     </div>
-  </div>
+  </section>
 
   <!-- Features Section -->
-  <div *ngIf="!username" class="features-section">
-    <h2 class="section-title">Pourquoi choisir notre plateforme ?</h2>
-    <div class="features-grid">
-      <div class="feature-card animate__animated animate__fadeIn" [style.animation-delay]="'0.1s'">
-        <div class="feature-icon">
-          <i class="fas fa-tasks"></i>
-        </div>
-        <h3>Gestion des tâches</h3>
-        <p>Organisez vos tâches en colonnes personnalisables pour un workflow optimal.</p>
-      </div>
-
-      <div class="feature-card animate__animated animate__fadeIn" [style.animation-delay]="'0.3s'">
-        <div class="feature-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <h3>Collaboration</h3>
-        <p>Travaillez en équipe avec des commentaires en temps réel et des notifications.</p>
-      </div>
-
-      <div class="feature-card animate__animated animate__fadeIn" [style.animation-delay]="'0.5s'">
-        <div class="feature-icon">
-          <i class="fas fa-chart-line"></i>
-        </div>
-        <h3>Suivi complet</h3>
-        <p>Visualisez la progression de vos projets avec des tableaux de bord intuitifs.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats Section -->
-  <div class="stats-section">
+  <section class="features-section">
     <div class="container">
-      <div class="row text-center">
-        <div class="col-md-3 col-sm-6 mb-4">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-project-diagram"></i>
+      <div class="section-header text-center" data-aos="fade-up">
+        <span class="section-badge">Fonctionnalités</span>
+        <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+        <p class="section-description">Des outils puissants pour gérer vos projets efficacement</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-tasks"></i>
             </div>
-            <h3 class="stat-number">500+</h3>
-            <p class="stat-label">Projets gérés</p>
+            <h3>Gestion des Tâches</h3>
+            <p>Organisez vos tâches avec des tableaux Kanban intuitifs. Drag & drop, priorités et échéances.</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> Tableaux personnalisables</li>
+              <li><i class="fas fa-check"></i> Assignation d'équipe</li>
+              <li><i class="fas fa-check"></i> Suivi en temps réel</li>
+            </ul>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-users"></i>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-card featured">
+            <div class="popular-badge">Populaire</div>
+            <div class="feature-icon">
+              <i class="fas fa-comments"></i>
             </div>
-            <h3 class="stat-number">150+</h3>
-            <p class="stat-label">Utilisateurs actifs</p>
+            <h3>Collaboration Temps Réel</h3>
+            <p>Communiquez instantanément avec votre équipe. Chat intégré, notifications et commentaires.</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> Chat en direct</li>
+              <li><i class="fas fa-check"></i> Notifications push</li>
+              <li><i class="fas fa-check"></i> Partage de fichiers</li>
+            </ul>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-check-circle"></i>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-pie"></i>
             </div>
-            <h3 class="stat-number">2000+</h3>
-            <p class="stat-label">Tâches complétées</p>
+            <h3>Statistiques Avancées</h3>
+            <p>Visualisez vos performances avec des tableaux de bord interactifs et des rapports détaillés.</p>
+            <ul class="feature-list">
+              <li><i class="fas fa-check"></i> Graphiques dynamiques</li>
+              <li><i class="fas fa-check"></i> Rapports exportables</li>
+              <li><i class="fas fa-check"></i> Analyses prédictives</li>
+            </ul>
           </div>
         </div>
-        <div class="col-md-3 col-sm-6 mb-4">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-clock"></i>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-calendar-alt"></i>
             </div>
-            <h3 class="stat-number">24/7</h3>
-            <p class="stat-label">Support disponible</p>
+            <h3>Calendrier & Réunions</h3>
+            <p>Planifiez vos réunions et gérez votre emploi du temps avec un calendrier intelligent.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Sécurité Maximale</h3>
+            <p>Vos données sont protégées avec un cryptage de niveau militaire et des sauvegardes automatiques.</p>
+          </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h3>Responsive Design</h3>
+            <p>Accédez à vos projets depuis n'importe quel appareil. Mobile, tablette ou ordinateur.</p>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- About Section -->
-  <div class="about-section">
+  <!-- About Hospital Section -->
+  <section class="about-section">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-md-6">
-          <div class="about-image">
-            <!-- Image du bâtiment avec fallback vers placeholder -->
-            <img src="https://t4.ftcdn.net/jpg/08/44/82/55/360_F_844825587_MEoU8odal1uKKTjNOoFa0A4yLyZzJ0gG.jpg" 
-                 alt="Hôpital Militaire de Bizerte" 
-                 class="img-fluid rounded shadow-lg"
-                 (error)="onBuildingImageError($event)">
-            <!-- Placeholder caché par défaut, affiché si l'image échoue -->
-            <div class="building-placeholder" id="buildingPlaceholder" style="display: none;">
+        <div class="col-lg-6" data-aos="fade-right">
+          <div class="about-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800" alt="Hôpital Militaire"
+              class="img-fluid rounded-4 shadow-lg">
+            <div class="about-badge">
               <i class="fas fa-hospital"></i>
-              <p>Hôpital Militaire de Bizerte</p>
+              <div>
+                <h4>Excellence</h4>
+                <p>Depuis 1956</p>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="about-content">
-            <h2 class="section-title">À propos de nous</h2>
-            <p class="about-text">
-              L'<strong>Hôpital Militaire de Bizerte</strong> est un établissement de santé 
-              d'excellence qui se consacre à fournir des soins de qualité supérieure à nos patients 
-              et à notre communauté militaire.
-            </p>
-            <p class="about-text">
-              Notre plateforme de gestion de projets a été développée pour optimiser 
-              l'organisation interne, améliorer la communication entre les services, 
-              et garantir une gestion efficace de tous nos projets médicaux et administratifs.
-            </p>
-            <div class="about-features">
-              <div class="about-feature-item">
-                <i class="fas fa-check-circle text-success me-2"></i>
-                <span>Gestion centralisée des projets</span>
-              </div>
-              <div class="about-feature-item">
-                <i class="fas fa-check-circle text-success me-2"></i>
-                <span>Communication en temps réel</span>
-              </div>
-              <div class="about-feature-item">
-                <i class="fas fa-check-circle text-success me-2"></i>
-                <span>Sécurité des données garantie</span>
-              </div>
+        <div class="col-lg-6" data-aos="fade-left">
+          <span class="section-badge">À Propos</span>
+          <h2 class="section-title">Hôpital Militaire de Bizerte</h2>
+          <p class="about-text">
+            Établissement de santé militaire d'excellence, l'Hôpital Militaire de Bizerte se consacre
+            à fournir des soins de qualité supérieure à nos patients et à notre communauté militaire.
+          </p>
+          <p class="about-text">
+            Notre plateforme de gestion de projets a été développée pour optimiser l'organisation interne,
+            améliorer la communication entre les services, et garantir une gestion efficace de tous nos
+            projets médicaux et administratifs.
+          </p>
+          <div class="about-features">
+            <div class="about-feature-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Gestion centralisée des projets</span>
+            </div>
+            <div class="about-feature-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Communication en temps réel</span>
+            </div>
+            <div class="about-feature-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Sécurité des données garantie</span>
+            </div>
+            <div class="about-feature-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Support technique 24/7</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Contact Section -->
-  <div class="contact-section">
+  <!-- CTA Section -->
+  <section class="cta-section" *ngIf="!username">
     <div class="container">
-      <h2 class="section-title text-center mb-5">Contactez-nous</h2>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="contact-card">
-            <div class="contact-icon">
-              <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <h4>Adresse</h4>
-            <p>Hôpital Militaire de Bizerte<br>
-               Route de Tunis<br>
-               7000 Bizerte, Tunisie</p>
+      <div class="cta-card" data-aos="zoom-in">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h2 class="cta-title">Prêt à optimiser vos projets ?</h2>
+            <p class="cta-description">Rejoignez notre plateforme et découvrez une nouvelle façon de gérer vos projets.
+            </p>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="contact-card">
-            <div class="contact-icon">
-              <i class="fas fa-phone"></i>
-            </div>
-            <h4>Téléphone</h4>
-            <p>Standard: +216 72 431 033<br>
-               Urgences: +216 72 431 444<br>
-               Fax: +216 72 431 055</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="contact-card">
-            <div class="contact-icon">
-              <i class="fas fa-envelope"></i>
-            </div>
-            <h4>Email</h4>
-            <p>contact&#64;hmb.tn<br>
-               info&#64;hopitalmilitaire-bizerte.tn<br>
-               support&#64;hmb.tn</p>
+          <div class="col-lg-4 text-lg-end">
+            <a routerLink="/register" class="btn btn-white-gradient btn-lg">
+              <i class="fas fa-rocket me-2"></i>
+              Commencer Maintenant
+            </a>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- Footer -->
-  <footer class="footer-section">
+  <footer class="modern-footer">
     <div class="container">
       <div class="footer-top">
         <div class="row">
-          <!-- Colonne 1: À propos -->
-          <div class="col-md-4 mb-4">
-            <div class="footer-widget">
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="footer-brand">
               <div class="footer-logo">
-                <img src="https://www.africanchallenges.com/wp-content/uploads/2020/10/Defense-4-615x570.jpg" 
-                     alt="Hôpital Militaire de Bizerte" 
-                     class="footer-logo-img">
-                <h4>Hôpital Militaire de Bizerte</h4>
+                <i class="fas fa-hospital-symbol"></i>
+                <h4>HMB</h4>
               </div>
-              <p class="footer-description">
-                Établissement de santé militaire d'excellence, dédié à fournir des soins 
-                de qualité supérieure et à innover dans la gestion hospitalière.
-              </p>
+              <p>Hôpital Militaire de Bizerte - Excellence, Innovation, Service</p>
               <div class="social-links">
-                <a href="https://facebook.com" target="_blank" class="social-link">
-                  <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://twitter.com" target="_blank" class="social-link">
-                  <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://linkedin.com" target="_blank" class="social-link">
-                  <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://instagram.com" target="_blank" class="social-link">
-                  <i class="fab fa-instagram"></i>
-                </a>
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
               </div>
             </div>
           </div>
 
-          <!-- Colonne 2: Liens rapides -->
-          <div class="col-md-2 mb-4">
-            <div class="footer-widget">
-              <h5 class="footer-title">Liens rapides</h5>
-              <ul class="footer-links">
-                <li><a routerLink="/projects"><i class="fas fa-angle-right me-2"></i>Projets</a></li>
-                <li><a routerLink="/mes-taches"><i class="fas fa-angle-right me-2"></i>Mes tâches</a></li>
-                <li><a routerLink="/login"><i class="fas fa-angle-right me-2"></i>Connexion</a></li>
-                <li><a routerLink="/register"><i class="fas fa-angle-right me-2"></i>Inscription</a></li>
-              </ul>
-            </div>
+          <div class="col-lg-2 col-md-6 mb-4">
+            <h5 class="footer-title">Navigation</h5>
+            <ul class="footer-links">
+              <li><a routerLink="/projects">Projets</a></li>
+              <li><a routerLink="/mes-taches">Mes Tâches</a></li>
+              <li><a routerLink="/meetings">Réunions</a></li>
+              <li><a routerLink="/chat">Messages</a></li>
+            </ul>
           </div>
 
-          <!-- Colonne 3: Support -->
-          <div class="col-md-3 mb-4">
-            <div class="footer-widget">
-              <h5 class="footer-title">Support</h5>
-              <ul class="footer-links">
-                <li><a href="#"><i class="fas fa-angle-right me-2"></i>Centre d'aide</a></li>
-                <li><a href="#"><i class="fas fa-angle-right me-2"></i>Documentation</a></li>
-                <li><a href="#"><i class="fas fa-angle-right me-2"></i>FAQ</a></li>
-                <li><a href="#"><i class="fas fa-angle-right me-2"></i>Conditions d'utilisation</a></li>
-              </ul>
-            </div>
+          <div class="col-lg-2 col-md-6 mb-4">
+            <h5 class="footer-title">Support</h5>
+            <ul class="footer-links">
+              <li><a href="#">Centre d'aide</a></li>
+              <li><a href="#">Documentation</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
           </div>
 
-          <!-- Colonne 4: Contact -->
-          <div class="col-md-3 mb-4">
-            <div class="footer-widget">
-              <h5 class="footer-title">Contact</h5>
-              <div class="footer-contact">
-                <div class="contact-item">
-                  <i class="fas fa-map-marker-alt"></i>
-                  <span>Bizerte, Tunisie</span>
-                </div>
-                <div class="contact-item">
-                  <i class="fas fa-phone"></i>
-                  <span>+216 72 431 033</span>
-                </div>
-                <div class="contact-item">
-                  <i class="fas fa-envelope"></i>
-                  <span>contact&#64;hmb.tn</span>
-                </div>
-              </div>
-            </div>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <h5 class="footer-title">Contact</h5>
+            <ul class="footer-contact">
+              <li>
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Route de Tunis, 7000 Bizerte, Tunisie</span>
+              </li>
+              <li>
+                <i class="fas fa-phone"></i>
+                <span>+216 72 431 033</span>
+              </li>
+              <li>
+                <i class="fas fa-envelope"></i>
+                <span>contact&#64;hmb.tn</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <!-- Footer Bottom -->
       <div class="footer-bottom">
         <div class="row align-items-center">
           <div class="col-md-6">
-            <div class="copyright">
-              <p class="mb-0">
-                <i class="far fa-copyright me-2"></i>
-                {{ currentYear }} <strong>Hôpital Militaire de Bizerte</strong>. 
-                Tous droits réservés.
-              </p>
-            </div>
+            <p class="copyright">
+              <i class="far fa-copyright me-2"></i>
+              {{ currentYear }} <strong>Hôpital Militaire de Bizerte</strong>. Tous droits réservés.
+            </p>
           </div>
-          <div class="col-md-6">
-            <div class="credits text-md-end">
-              <p class="mb-0">
-                Développé par <strong>HMB IT Department</strong> 
-                <span class="separator">•</span> 
-                Propulsé par <strong>Angular & .NET</strong>
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Version & Tech Stack -->
-        <div class="row mt-3">
-          <div class="col-12 text-center">
+          <div class="col-md-6 text-md-end">
             <div class="tech-stack">
-              <span class="tech-badge">
-                <i class="fab fa-angular text-danger me-1"></i>Angular 17
-              </span>
-              <span class="tech-badge">
-                <i class="fas fa-server text-primary me-1"></i>.NET 8
-              </span>
-              <span class="tech-badge">
-                <i class="fas fa-database text-warning me-1"></i>SQL Server
-              </span>
-              <span class="tech-badge">
-                <i class="fas fa-code-branch text-success me-1"></i>Version 1.0.0
-              </span>
+              <span class="tech-badge"><i class="fab fa-angular"></i> Angular 17</span>
+              <span class="tech-badge"><i class="fas fa-server"></i> .NET 8</span>
+              <span class="tech-badge"><i class="fas fa-database"></i> SQL Server</span>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Scroll to Top Button -->
-      <button class="scroll-to-top" id="scrollToTop" (click)="scrollToTop()" *ngIf="showScrollButton">
-        <i class="fas fa-arrow-up"></i>
-      </button>
     </div>
   </footer>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" *ngIf="showScrollButton" (click)="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 </div>

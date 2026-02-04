@@ -348,7 +348,7 @@ getTaskStatus(task: TaskItem): string {
     ? new Date(task.dueDate).toISOString().split('T')[0] 
     : null;
 
-  console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
+  //console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
 
   // ✅ Comparer les chaînes de dates (AAAA-MM-JJ)
   

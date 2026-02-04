@@ -1,3 +1,126 @@
-<!-- <div class="calendar-container">
-  <full-calendar [options]="calendarOptions"></full-calendar>
-</div> -->
+<div class="calendar-page py-5">
+  <div class="container-fluid px-4">
+    <!-- Header Section -->
+    <div class="header-section mb-4" data-aos="fade-down">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <h2 class="page-title mb-1">Calendrier des Événements</h2>
+          <p class="text-secondary">Visualisez toutes vos tâches et réunions en un coup d'œil</p>
+        </div>
+        <button class="btn btn-primary-gradient shadow-sm" (click)="loadCalendarData()">
+          <i class="fas fa-sync-alt me-2"></i>Actualiser
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4" data-aos="fade-up">
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-secondary mb-1 small">Total Tâches</p>
+                <h3 class="mb-0 fw-bold">{{ stats.totalTasks }}</h3>
+              </div>
+              <div class="stat-icon bg-primary-soft">
+                <i class="fas fa-tasks text-primary"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-secondary mb-1 small">Terminées</p>
+                <h3 class="mb-0 fw-bold text-success">{{ stats.completedTasks }}</h3>
+              </div>
+              <div class="stat-icon bg-success-soft">
+                <i class="fas fa-check-circle text-success"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-secondary mb-1 small">En Retard</p>
+                <h3 class="mb-0 fw-bold text-danger">{{ stats.overdueTasks }}</h3>
+              </div>
+              <div class="stat-icon bg-danger-soft">
+                <i class="fas fa-exclamation-triangle text-danger"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="stat-card card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="text-secondary mb-1 small">Réunions à venir</p>
+                <h3 class="mb-0 fw-bold text-purple">{{ stats.upcomingMeetings }}</h3>
+              </div>
+              <div class="stat-icon bg-purple-soft">
+                <i class="fas fa-calendar-alt text-purple"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-section mb-4 p-3 bg-white rounded-4 shadow-sm" data-aos="fade-up">
+      <div class="d-flex flex-wrap gap-3 align-items-center">
+        <span class="fw-bold text-secondary me-2">Légende :</span>
+        <div class="legend-item">
+          <span class="legend-dot bg-primary"></span>
+          <span class="small">🔵 Planifiée</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot bg-warning-custom"></span>
+          <span class="small">🟠 En cours</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot bg-danger"></span>
+          <span class="small">🔴 En retard</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot bg-success"></span>
+          <span class="small">🟢 Terminée</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot bg-purple"></span>
+          <span class="small">🎯 Réunion</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="text-secondary">Chargement du calendrier...</p>
+    </div>
+
+    <!-- Calendar -->
+    <div *ngIf="!isLoading" class="calendar-container card border-0 shadow-sm rounded-4 overflow-hidden"
+      data-aos="zoom-in">
+      <div class="card-body p-4">
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+    </div>
+  </div>
+</div>

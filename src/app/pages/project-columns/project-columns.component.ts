@@ -51,12 +51,51 @@ export class ProjectColumnsComponent implements OnInit {
     });
   }
 
-  getCompletionPercentage(tasks: TaskItem[]): number {
-    if (!tasks || tasks.length === 0) return 0;
+  /**
+ * Calcule la progression basée sur les POIDS des tâches
+ */
+getCompletionPercentage(tasks: TaskItem[]): number {
+  if (!tasks || tasks.length === 0) return 0;
+
+  // Somme des poids de TOUTES les tâches
+  const totalWeight = tasks.reduce((sum, task) => sum + (task.percentage || 0), 0);
+  
+  if (totalWeight === 0) {
+    // Si aucune tâche n'a de poids, utiliser l'ancien système
     const completed = tasks.filter(t => t.isCompleted).length;
     return Math.round((completed / tasks.length) * 100);
   }
 
+  // Somme des poids des tâches TERMINÉES
+  const completedWeight = tasks
+    .filter(t => t.isCompleted)
+    .reduce((sum, task) => sum + (task.percentage || 0), 0);
+
+  // Progression = (poids terminé / poids total) * 100
+  return Math.round((completedWeight / totalWeight) * 100);
+}
+
+/**
+ * Poids total d'une colonne
+ */
+getTotalWeight(tasks: TaskItem[]): number {
+  if (!tasks || tasks.length === 0) return 0;
+  return tasks.reduce((sum, task) => sum + (task.percentage || 0), 0);
+}
+
+/**
+ * Vérifie si > 100%
+ */
+isOverweighted(tasks: TaskItem[]): boolean {
+  return this.getTotalWeight(tasks) > 100;
+}
+
+/**
+ * Poids restant disponible
+ */
+getRemainingWeight(tasks: TaskItem[]): number {
+  return Math.max(0, 100 - this.getTotalWeight(tasks));
+}
   toggleTaskCompletion(task: TaskItem): void {
     const updated = { ...task, isCompleted: !task.isCompleted };
     this.taskItemService.updateTask(updated.id, updated).subscribe(() => {
@@ -117,7 +156,7 @@ getTaskStatus(task: TaskItem): string {
     ? new Date(task.dueDate).toISOString().split('T')[0] 
     : null;
 
-  console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
+  //console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
 
   // ✅ Comparer les chaînes de dates (AAAA-MM-JJ)
   
@@ -209,30 +248,49 @@ get connectedDropListsIds(): string[] {
 }
 openAddTaskModal(columnId: number) {
   const modalRef = this.modalService.open(AddTaskModalComponent);
+  
   modalRef.result.then((result) => {
     if (result) {
+      const column = this.columnsWithTasks.find(c => c.id === columnId);
+      
+      // ✅ VALIDATION DU POIDS
+      if (column) {
+        const currentWeight = this.getTotalWeight(column.tasks);
+        const newWeight = result.percentage || 0;
+        const totalWeight = currentWeight + newWeight;
+        
+        if (totalWeight > 100) {
+          const remaining = 100 - currentWeight;
+          if (!confirm(
+            `⚠️ ATTENTION!\n\n` +
+            `Poids actuel: ${currentWeight}%\n` +
+            `Nouvelle tâche: ${newWeight}%\n` +
+            `Total: ${totalWeight}% (> 100%!)\n\n` +
+            `Disponible: ${remaining}%\n\n` +
+            `Continuer quand même?`
+          )) {
+            return;
+          }
+        }
+      }
+
       const newTask: Partial<TaskItem> = {
         title: result.title,
+        description: result.description,
+        percentage: result.percentage || 0,  // ✅ Le poids
         startDate: result.startDate,
         dueDate: result.dueDate,
         columnId: columnId,
-        projectId: this.projectId,   // ✅ doit bien remonter ici
+        projectId: this.projectId,
         assignedUserId: result.assignedUserId
       };
 
-      // 🔎 Debug : voir ce qui part au backend
-      console.log("📤 Task envoyée au backend :", newTask);
-this.taskItemService.createTask(newTask).subscribe({
-  next: task => {
-    console.log("✅ Task créée :", task);
-    const column = this.columnsWithTasks.find(c => c.id === columnId);
-    if (column) column.tasks.push(task);
-  },
-  error: err => {
-    console.error("❌ Erreur création tâche :", err);
-  }
-});
-
+      this.taskItemService.createTask(newTask).subscribe({
+        next: task => {
+          console.log("✅ Tâche créée avec poids:", task.percentage, "%");
+          if (column) column.tasks.push(task);
+        }
+      });
     }
   });
 }
@@ -327,6 +385,8 @@ deleteTask(taskId: number): void {
   }).catch(() => {});
 }
 selectedTasks: TaskItem[] = [];
+
+
 
 openGanttModal(tasks: TaskItem[]): void {
   console.log("🧩 Tâches envoyées au Gantt :", tasks);

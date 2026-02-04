@@ -1,55 +1,118 @@
-<div class="register-container">
-  <h2>Créer un compte</h2>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-      <label for="username" class="form-label">Nom d'utilisateur</label>
-      <input
-        id="username"
-        class="form-control"
-        formControlName="username"
-        type="text"
-        required
-      />
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- Left Side - Branding -->
+    <div class="auth-branding">
+      <div class="branding-content">
+        <div class="brand-logo">
+          <i class="fas fa-hospital-symbol"></i>
+          <h2>HMB</h2>
+        </div>
+        <h1>Rejoignez-nous</h1>
+        <p>Créez votre compte et commencez à gérer vos projets efficacement</p>
+
+        <div class="branding-features">
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Inscription rapide et sécurisée</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Accès à tous les outils</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Support technique 24/7</span>
+          </div>
+        </div>
+
+        <div class="hospital-badge">
+          <i class="fas fa-hospital"></i>
+          <div>
+            <h4>Hôpital Militaire de Bizerte</h4>
+            <p>Excellence • Innovation • Service</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="mb-3">
-      <label for="password" class="form-label">Mot de passe</label>
-      <input
-        id="password"
-        class="form-control"
-        formControlName="password"
-        type="password"
-        required
-      />
+    <!-- Right Side - Register Form -->
+    <div class="auth-form-section">
+      <div class="form-wrapper">
+        <div class="form-header">
+          <h2>Créer un compte</h2>
+          <p>Remplissez les informations ci-dessous</p>
+        </div>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <div class="form-group">
+            <label for="username" class="form-label">
+              <i class="fas fa-user"></i>
+              Nom d'utilisateur
+            </label>
+            <input id="username" class="form-input" formControlName="username" type="text"
+              placeholder="Choisissez un nom d'utilisateur" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">
+              <i class="fas fa-lock"></i>
+              Mot de passe
+            </label>
+            <input id="password" class="form-input" formControlName="password" type="password"
+              placeholder="Créez un mot de passe sécurisé" required />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">
+              <i class="fas fa-lock"></i>
+              Confirmer le mot de passe
+            </label>
+            <input id="confirmPassword" class="form-input" formControlName="confirmPassword" type="password"
+              placeholder="Confirmez votre mot de passe" required />
+          </div>
+
+          <div class="form-group">
+            <label for="role" class="form-label">
+              <i class="fas fa-user-tag"></i>
+              Rôle
+            </label>
+            <select class="form-select" id="role" formControlName="role" required>
+              <option value="Member">👤 Membre</option>
+              <option value="Manager">👥 Chef de projet</option>
+              <option value="Admin">🔐 Administrateur</option>
+            </select>
+          </div>
+
+          <div class="terms-checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" required />
+              <span>J'accepte les <a href="#" class="link-primary">conditions d'utilisation</a></span>
+            </label>
+          </div>
+
+          <button class="btn-submit" type="submit" [disabled]="registerForm.invalid"
+            [class.disabled]="registerForm.invalid">
+            <i class="fas fa-user-plus me-2"></i>
+            S'inscrire
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <p>
+            Vous avez déjà un compte ?
+            <a routerLink="/login" class="link-primary">Se connecter</a>
+          </p>
+        </div>
+
+        <div class="divider">
+          <span>ou</span>
+        </div>
+
+        <a routerLink="/" class="btn-back-home">
+          <i class="fas fa-home me-2"></i>
+          Retour à l'accueil
+        </a>
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label for="confirmPassword" class="form-label">Confirmer mot de passe</label>
-      <input
-        id="confirmPassword"
-        class="form-control"
-        formControlName="confirmPassword"
-        type="password"
-        required
-      />
-    </div>
-    <div class="mb-3">
-  <label for="role" class="form-label">Rôle</label>
-  <select class="form-select" formControlName="role" required>
-    <option value="Member">👤 Membre</option>
-    <option value="Manager">👥 Chef de projet</option>
-    <option value="Admin">🔐 Administrateur</option>
-  </select>
-</div>
-
-
-    <button class="btn btn-success" type="submit" [disabled]="registerForm.invalid">
-      S'inscrire
-    </button>
-  </form>
-
-  <p class="mt-3">
-    Vous avez déjà un compte ?
-    <a routerLink="/login">Se connecter</a>
-  </p>
+  </div>
 </div>

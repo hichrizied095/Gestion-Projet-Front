@@ -1,5 +1,5 @@
 /* ========================================
-   TASK DETAILS MODAL - CSS PROFESSIONNEL
+   TASK DETAILS MODAL - CSS PROFESSIONNEL AMÉLIORÉ
    ======================================== */
 
 /* ========================================
@@ -18,6 +18,12 @@
   font-weight: 700;
   font-size: 1.5rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+.modal-header .modal-title i {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .modal-header .btn-close {
@@ -62,38 +68,142 @@
 }
 
 /* ========================================
-   📝 DESCRIPTION SECTION
+   📌 SECTIONS TITLE (NOUVEAU)
    ======================================== */
 
-.modal-body > p:first-child {
-  background: white;
-  padding: 1.25rem;
-  border-radius: 12px;
-  border-left: 4px solid #667eea;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
+.section-title {
+  color: #495057;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  display: flex;
+  align-items: center;
 }
 
-.modal-body > p:first-child strong {
+.section-title i {
   color: #667eea;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.section-title .badge {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
 }
 
 /* ========================================
-   📊 INFORMATIONS PRINCIPALES
+   📝 SECTION DESCRIPTION (AMÉLIORÉE)
    ======================================== */
 
-.list-unstyled {
+.description-section {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
+  border-left: 4px solid #667eea;
 }
 
-.list-unstyled li {
+.description-content p {
+  color: #495057;
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.description-content .text-muted {
+  color: #6c757d !important;
+  font-style: italic;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ========================================
+   📊 SECTION POURCENTAGE (NOUVEAU)
+   ======================================== */
+
+.progress-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #28a745;
+}
+
+.progress-content {
+  margin-top: 0.75rem;
+}
+
+.progress {
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.6s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* Couleurs du pourcentage */
+.progress-bar.bg-danger {
+  background: linear-gradient(90deg, #ef4444, #dc2626) !important;
+}
+
+.progress-bar.bg-warning {
+  background: linear-gradient(90deg, #f59e0b, #d97706) !important;
+}
+
+.progress-bar.bg-success {
+  background: linear-gradient(90deg, #10b981, #059669) !important;
+}
+
+/* Badge du pourcentage */
+.progress-content .badge {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+/* Texte d'aide sous la barre */
+.progress-content small {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  color: #6c757d;
+}
+
+.progress-content small i {
+  color: #667eea;
+}
+
+/* ========================================
+   ℹ️ SECTION INFORMATIONS
+   ======================================== */
+
+.info-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.info-list {
+  margin: 0;
+}
+
+.info-list li {
   padding: 0.75rem 0;
   border-bottom: 1px solid #e9ecef;
   display: flex;
@@ -101,23 +211,36 @@
   flex-wrap: wrap;
 }
 
-.list-unstyled li:last-child {
+.info-list li:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.list-unstyled li strong {
+.info-list li strong {
   color: #495057;
   font-weight: 600;
   min-width: 120px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-list li strong i {
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+/* Badge de statut */
+.info-list .badge {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  font-weight: 600;
 }
 
 /* ========================================
    ⏰ ÉDITION DATE D'ÉCHÉANCE
    ======================================== */
 
-.list-unstyled li:has(.form-control) {
+.info-list li:has(.form-control) {
   flex-direction: column;
   gap: 0.5rem;
 }
@@ -183,45 +306,40 @@ input[type="date"].form-control-sm:focus {
    🔴 CAUSE DU RETARD
    ======================================== */
 
-.list-unstyled div:has(strong:contains('Cause du retard')) {
-  background: #fff5f5;
-  padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid #dc3545;
-  margin-top: 0.5rem;
+.delay-reason-section {
+  width: 100%;
 }
 
-.text-muted.fst-italic {
-  color: #6c757d !important;
-  font-style: italic;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 6px;
-  display: inline-block;
+.delay-reason-section .alert {
+  background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+  border-left: 4px solid #dc3545;
+  border-radius: 8px;
+}
+
+.delay-reason-section .alert strong {
+  color: #dc3545;
 }
 
 /* ========================================
-   👤 RÉAFFECTATION UTILISATEUR
+   👤 SECTION RÉAFFECTATION
    ======================================== */
 
-.mb-3:has(label[for="assignedUser"]) {
+.reassign-section {
   background: white;
-  padding: 1rem;
-  border-radius: 10px;
-  border: 2px solid #e9ecef;
-  transition: all 0.2s ease;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #764ba2;
 }
 
-.mb-3:has(label[for="assignedUser"]):hover {
-  border-color: #667eea;
-  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
+.reassign-content {
+  margin-top: 0.75rem;
 }
 
-.mb-3 label[for="assignedUser"] {
+.reassign-content .form-label {
   font-weight: 600;
   color: #495057;
-  margin-bottom: 0.75rem;
-  display: block;
+  margin-bottom: 0.5rem;
 }
 
 .form-select {
@@ -241,35 +359,12 @@ input[type="date"].form-control-sm:focus {
    📎 SECTION FICHIERS ATTACHÉS
    ======================================== */
 
-.mt-4 {
+.attachments-section {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem;
-}
-
-.mt-4 h6 {
-  color: #495057;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e9ecef;
-  display: flex;
-  align-items: center;
-}
-
-.mt-4 h6 i {
-  color: #667eea;
-  font-size: 1.2rem;
-}
-
-.mt-4 h6 .badge {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  font-size: 0.75rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 12px;
+  border-left: 4px solid #17a2b8;
 }
 
 /* Liste des fichiers */
@@ -293,7 +388,7 @@ input[type="date"].form-control-sm:focus {
   transform: translateX(3px);
 }
 
-.list-group-item i.bi-file-earmark {
+.list-group-item i.fas {
   color: #667eea;
   font-size: 1.1rem;
 }
@@ -332,7 +427,7 @@ input[type="date"].form-control-sm:focus {
 }
 
 /* Message "Aucun fichier" */
-.text-muted.mb-3 {
+.attachments-section .text-muted {
   background: #f8f9fa;
   padding: 1rem;
   border-radius: 8px;
@@ -423,6 +518,14 @@ input[type="file"].form-control:disabled {
    💬 SECTION COMMENTAIRES
    ======================================== */
 
+.comments-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid #ffc107;
+}
+
 hr {
   border: none;
   height: 2px;
@@ -430,66 +533,45 @@ hr {
   margin: 2rem 0;
 }
 
-.modal-body > h6 {
-  color: #495057;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-  display: flex;
-  align-items: center;
-  background: white;
-  padding: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.modal-body > h6 i {
-  color: #667eea;
-  font-size: 1.2rem;
-}
-
-.modal-body > h6 .badge {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  font-size: 0.75rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 12px;
-}
-
 /* Liste des commentaires */
-.list-group.mb-3 {
+.comments-section .list-group {
   max-height: 300px;
   overflow-y: auto;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.list-group.mb-3::-webkit-scrollbar {
+.comments-section .list-group::-webkit-scrollbar {
   width: 6px;
 }
 
-.list-group.mb-3::-webkit-scrollbar-track {
+.comments-section .list-group::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 10px;
 }
 
-.list-group.mb-3::-webkit-scrollbar-thumb {
+.comments-section .list-group::-webkit-scrollbar-thumb {
   background: #667eea;
   border-radius: 10px;
 }
 
-.list-group.mb-3 .list-group-item {
+.comments-section .list-group-item {
   border: none;
   border-left: 4px solid transparent;
   transition: all 0.2s ease;
-  background: white;
+  background: #fafbfc;
   margin-bottom: 0.5rem;
   border-radius: 8px !important;
+  padding: 1rem;
 }
 
-.list-group.mb-3 .list-group-item:hover {
+.comments-section .list-group-item:hover {
   background: #f0f9ff;
   border-left-color: #667eea;
   transform: translateX(3px);
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.comment-avatar i {
+  color: #667eea;
 }
 
 .list-group-item strong {
@@ -509,17 +591,31 @@ hr {
 }
 
 /* Message "Aucun commentaire" */
-.modal-body > p.text-muted {
+.comments-section .text-muted {
   background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 10px;
+  padding: 1rem;
+  border-radius: 8px;
   text-align: center;
   font-style: italic;
   border: 2px dashed #dee2e6;
-  margin: 1rem 0;
 }
 
-/* Textarea commentaire */
+/* Formulaire de commentaire */
+.comment-form {
+  margin-top: 1rem;
+}
+
+.comment-form .form-label {
+  font-weight: 600;
+  color: #495057;
+  display: flex;
+  align-items: center;
+}
+
+.comment-form .form-label i {
+  color: #667eea;
+}
+
 textarea.form-control {
   border: 2px solid #dee2e6;
   border-radius: 10px;
@@ -528,7 +624,7 @@ textarea.form-control {
   min-height: 100px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 textarea.form-control:focus {
@@ -542,7 +638,7 @@ textarea.form-control::placeholder {
 }
 
 /* ========================================
-   🔘 MODAL FOOTER
+   📘 MODAL FOOTER
    ======================================== */
 
 .modal-footer {
@@ -559,6 +655,12 @@ textarea.form-control::placeholder {
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.modal-footer .btn i {
   font-size: 0.9rem;
 }
 
@@ -587,16 +689,21 @@ textarea.form-control::placeholder {
     padding: 1.25rem;
   }
 
-  .list-unstyled {
+  .description-section,
+  .progress-section,
+  .info-section,
+  .reassign-section,
+  .attachments-section,
+  .comments-section {
     padding: 1rem;
   }
 
-  .list-unstyled li {
+  .info-list li {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .list-unstyled li strong {
+  .info-list li strong {
     margin-bottom: 0.25rem;
   }
 
@@ -630,6 +737,7 @@ textarea.form-control::placeholder {
   .modal-footer .btn {
     width: 100%;
     margin-bottom: 0.5rem;
+    justify-content: center;
   }
 
   .modal-footer .btn:last-child {
@@ -657,9 +765,14 @@ textarea.form-control::placeholder {
 }
 
 /* Animation pour les éléments qui apparaissent */
+.description-section,
+.progress-section,
+.info-section,
+.reassign-section,
+.attachments-section,
+.comments-section,
 .list-group-item,
-.card,
-.list-unstyled {
+.card {
   animation: fadeIn 0.4s ease-in-out;
 }
 
@@ -667,11 +780,12 @@ textarea.form-control::placeholder {
    🎨 TOUCHES FINALES
    ======================================== */
 
-/* Icônes Bootstrap Icons */
-.bi {
+/* Icônes Font Awesome */
+.fas, .bi {
   transition: all 0.2s ease;
 }
 
+.btn:hover .fas,
 .btn:hover .bi {
   transform: scale(1.1);
 }

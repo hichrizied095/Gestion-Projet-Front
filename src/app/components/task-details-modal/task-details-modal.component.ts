@@ -283,6 +283,79 @@ export class TaskDetailsModalComponent implements OnInit {
     return `http://localhost:5279/api/TaskItems/download/${this.task.id}`;
   }
 
+/**
+ * Calcule le pourcentage de temps écoulé entre startDate et dueDate
+ * @returns Pourcentage (0-100+)
+ */
+getTimeProgress(): number {
+  if (!this.task || !this.task.startDate || !this.task.dueDate) {
+    return 0;
+  }
+
+  const now = new Date();
+  const start = new Date(this.task.startDate);
+  const due = new Date(this.task.dueDate);
+
+  // Temps total (en millisecondes)
+  const totalTime = due.getTime() - start.getTime();
+  
+  // Temps écoulé (en millisecondes)
+  const elapsedTime = now.getTime() - start.getTime();
+
+  // Pourcentage
+  const progress = (elapsedTime / totalTime) * 100;
+
+  // Arrondir à l'entier
+  return Math.max(0, Math.round(progress));
+}
+
+/**
+ * Retourne un texte descriptif du temps restant
+ */
+getTimeRemainingText(): string {
+  if (!this.task || !this.task.startDate || !this.task.dueDate) {
+    return 'Dates non définies';
+  }
+
+  const progress = this.getTimeProgress();
+  const now = new Date();
+  const due = new Date(this.task.dueDate);
+  const start = new Date(this.task.startDate);
+
+  // Si la tâche est terminée
+  if (this.task.isCompleted) {
+    return '✅ Tâche terminée';
+  }
+
+  // Si la tâche n'a pas encore commencé
+  if (now < start) {
+    const daysUntilStart = Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return `⏳ Commence dans ${daysUntilStart} jour${daysUntilStart > 1 ? 's' : ''}`;
+  }
+
+  // Si la tâche est en retard
+  if (progress > 100) {
+    const daysOverdue = Math.ceil((now.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
+    return `⚠️ En retard de ${daysOverdue} jour${daysOverdue > 1 ? 's' : ''}`;
+  }
+
+  // Si la tâche est en cours
+  const daysRemaining = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysRemaining === 0) {
+    return '🔥 Échéance aujourd\'hui !';
+  } else if (daysRemaining === 1) {
+    return '⏰ Échéance demain';
+  } else if (daysRemaining <= 3) {
+    return `⚠️ Plus que ${daysRemaining} jours restants`;
+  } else {
+    return `📅 ${daysRemaining} jour${daysRemaining > 1 ? 's' : ''} restant${daysRemaining > 1 ? 's' : ''}`;
+  }
+}
+
+// ✅ Propriété pour accéder à Math.min dans le template
+Math = Math;
+
   formatFileSize(bytes?: number): string {
     if (!bytes || bytes === 0) return '0 Bytes';
 

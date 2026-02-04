@@ -18,6 +18,7 @@ import { MeetingCreateComponent } from './components/meeting-create/meeting-crea
 import { MeetingDetailsComponent } from './components/meeting-details/meeting-details.component';
 import { MeetingListComponent } from './components/meeting-list/meeting-list.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -36,7 +37,11 @@ const routes: Routes = [
     { path: 'meetings/create', component: MeetingCreateComponent },
     { path: 'meetings/:id', component: MeetingDetailsComponent },
     { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+    { path: 'statistics', component: StatisticsComponent, canActivate: [authGuard] },
 
+    // 🔧 Redirection pour les notifications du backend qui utilisent /tasks/:id
+    { path: 'tasks/:id', redirectTo: 'mes-taches', pathMatch: 'full' },
+    { path: 'tasks', redirectTo: 'mes-taches', pathMatch: 'full' },
 
     { path: '**', redirectTo: '' },
 

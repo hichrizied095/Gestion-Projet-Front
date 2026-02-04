@@ -1,12 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Chart, ChartConfiguration, registerables } from 'chart.js';
-import { AdminService, DashboardStats, ProjectStats, RecentActivity } from '../../services/admin.service';
+import { AdminService, DashboardStats, RecentActivity } from '../../services/admin.service';
 import { UserService } from '../../services/user.service';
-import { TaskItemDto, UserDto } from '../../Models';
-
-// Enregistrer tous les composants Chart.js
-Chart.register(...registerables);
+import { TaskItemDto } from '../../Models';
 
 interface QuickAction {
   title: string;
@@ -19,7 +15,7 @@ interface QuickAction {
 
 @Component({
   selector: 'app-admin-dashboard',
-  standalone:false,
+  standalone: false,
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -47,18 +43,10 @@ export class AdminDashboardComponent implements OnInit {
     completionRate: 0
   };
 
-  // Statistiques par rôle (compatibilité avec le template)
-  roleStats = {
-    Admin: 0,
-    Manager: 0,
-    Member: 0
-  };
-
-  // Données pour les graphiques
-  projectStats: ProjectStats[] = [];
+  // Données
   recentActivities: RecentActivity[] = [];
   recentTasks: TaskItemDto[] = [];
-  pendingUsers: UserDto[] = [];
+  pendingUsers: any[] = [];  // ✅ Type any pour éviter les conflits
 
   // Actions rapides
   quickActions: QuickAction[] = [
@@ -70,11 +58,18 @@ export class AdminDashboardComponent implements OnInit {
       color: '#3B82F6'
     },
     {
-      title: 'Voir tous les projets',
+      title: 'Voir les statistiques',
+      description: 'Graphiques et analyses détaillées',
+      icon: 'bi-graph-up',
+      route: '/statistics',
+      color: '#8B5CF6'
+    },
+    {
+      title: 'Tous les projets',
       description: 'Consulter l\'état de tous les projets',
       icon: 'bi-kanban',
-      route: '/projets',
-      color: '#8B5CF6'
+      route: '/projects',
+      color: '#10B981'
     },
     {
       title: 'Tâches en retard',
@@ -88,41 +83,22 @@ export class AdminDashboardComponent implements OnInit {
       title: 'Réunions à venir',
       description: 'Calendrier des réunions',
       icon: 'bi-calendar-event',
-      route: '/mes-reunions',
+      route: '/meetings',
       color: '#F59E0B',
       count: 0
+    },
+    {
+      title: 'Messages',
+      description: 'Consulter les conversations',
+      icon: 'bi-chat-dots',
+      route: '/chat',
+      color: '#06B6D4'
     }
   ];
 
-  // Charts references
-  @ViewChild('roleChartCanvas') roleChartCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('taskStatusChartCanvas') taskStatusChartCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('projectProgressChartCanvas') projectProgressChartCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('monthlyTasksChartCanvas') monthlyTasksChartCanvas!: ElementRef<HTMLCanvasElement>;
-
-  // Chart instances
-  roleChart?: Chart;
-  taskStatusChart?: Chart;
-  projectProgressChart?: Chart;
-  monthlyTasksChart?: Chart;
-
-  // Chart data & options
-  roleChartData: any;
-  roleChartOptions: any;
-  taskStatusChartData: any;
-  taskStatusChartOptions: any;
-  projectProgressChartData: any;
-  projectProgressChartOptions: any;
-  monthlyTasksChartData: any;
-  monthlyTasksChartOptions: any;
-
-  // UI States
-  isLoading = true;
+  // État
+  isLoading = false;
   lastUpdated = new Date();
-
-  // ==========================================
-  // CONSTRUCTOR & LIFECYCLE
-  // ==========================================
 
   constructor(
     private adminService: AdminService,
@@ -134,438 +110,172 @@ export class AdminDashboardComponent implements OnInit {
     this.loadDashboardData();
   }
 
-  ngAfterViewInit(): void {
-    // Les graphiques seront créés après le chargement des données
-  }
-
   // ==========================================
   // CHARGEMENT DES DONNÉES
   // ==========================================
 
-  async loadDashboardData(): Promise<void> {
+  loadDashboardData(): void {
     this.isLoading = true;
 
-    try {
-      // Charger toutes les données en parallèle
-      await Promise.all([
-        this.loadStats(),
-        this.loadProjectStats(),
-        this.loadRecentActivities(),
-        this.loadRecentTasks(),
-        this.loadPendingUsers()
-      ]);
-
-      // Créer les graphiques après le chargement des données
-      setTimeout(() => {
-        this.createCharts();
-      }, 100);
-
-      this.lastUpdated = new Date();
-    } catch (error) {
-      console.error('Erreur lors du chargement du dashboard:', error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  /**
-   * Charge les statistiques globales
-   */
-  private async loadStats(): Promise<void> {
-    try {
-      const stats = await this.adminService.getDashboardStats().toPromise();
-      if (stats) {
+    // Charger les statistiques
+    this.adminService.getDashboardStats().subscribe({
+      next: (stats) => {
         this.stats = stats;
-
-        // Compatibilité avec le template existant
-        this.roleStats = {
-          Admin: stats.roleStats['Admin'] || 0,
-          Manager: stats.roleStats['Manager'] || 0,
-          Member: stats.roleStats['Member'] || 0
-        };
-
+        
         // Mettre à jour les compteurs des actions rapides
-        this.quickActions[2].count = stats.overdueTasks;
-        this.quickActions[3].count = stats.upcomingMeetings;
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des statistiques:', error);
-    }
-  }
-
-  /**
-   * Charge les statistiques des projets
-   */
-  private async loadProjectStats(): Promise<void> {
-    try {
-      const projects = await this.adminService.getProjectStats(5).toPromise();
-      if (projects) {
-        // Ajouter les alias pour compatibilité avec le template
-        this.projectStats = projects.map(p => ({
-          ...p,
-          name: p.projectName,
-          tasks: p.totalTasks,
-          completed: p.completedTasks
-        }));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des stats projets:', error);
-    }
-  }
-
-  /**
-   * Charge les activités récentes
-   */
-  private async loadRecentActivities(): Promise<void> {
-    try {
-      const activities = await this.adminService.getRecentActivities(10).toPromise();
-      if (activities) {
-        this.recentActivities = activities;
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des activités:', error);
-    }
-  }
-
-  /**
-   * Charge les tâches récentes
-   */
-  private async loadRecentTasks(): Promise<void> {
-    try {
-      const tasks = await this.adminService.getRecentTasks(10).toPromise();
-      if (tasks) {
-        this.recentTasks = tasks;
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des tâches récentes:', error);
-    }
-  }
-
-  /**
-   * Charge les utilisateurs en attente
-   */
-  private async loadPendingUsers(): Promise<void> {
-    try {
-      const users = await this.adminService.getPendingUsers().toPromise();
-      if (users) {
-        this.pendingUsers = users;
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs en attente:', error);
-    }
-  }
-
-  // ==========================================
-  // CRÉATION DES GRAPHIQUES
-  // ==========================================
-
-  private createCharts(): void {
-    this.createRoleChart();
-    this.createTaskStatusChart();
-    this.createProjectProgressChart();
-    this.createMonthlyTasksChart();
-  }
-
-  /**
-   * Graphique de répartition des rôles (Doughnut)
-   */
-  private createRoleChart(): void {
-    if (!this.roleChartCanvas) return;
-
-    this.roleChartData = {
-      labels: ['Admin', 'Manager', 'Membre'],
-      datasets: [{
-        data: [
-          this.roleStats.Admin,
-          this.roleStats.Manager,
-          this.roleStats.Member
-        ],
-        backgroundColor: ['#EF4444', '#F59E0B', '#10B981'],
-        borderWidth: 0
-      }]
-    };
-
-    this.roleChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const total = this.stats.totalUsers;
-              const value = context.parsed;
-              const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-              return `${context.label}: ${value} (${percentage}%)`;
-            }
-          }
+        const overdueAction = this.quickActions.find(a => a.route === '/mes-taches');
+        if (overdueAction) {
+          overdueAction.count = stats.overdueTasks;
         }
-      }
-    };
-  }
-
-  /**
-   * Graphique de statut des tâches (Bar)
-   */
-  private createTaskStatusChart(): void {
-    if (!this.taskStatusChartCanvas) return;
-
-    this.taskStatusChartData = {
-      labels: ['Terminées', 'En cours', 'En retard'],
-      datasets: [{
-        label: 'Tâches',
-        data: [
-          this.stats.completedTasks,
-          this.stats.inProgressTasks,
-          this.stats.overdueTasks
-        ],
-        backgroundColor: ['#10B981', '#3B82F6', '#EF4444'],
-        borderRadius: 6
-      }]
-    };
-
-    this.taskStatusChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    };
-  }
-
-  /**
-   * Graphique de progression des projets (Line)
-   */
-  private createProjectProgressChart(): void {
-    if (!this.projectProgressChartCanvas) return;
-
-    this.projectProgressChartData = {
-      labels: this.projectStats.map(p => p.name || p.projectName),
-      datasets: [{
-        label: 'Progression (%)',
-        data: this.projectStats.map(p => p.progress),
-        borderColor: '#8B5CF6',
-        backgroundColor: 'rgba(139, 92, 246, 0.1)',
-        tension: 0.4,
-        fill: true
-      }]
-    };
-
-    this.projectProgressChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100
+        
+        const meetingsAction = this.quickActions.find(a => a.route === '/meetings');
+        if (meetingsAction) {
+          meetingsAction.count = stats.upcomingMeetings;
         }
-      }
-    };
-  }
 
-  /**
-   * Graphique des tâches mensuelles (Line)
-   */
-  private createMonthlyTasksChart(): void {
-    if (!this.monthlyTasksChartCanvas) return;
-
-    // Pour l'instant, données fictives
-    this.monthlyTasksChartData = {
-      labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui'],
-      datasets: [
-        {
-          label: 'Créées',
-          data: [12, 19, 15, 25, 22, 30],
-          borderColor: '#3B82F6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4
-        },
-        {
-          label: 'Terminées',
-          data: [8, 15, 12, 20, 18, 25],
-          borderColor: '#10B981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          tension: 0.4
-        }
-      ]
-    };
-
-    this.monthlyTasksChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: 'top' }
+        console.log('✅ Stats chargées:', stats);
       },
-      scales: {
-        y: { beginAtZero: true }
+      error: (err: any) => console.error('❌ Erreur stats:', err)
+    });
+
+    // Charger les utilisateurs en attente
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        this.pendingUsers = users.filter(u => !u.isApproved);
+        console.log('✅ Utilisateurs en attente:', this.pendingUsers.length);
+      },
+      error: (err: any) => console.error('❌ Erreur utilisateurs:', err)
+    });
+
+    // Charger les activités récentes
+    this.adminService.getRecentActivities().subscribe({
+      next: (activities) => {
+        this.recentActivities = activities.slice(0, 10);
+        console.log('✅ Activités chargées:', this.recentActivities.length);
+      },
+      error: (err: any) => console.error('❌ Erreur activités:', err)
+    });
+
+    // Charger les tâches récentes
+    this.adminService.getRecentTasks().subscribe({
+      next: (tasks) => {
+        this.recentTasks = tasks.slice(0, 10);
+        console.log('✅ Tâches chargées:', this.recentTasks.length);
+        this.isLoading = false;
+        this.lastUpdated = new Date();
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur tâches:', err);
+        this.isLoading = false;
       }
-    };
-  }
-
-  // ==========================================
-  // MÉTHODES HELPER POUR LE TEMPLATE
-  // ==========================================
-
-  /**
-   * Retourne le statut d'une tâche
-   */
-  getStatus(task: TaskItemDto): string {
-    if (task.isCompleted) return 'Terminée';
-    if (new Date(task.dueDate) < new Date()) return 'En retard';
-    if (new Date(task.startDate) > new Date()) return 'Planifiée';
-    return 'En cours';
-  }
-
-  /**
-   * Retourne la couleur du badge de statut
-   */
-  getStatusColor(status: string): string {
-    const colors: { [key: string]: string } = {
-      'Terminée': 'success',
-      'En retard': 'danger',
-      'En cours': 'primary',
-      'Planifiée': 'secondary',
-      'success': 'success',
-      'completed': 'success',
-      'pending': 'warning',
-      'upcoming': 'primary',
-      'info': 'info',
-      'past': 'secondary'
-    };
-    return colors[status] || 'secondary';
-  }
-
-  /**
-   * Retourne l'icône d'une activité
-   */
-  getActivityIcon(type: string): string {
-    const icons: { [key: string]: string } = {
-      'project_created': 'bi-folder-plus',
-      'task_created': 'bi-card-checklist',
-      'meeting_scheduled': 'bi-calendar-event',
-      'comment_added': 'bi-chat-left-text'
-    };
-    return icons[type] || 'bi-info-circle';
-  }
-
-  /**
-   * Retourne la couleur d'une activité
-   */
-  getActivityColor(type: string): string {
-    const colors: { [key: string]: string } = {
-      'project_created': 'activity-success',
-      'task_created': 'activity-primary',
-      'meeting_scheduled': 'activity-warning',
-      'comment_added': 'activity-info'
-    };
-    return colors[type] || 'activity-secondary';
-  }
-
-  /**
-   * Formate une date de manière relative
-   */
-  formatDate(date: Date): string {
-    const now = new Date();
-    const activityDate = new Date(date);
-    const diff = now.getTime() - activityDate.getTime();
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) return `Il y a ${days} jour${days > 1 ? 's' : ''}`;
-    if (hours > 0) return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`;
-    if (minutes > 0) return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`;
-    return 'À l\'instant';
-  }
-
-  /**
-   * Navigation vers une route
-   */
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
+    });
   }
 
   // ==========================================
   // ACTIONS UTILISATEUR
   // ==========================================
 
-  /**
-   * Actualise le dashboard
-   */
+  approveUser(userId: number): void {
+    if (!confirm('Êtes-vous sûr de vouloir approuver cet utilisateur ?')) {
+      return;
+    }
+
+    // ✅ Utiliser userService
+    this.userService.approveUser(userId).subscribe({
+      next: () => {
+        console.log('✅ Utilisateur approuvé');
+        this.pendingUsers = this.pendingUsers.filter(u => u.id !== userId);
+        this.stats.pendingUsers--;
+        this.stats.approvedUsers++;
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur approbation:', err);
+        alert('Erreur lors de l\'approbation de l\'utilisateur');
+      }
+    });
+  }
+
+  rejectUser(userId: number): void {
+    if (!confirm('Êtes-vous sûr de vouloir rejeter cet utilisateur ?')) {
+      return;
+    }
+
+    // ✅ Utiliser userService
+    this.userService.rejectUser(userId).subscribe({
+      next: () => {
+        console.log('✅ Utilisateur rejeté');
+        this.pendingUsers = this.pendingUsers.filter(u => u.id !== userId);
+        this.stats.pendingUsers--;
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur rejet:', err);
+        alert('Erreur lors du rejet de l\'utilisateur');
+      }
+    });
+  }
+
   refreshDashboard(): void {
     this.loadDashboardData();
   }
 
-  /**
-   * Exporte les données du dashboard
-   */
-  exportReport(): void {
-    this.adminService.exportDashboardData('json').subscribe(
-      (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `dashboard_${new Date().toISOString()}.json`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      (error) => console.error('Erreur lors de l\'export:', error)
-    );
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 
-  /**
-   * Approuve un utilisateur
-   */
-  async approveUser(userId: number): Promise<void> {
-  try {
-    console.log('Approuver utilisateur:', userId);
-    
-    // ✅ CORRECTION: Appeler l'API d'approbation
-    await this.userService.approveUser(userId).toPromise();
-    
-    console.log('✅ Utilisateur approuvé avec succès');
-    
-    // Recharger les données
-    await this.loadPendingUsers();
-    await this.loadStats();
-  } catch (error) {
-    console.error('❌ Erreur lors de l\'approbation:', error);
-    alert('Erreur lors de l\'approbation de l\'utilisateur');
-  }
-}
+  // ==========================================
+  // UTILITAIRES
+  // ==========================================
 
-  /**
-   * Rejette un utilisateur
-   */
-  async rejectUser(userId: number): Promise<void> {
-  try {
-    console.log('Rejeter utilisateur:', userId);
+  getStatus(task: TaskItemDto): string {
+    if (task.isCompleted) return 'Terminée';
     
-    // ✅ CORRECTION: Appeler l'API de rejet
-    await this.userService.rejectUser(userId).toPromise();
-    
-    console.log('✅ Utilisateur rejeté avec succès');
-    
-    // Recharger les données
-    await this.loadPendingUsers();
-    await this.loadStats();
-  } catch (error) {
-    console.error('❌ Erreur lors du rejet:', error);
-    alert('Erreur lors du rejet de l\'utilisateur');
-  }
-}
+    const now = new Date();
+    const start = new Date(task.startDate);
+    const due = new Date(task.dueDate);
 
-  /**
-   * Rafraîchit les données
-   */
-  refresh(): void {
-    this.loadDashboardData();
+    if (start > now) return 'Planifiée';
+    if (due < now) return 'En retard';
+    return 'En cours';
+  }
+
+  getActivityColor(type: string): string {
+    const colors: { [key: string]: string } = {
+      'task_created': 'marker-blue',
+      'task_completed': 'marker-green',
+      'project_created': 'marker-purple',
+      'user_joined': 'marker-cyan',
+      'meeting_scheduled': 'marker-orange',
+      'default': 'marker-gray'
+    };
+    return colors[type] || colors['default'];
+  }
+
+  getStatusColor(status: string): string {
+    const colors: { [key: string]: string } = {
+      'Terminée': 'green',
+      'En cours': 'blue',
+      'En retard': 'red',
+      'Planifiée': 'purple'
+    };
+    return colors[status] || 'gray';
+  }
+
+  formatDate(date: any): string {
+    const now = new Date();
+    const activityDate = new Date(date);
+    const diffMs = now.getTime() - activityDate.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'À l\'instant';
+    if (diffMins < 60) return `Il y a ${diffMins} min`;
+    if (diffHours < 24) return `Il y a ${diffHours}h`;
+    if (diffDays < 7) return `Il y a ${diffDays}j`;
+    
+    return activityDate.toLocaleDateString('fr-FR', { 
+      day: '2-digit', 
+      month: 'short' 
+    });
   }
 }

@@ -15,8 +15,6 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { AddTaskModalComponent } from './components/add-task-modal/add-task-modal.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDeleteModalComponent } from './components/confirm-delete-modal/confirm-delete-modal.component';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -41,6 +39,7 @@ import { MeetingCreateComponent } from './components/meeting-create/meeting-crea
 import { MeetingDetailsComponent } from './components/meeting-details/meeting-details.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ProfileComponent } from './components/profile/profile.component';
+import { StatisticsComponent } from './components/statistics/statistics.component';
 
 
 @NgModule({
@@ -70,6 +69,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     MeetingCreateComponent,
     MeetingDetailsComponent,
     ProfileComponent,
+    StatisticsComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,7 +83,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     DragDropModule,
     NgSelectModule,
     BaseChartDirective, // ✅ Correction: BaseChartDirective
-    //FullCalendarModule
+    FullCalendarModule // ✅ Module pour le calendrier
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

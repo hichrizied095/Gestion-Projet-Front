@@ -8,6 +8,7 @@ export interface TaskItem {
   id: number;
   title: string;
   description: string;
+  percentage?: number;
   columnId: number;
   isCompleted: boolean;
   updated?: boolean;
@@ -37,6 +38,7 @@ export interface TaskItemDetails {
   id: number;
   title: string;
   description: string;
+  percentage?: number;
   columnId: number;
   isCompleted: boolean;
   startDate: string;

@@ -9,19 +9,40 @@
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/projects" routerLinkActive="active">Projets</a>
+          <a class="nav-link" routerLink="/projects" routerLinkActive="active">
+            <i class="fas fa-folder-open me-1"></i>Projets
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/mes-taches" routerLinkActive="active">Mes Tâches</a>
+          <a class="nav-link" routerLink="/mes-taches" routerLinkActive="active">
+            <i class="fas fa-tasks me-1"></i>Mes Tâches
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/chat" routerLinkActive="active">Messages</a>
+          <a class="nav-link" routerLink="/calendar" routerLinkActive="active">
+            <i class="fas fa-calendar-alt me-1"></i>Calendrier
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/meetings" routerLinkActive="active">Réunions</a>
+          <a class="nav-link" routerLink="/chat" routerLinkActive="active">
+            <i class="fas fa-comments me-1"></i>Messages
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/meetings" routerLinkActive="active">
+            <i class="fas fa-video me-1"></i>Réunions
+          </a>
         </li>
         <li *ngIf="role === 'Admin'" class="nav-item">
-          <a class="nav-link" routerLink="/admin-dashboard" routerLinkActive="active">Dashboard Admin</a>
+          <a class="nav-link" routerLink="/admin-dashboard" routerLinkActive="active">
+            <i class="fas fa-tachometer-alt me-1"></i>Dashboard Admin
+          </a>
+        </li>
+        <!-- ✅ NOUVEAU: STATISTIQUES (ADMIN UNIQUEMENT) -->
+        <li *ngIf="role === 'Admin'" class="nav-item">
+          <a class="nav-link" routerLink="/statistics" routerLinkActive="active">
+            <i class="fas fa-chart-bar me-1"></i>Statistiques
+          </a>
         </li>
       </ul>
 
@@ -52,22 +73,19 @@
               </div>
 
               <!-- Liste des notifications -->
-              <div *ngFor="let notif of notifications"
-                   class="dropdown-item notification-item"
-                   [class.unread]="!notif.isRead"
-                   (click)="markNotificationAsRead(notif)">
+              <div *ngFor="let notif of notifications" class="dropdown-item notification-item"
+                [class.unread]="!notif.isRead" (click)="markNotificationAsRead(notif)">
                 <div class="d-flex justify-content-between align-items-start mb-2">
                   <div class="d-flex align-items-center">
-                    <span *ngIf="notif.type === 'meeting' || notif.type === 'meeting_created' || notif.type === 'meeting_invitation' || notif.type === 'meeting_task'"
-                          class="badge bg-meeting notification-type-badge">
+                    <span
+                      *ngIf="notif.type === 'meeting' || notif.type === 'meeting_created' || notif.type === 'meeting_invitation' || notif.type === 'meeting_task'"
+                      class="badge bg-meeting notification-type-badge">
                       <i class="fas fa-calendar-alt me-1"></i>Réunion
                     </span>
-                    <span *ngIf="notif.type === 'task' || notif.taskId"
-                          class="badge bg-task notification-type-badge">
+                    <span *ngIf="notif.type === 'task' || notif.taskId" class="badge bg-task notification-type-badge">
                       <i class="fas fa-tasks me-1"></i>Tâche
                     </span>
-                    <span *ngIf="notif.type === 'general'"
-                          class="badge bg-secondary notification-type-badge">
+                    <span *ngIf="notif.type === 'general'" class="badge bg-secondary notification-type-badge">
                       <i class="fas fa-info-circle me-1"></i>Info
                     </span>
                     <small class="notification-details ms-auto">
@@ -99,9 +117,8 @@
             </div>
 
             <div class="dropdown-footer">
-              <button *ngIf="notifications.length > 0"
-                      class="btn btn-sm btn-outline-danger w-100"
-                      (click)="clearNotifications(); $event.stopPropagation()">
+              <button *ngIf="notifications.length > 0" class="btn btn-sm btn-outline-danger w-100"
+                (click)="clearNotifications(); $event.stopPropagation()">
                 <i class="fas fa-trash-alt me-2"></i>Effacer toutes les notifications
               </button>
             </div>
@@ -133,10 +150,8 @@
               </div>
 
               <!-- Liste des messages -->
-              <div *ngFor="let msg of chatNotifications"
-                   class="dropdown-item"
-                   [class.unread]="!msg.isRead"
-                   (click)="markChatAsRead(msg)">
+              <div *ngFor="let msg of chatNotifications" class="dropdown-item" [class.unread]="!msg.isRead"
+                (click)="markChatAsRead(msg)">
                 <div class="d-flex align-items-start">
                   <div class="avatar-circle">
                     {{ msg.senderName?.charAt(0)?.toUpperCase() || '?' }}
@@ -165,9 +180,8 @@
             </div>
 
             <div class="dropdown-footer">
-              <button *ngIf="chatNotifications.length > 0"
-                      class="btn btn-sm btn-outline-danger w-100"
-                      (click)="clearChatNotifications(); $event.stopPropagation()">
+              <button *ngIf="chatNotifications.length > 0" class="btn btn-sm btn-outline-danger w-100"
+                (click)="clearChatNotifications(); $event.stopPropagation()">
                 <i class="fas fa-trash-alt me-2"></i>Effacer tous les messages
               </button>
             </div>
@@ -176,14 +190,11 @@
 
         <!-- 👤 UTILISATEUR -->
         <div class="dropdown">
-          <button class="btn btn-outline-light dropdown-toggle"
-                  type="button"
-                  id="userDropdown"
-                  data-bs-toggle="dropdown">
+          <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown"
+            data-bs-toggle="dropdown">
             <i class="fas fa-user me-2"></i>
             <span>{{ username || 'Utilisateur' }}</span>
-            <span *ngIf="role" class="badge ms-2"
-                  [ngClass]="{
+            <span *ngIf="role" class="badge ms-2" [ngClass]="{
                     'bg-danger': role === 'Admin',
                     'bg-primary': role === 'Manager',
                     'bg-secondary': role === 'Member'
@@ -197,7 +208,9 @@
                 <i class="fas fa-user-cog me-2"></i>Mon profil
               </a>
             </li>
-            <li><hr class="dropdown-divider"></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
             <li>
               <button class="dropdown-item text-danger" (click)="logout()">
                 <i class="fas fa-sign-out-alt me-2"></i>Déconnexion

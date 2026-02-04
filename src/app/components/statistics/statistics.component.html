@@ -1,0 +1,499 @@
+<div class="container-fluid mt-4">
+  
+  <!-- ============================================
+       EN-TÊTE
+       ============================================ -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">
+      <i class="fas fa-chart-bar me-2"></i>Statistiques Globales
+    </h2>
+    <button class="btn btn-primary" (click)="refresh()" [disabled]="loading">
+      <i class="fas fa-sync-alt me-2" [class.fa-spin]="loading"></i>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- ============================================
+       LOADER
+       ============================================ -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-3 text-muted">Chargement des statistiques...</p>
+  </div>
+
+  <!-- ============================================
+       CONTENU (si chargé)
+       ============================================ -->
+  <div *ngIf="!loading && overview">
+
+    <!-- ============================================
+         SECTION 1: VUE D'ENSEMBLE (4 CARTES)
+         ============================================ -->
+    <div class="row g-4 mb-4">
+      
+      <!-- Carte: Total Projets -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stat-card stat-card-purple">
+          <div class="stat-card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="stat-card-title">Total Projets</h6>
+                <h2 class="stat-card-value">{{ overview.totalProjects }}</h2>
+                <p class="stat-card-subtitle mb-0">
+                  <i class="fas fa-project-diagram me-1"></i>Actifs
+                </p>
+              </div>
+              <div class="stat-card-icon">
+                <i class="fas fa-folder-open"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte: Total Tâches -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stat-card stat-card-blue">
+          <div class="stat-card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="stat-card-title">Total Tâches</h6>
+                <h2 class="stat-card-value">{{ overview.totalTasks }}</h2>
+                <p class="stat-card-subtitle mb-0">
+                  <span class="text-success">{{ overview.completedTasks }} terminées</span>
+                </p>
+              </div>
+              <div class="stat-card-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte: Total Utilisateurs -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stat-card stat-card-green">
+          <div class="stat-card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="stat-card-title">Utilisateurs</h6>
+                <h2 class="stat-card-value">{{ overview.totalUsers }}</h2>
+                <p class="stat-card-subtitle mb-0">
+                  <span *ngIf="overview.pendingUsers > 0" class="text-warning">
+                    {{ overview.pendingUsers }} en attente
+                  </span>
+                  <span *ngIf="overview.pendingUsers === 0" class="text-success">
+                    Tous approuvés
+                  </span>
+                </p>
+              </div>
+              <div class="stat-card-icon">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte: Taux de Complétion -->
+      <div class="col-xl-3 col-md-6">
+        <div class="stat-card stat-card-orange">
+          <div class="stat-card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="stat-card-title">Taux de Complétion</h6>
+                <h2 class="stat-card-value">{{ overview.completionRate }}%</h2>
+                <p class="stat-card-subtitle mb-0">
+                  <i class="fas fa-chart-line me-1"></i>Global
+                </p>
+              </div>
+              <div class="stat-card-icon">
+                <i class="fas fa-percentage"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================
+         SECTION 2: RÉPARTITION DES TÂCHES
+         ============================================ -->
+    <div class="row g-4 mb-4">
+      
+      <!-- Tâches Terminées -->
+      <div class="col-lg-3 col-md-6">
+        <div class="mini-stat-card bg-success">
+          <div class="mini-stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="mini-stat-content">
+            <h4>{{ overview.completedTasks }}</h4>
+            <p>Terminées</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tâches En Cours -->
+      <div class="col-lg-3 col-md-6">
+        <div class="mini-stat-card bg-warning">
+          <div class="mini-stat-icon">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div class="mini-stat-content">
+            <h4>{{ overview.ongoingTasks }}</h4>
+            <p>En Cours</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tâches En Retard -->
+      <div class="col-lg-3 col-md-6">
+        <div class="mini-stat-card bg-danger">
+          <div class="mini-stat-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="mini-stat-content">
+            <h4>{{ overview.delayedTasks }}</h4>
+            <p>En Retard</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tâches Planifiées -->
+      <div class="col-lg-3 col-md-6">
+        <div class="mini-stat-card bg-info">
+          <div class="mini-stat-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div class="mini-stat-content">
+            <h4>{{ overview.plannedTasks }}</h4>
+            <p>Planifiées</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================
+         SECTION 3: GRAPHIQUES
+         ============================================ -->
+    <div class="row g-4 mb-4">
+
+      <!-- Graphique: Projets -->
+      <div class="col-lg-8">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h5>
+              <i class="fas fa-project-diagram me-2"></i>
+              Projets (Top 10)
+            </h5>
+          </div>
+          <div class="chart-card-body">
+            <canvas id="projectChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphique: Statuts -->
+      <div class="col-lg-4">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h5>
+              <i class="fas fa-chart-pie me-2"></i>
+              Par Statut
+            </h5>
+          </div>
+          <div class="chart-card-body">
+            <canvas id="statusChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Graphique: Évolution Temporelle -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h5>
+              <i class="fas fa-chart-line me-2"></i>
+              Évolution Temporelle
+            </h5>
+          </div>
+          <div class="chart-card-body">
+            <canvas id="monthlyChart" height="120"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================
+         SECTION 4: STATISTIQUES PAR UTILISATEUR
+         ============================================ -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="table-card">
+          <div class="table-card-header">
+            <h5>
+              <i class="fas fa-users me-2"></i>
+              Statistiques par Utilisateur
+            </h5>
+          </div>
+          <div class="table-card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Utilisateur</th>
+                    <th>Rôle</th>
+                    <th class="text-center">Tâches Assignées</th>
+                    <th class="text-center">Terminées</th>
+                    <th class="text-center">En Retard</th>
+                    <th class="text-center">Taux</th>
+                    <th class="text-center">Projets Possédés</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of userStats; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <strong>
+                        <i class="fas fa-user me-2 text-primary"></i>
+                        {{ user.username }}
+                      </strong>
+                    </td>
+                    <td>
+                      <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+                        {{ user.role }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-secondary">{{ user.assignedTasks }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-success">{{ user.completedTasks }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-danger">{{ user.delayedTasks }}</span>
+                    </td>
+                    <td class="text-center">
+                      <div class="progress" style="height: 20px; min-width: 80px;">
+                        <div class="progress-bar" 
+                             [class.bg-success]="user.completionRate >= 70"
+                             [class.bg-warning]="user.completionRate >= 30 && user.completionRate < 70"
+                             [class.bg-danger]="user.completionRate < 30"
+                             [style.width.%]="user.completionRate"
+                             role="progressbar">
+                          {{ user.completionRate }}%
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-info">{{ user.projectsOwned }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Message si aucun utilisateur -->
+            <div *ngIf="userStats.length === 0" class="text-center py-4 text-muted">
+              <i class="fas fa-users-slash fa-3x mb-3"></i>
+              <p>Aucune statistique utilisateur disponible</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         SECTION 5: STATISTIQUES PAR PROJET
+         ============================================ -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="table-card">
+          <div class="table-card-header">
+            <h5>
+              <i class="fas fa-project-diagram me-2"></i>
+              Statistiques par Projet
+            </h5>
+          </div>
+          <div class="table-card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Projet</th>
+                    <th>Chef de Projet</th>
+                    <th class="text-center">Total Tâches</th>
+                    <th class="text-center">Terminées</th>
+                    <th class="text-center">En Retard</th>
+                    <th class="text-center">Taux</th>
+                    <th class="text-center">Poids Moyen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let project of projectStats; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <strong>
+                        <i class="fas fa-folder-open me-2 text-primary"></i>
+                        {{ project.projectTitle }}
+                      </strong>
+                    </td>
+                    <td>
+                      <i class="fas fa-user-tie me-1"></i>
+                      {{ project.ownerName }}
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-secondary">{{ project.taskCount }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-success">{{ project.completedTasks }}</span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-danger">{{ project.delayedTasks }}</span>
+                    </td>
+                    <td class="text-center">
+                      <div class="progress" style="height: 20px; min-width: 80px;">
+                        <div class="progress-bar"
+                             [class.bg-success]="project.completionRate >= 70"
+                             [class.bg-warning]="project.completionRate >= 30 && project.completionRate < 70"
+                             [class.bg-danger]="project.completionRate < 30"
+                             [style.width.%]="project.completionRate"
+                             role="progressbar">
+                          {{ project.completionRate }}%
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-info">{{ project.averageWeight }}%</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Message si aucun projet -->
+            <div *ngIf="projectStats.length === 0" class="text-center py-4 text-muted">
+              <i class="fas fa-folder-open fa-3x mb-3"></i>
+              <p>Aucune statistique projet disponible</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         SECTION 6: STATISTIQUES AVANCÉES
+         ============================================ -->
+    <div class="row g-4 mb-4" *ngIf="advancedStats">
+      
+      <!-- Taux de respect des délais -->
+      <div class="col-lg-4">
+        <div class="advanced-stat-card">
+          <div class="advanced-stat-icon bg-success">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="advanced-stat-content">
+            <h6>Taux de Respect des Délais</h6>
+            <h3>{{ advancedStats.onTimeRate }}%</h3>
+            <p class="text-muted mb-0">Tâches terminées à temps</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Taux de description -->
+      <div class="col-lg-4">
+        <div class="advanced-stat-card">
+          <div class="advanced-stat-icon bg-info">
+            <i class="fas fa-align-left"></i>
+          </div>
+          <div class="advanced-stat-content">
+            <h6>Tâches avec Description</h6>
+            <h3>{{ advancedStats.descriptionRate }}%</h3>
+            <p class="text-muted mb-0">Des tâches sont documentées</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Poids moyen -->
+      <div class="col-lg-4">
+        <div class="advanced-stat-card">
+          <div class="advanced-stat-icon bg-warning">
+            <i class="fas fa-weight-hanging"></i>
+          </div>
+          <div class="advanced-stat-content">
+            <h6>Poids Moyen des Tâches</h6>
+            <h3>{{ advancedStats.averageWeight }}%</h3>
+            <p class="text-muted mb-0">Par colonne</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+ <!-- ============================================
+         SECTION 7: TOP 5 PROJETS (PAR NOMBRE DE TÂCHES)
+         ============================================ -->
+    <div class="row g-4 mb-4" *ngIf="advancedStats && advancedStats.topProjects && advancedStats.topProjects.length > 0">
+      <div class="col-12">
+        <div class="table-card">
+          <div class="table-card-header">
+            <h5>
+              <i class="fas fa-trophy me-2"></i>
+              Top 5 Projets (Plus de Tâches)
+            </h5>
+          </div>
+          <div class="table-card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Projet</th>
+                    <th class="text-center">Nombre de Tâches</th>
+                    <th class="text-center">Taux de Complétion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let project of advancedStats.topProjects; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <strong>
+                        <i class="fas fa-project-diagram me-2 text-primary"></i>
+                        {{ project.title }}
+                      </strong>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-primary">{{ project.taskCount }}</span>
+                    </td>
+                    <td class="text-center">
+                      <div class="progress" style="height: 20px; min-width: 80px;">
+                        <div class="progress-bar"
+                             [class.bg-success]="project.completionRate >= 70"
+                             [class.bg-warning]="project.completionRate >= 30 && project.completionRate < 70"
+                             [class.bg-danger]="project.completionRate < 30"
+                             [style.width.%]="project.completionRate"
+                             role="progressbar">
+                          {{ project.completionRate }}%
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>

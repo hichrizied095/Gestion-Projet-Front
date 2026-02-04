@@ -1,58 +1,144 @@
 <ng-container *ngIf="task">
   <div class="modal-header">
-    <h5 class="modal-title">{{ task.title }}</h5>
+    <h5 class="modal-title">
+      <i class="fas fa-tasks me-2"></i>{{ task.title }}
+    </h5>
     <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
   </div>
 
   <div class="modal-body">
-    <p><strong>Description :</strong> {{ task.description || 'Aucune description' }}</p>
-    <ul class="list-unstyled">
-      <li><strong>Statut :</strong> {{ getTaskStatus() }}</li>
-      <li><strong>Début :</strong> {{ task.startDate | date: 'mediumDate' }}</li>
-
-      <!-- Édition de la date d'échéance -->
-      <li>
-        <strong>Échéance :</strong>
-
-        <ng-container *ngIf="!isEditingDueDate">
-          {{ task.dueDate | date: 'mediumDate' }}
-          <button *ngIf="canEdit()"
-                  class="btn btn-sm btn-outline-primary ms-2"
-                  (click)="enableDueDateEdit()">
-            <i class="bi bi-pencil"></i> Modifier
-          </button>
-        </ng-container>
-
-        <ng-container *ngIf="isEditingDueDate">
-          <div class="d-flex align-items-center mt-1">
-            <input type="date"
-                   [(ngModel)]="newDueDate"
-                   class="form-control form-control-sm w-auto me-2"
-                   style="max-width: 150px;">
-            <button class="btn btn-sm btn-success me-1" (click)="saveDueDate()">
-              <i class="bi bi-check"></i> Valider
-            </button>
-            <button class="btn btn-sm btn-secondary" (click)="cancelDueDateEdit()">
-              <i class="bi bi-x"></i> Annuler
-            </button>
-          </div>
-        </ng-container>
-      </li>
-
-      <li *ngIf="task.assignedUsername"><strong>Assignée à :</strong> {{ task.assignedUsername }}</li>
-
-      <div *ngIf="getTaskStatus() === 'En retard'">
-        <strong>Cause du retard :</strong>
-        <p *ngIf="task.delayReason; else noReason">{{ task.delayReason }}</p>
-        <ng-template #noReason>
-          <p class="text-muted fst-italic">Aucune cause renseignée.</p>
+    
+    <!-- ✅ DESCRIPTION (AMÉLIORÉE) -->
+    <div class="description-section mb-4">
+      <h6 class="section-title">
+        <i class="fas fa-align-left me-2"></i>Description
+      </h6>
+      <div class="description-content">
+        <p *ngIf="task.description; else noDescription">{{ task.description }}</p>
+        <ng-template #noDescription>
+          <p class="text-muted fst-italic">
+            <i class="fas fa-info-circle me-1"></i>Aucune description fournie
+          </p>
         </ng-template>
       </div>
+    </div>
 
-      <div class="mb-3">
-        <label for="assignedUser">Réaffecter à :</label>
+    <!-- ============================================
+     NOUVELLE SECTION PROGRESSION TEMPORELLE
+     À remplacer dans task-details-modal.component.html
+     Lignes ~28-60 (bloc POURCENTAGE)
+     ============================================ -->
+
+    <!-- ✅ PROGRESSION TEMPORELLE (BASÉE SUR LES DATES) -->
+    <div class="progress-section mb-4">
+      <h6 class="section-title">
+        <i class="fas fa-clock me-2"></i>Progression temporelle
+      </h6>
+      <div class="progress-content">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="fw-semibold">Temps écoulé :</span>
+          <span class="badge bg-primary fs-6">{{ getTimeProgress() }}%</span>
+        </div>
+        <div class="progress" style="height: 30px;">
+          <div 
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            [class.bg-success]="getTimeProgress() <= 50"
+            [class.bg-warning]="getTimeProgress() > 50 && getTimeProgress() <= 100"
+            [class.bg-danger]="getTimeProgress() > 100"
+            [style.width.%]="Math.min(getTimeProgress(), 100)"
+            role="progressbar"
+            [attr.aria-valuenow]="getTimeProgress()"
+            aria-valuemin="0"
+            aria-valuemax="100">
+            <span class="fw-bold">{{ getTimeProgress() }}%</span>
+          </div>
+        </div>
+        <small class="text-muted mt-1 d-block">
+          <i class="fas fa-info-circle me-1"></i>
+          {{ getTimeRemainingText() }}
+        </small>
+      </div>
+    </div>
+
+    <!-- INFORMATIONS PRINCIPALES -->
+    <div class="info-section mb-4">
+      <h6 class="section-title">
+        <i class="fas fa-info-circle me-2"></i>Informations
+      </h6>
+      <ul class="list-unstyled info-list">
+        <li>
+          <strong><i class="fas fa-flag me-2"></i>Statut :</strong> 
+          <span class="badge" [ngClass]="{
+            'bg-success': getTaskStatus() === 'Terminée',
+            'bg-danger': getTaskStatus() === 'En retard',
+            'bg-primary': getTaskStatus() === 'En cours',
+            'bg-secondary': getTaskStatus() === 'Planifiée'
+          }">
+            {{ getTaskStatus() }}
+          </span>
+        </li>
+        <li>
+          <strong><i class="fas fa-calendar-alt me-2"></i>Début :</strong> 
+          {{ task.startDate | date: 'dd/MM/yyyy' }}
+        </li>
+
+        <!-- Édition de la date d'échéance -->
+        <li>
+          <strong><i class="fas fa-calendar-check me-2"></i>Échéance :</strong>
+
+          <ng-container *ngIf="!isEditingDueDate">
+            {{ task.dueDate | date: 'dd/MM/yyyy' }}
+            <button *ngIf="canEdit()"
+                    class="btn btn-sm btn-outline-primary ms-2"
+                    (click)="enableDueDateEdit()">
+              <i class="fas fa-pencil-alt"></i> Modifier
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="isEditingDueDate">
+            <div class="d-flex align-items-center mt-1">
+              <input type="date"
+                     [(ngModel)]="newDueDate"
+                     class="form-control form-control-sm w-auto me-2"
+                     style="max-width: 180px;">
+              <button class="btn btn-sm btn-success me-1" (click)="saveDueDate()">
+                <i class="fas fa-check"></i> Valider
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelDueDateEdit()">
+                <i class="fas fa-times"></i> Annuler
+              </button>
+            </div>
+          </ng-container>
+        </li>
+
+        <li *ngIf="task.assignedUsername">
+          <strong><i class="fas fa-user me-2"></i>Assignée à :</strong> 
+          {{ task.assignedUsername }}
+        </li>
+
+        <!-- Cause du retard -->
+        <li *ngIf="getTaskStatus() === 'En retard'" class="delay-reason-section">
+          <div class="alert alert-danger mb-0">
+            <strong><i class="fas fa-exclamation-triangle me-2"></i>Cause du retard :</strong>
+            <p *ngIf="task.delayReason; else noReason" class="mb-0 mt-1">{{ task.delayReason }}</p>
+            <ng-template #noReason>
+              <p class="text-muted fst-italic mb-0 mt-1">Aucune cause renseignée.</p>
+            </ng-template>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RÉAFFECTATION -->
+    <div class="reassign-section mb-4">
+      <h6 class="section-title">
+        <i class="fas fa-user-edit me-2"></i>Réaffectation
+      </h6>
+      <div class="reassign-content">
+        <label for="assignedUser" class="form-label">Réaffecter à :</label>
         <select [(ngModel)]="task.assignedUserId"
                 name="assignedUser"
+                id="assignedUser"
                 class="form-select"
                 (change)="updateAssignment()">
           <option [ngValue]="null">-- Aucun utilisateur --</option>
@@ -61,12 +147,12 @@
           </option>
         </select>
       </div>
-    </ul>
+    </div>
 
-    <!-- SECTION FICHIERS ATTACHÉS (MULTIPLES) -->
-    <div class="mt-4">
-      <h6 class="mb-3">
-        <i class="bi bi-paperclip me-2"></i>
+    <!-- SECTION FICHIERS ATTACHÉS -->
+    <div class="attachments-section mb-4">
+      <h6 class="section-title">
+        <i class="fas fa-paperclip me-2"></i>
         Fichiers attachés
         <span *ngIf="hasAttachments" class="badge bg-secondary ms-2">
           {{ task.attachments.length }}
@@ -80,7 +166,7 @@
                class="list-group-item">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <i class="bi bi-file-earmark me-2"></i>
+                <i class="fas fa-file me-2"></i>
                 <strong>{{ getFileName(attachment.name) }}</strong>
                 <small *ngIf="attachment.size" class="text-muted ms-2">
                   ({{ formatFileSize(attachment.size) }})
@@ -91,12 +177,12 @@
                    target="_blank"
                    class="btn btn-sm btn-primary me-1"
                    [title]="'Télécharger ' + attachment.name">
-                  <i class="bi bi-download"></i>
+                  <i class="fas fa-download"></i>
                 </a>
                 <button class="btn btn-sm btn-danger"
                         (click)="deleteAttachment(i)"
                         title="Supprimer le fichier">
-                  <i class="bi bi-trash"></i>
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
             </div>
@@ -105,14 +191,16 @@
       </div>
 
       <ng-template #noAttachments>
-        <p class="text-muted mb-3">Aucun fichier attaché.</p>
+        <p class="text-muted fst-italic">
+          <i class="fas fa-info-circle me-1"></i>Aucun fichier attaché.
+        </p>
       </ng-template>
 
       <!-- Formulaire d'upload -->
-      <div class="card">
+      <div class="card border-2">
         <div class="card-body">
           <h6 class="card-title mb-3">
-            <i class="bi bi-upload me-2"></i>Ajouter un fichier
+            <i class="fas fa-upload me-2"></i>Ajouter un fichier
           </h6>
 
           <div class="mb-3">
@@ -134,46 +222,70 @@
           </div>
 
           <small class="text-muted">
-            <i class="bi bi-info-circle me-1"></i>
+            <i class="fas fa-info-circle me-1"></i>
             Formats acceptés : images, PDF, Word, Excel, texte (max 10MB)
           </small>
         </div>
       </div>
     </div>
 
-    <hr />
+    <hr class="my-4" />
 
-    <!-- Section commentaires -->
-    <h6 class="mb-3">
-      <i class="bi bi-chat-left-text me-2"></i>
-      Commentaires
-      <span *ngIf="hasComments" class="badge bg-primary ms-2">
-        {{ task.comments.length }}
-      </span>
-    </h6>
+    <!-- SECTION COMMENTAIRES -->
+    <div class="comments-section">
+      <h6 class="section-title">
+        <i class="fas fa-comments me-2"></i>
+        Commentaires
+        <span *ngIf="hasComments" class="badge bg-primary ms-2">
+          {{ task.comments.length }}
+        </span>
+      </h6>
 
-    <ng-container *ngIf="hasComments; else noComments">
-      <ul class="list-group mb-3">
-        <li *ngFor="let comment of task.comments" class="list-group-item">
-          <strong>{{ comment.username }}</strong>
-          <small class="text-muted"> - {{ comment.createdAt | date:'short' }}</small>
-          <p class="mb-0">{{ comment.text }}</p>
-        </li>
-      </ul>
-    </ng-container>
-    
-    <ng-template #noComments>
-      <p class="text-muted">Aucun commentaire pour le moment.</p>
-    </ng-template>
+      <ng-container *ngIf="hasComments; else noComments">
+        <ul class="list-group mb-3">
+          <li *ngFor="let comment of task.comments" class="list-group-item">
+            <div class="d-flex align-items-start">
+              <div class="comment-avatar me-2">
+                <i class="fas fa-user-circle fa-2x text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong>{{ comment.username }}</strong>
+                  <small class="text-muted">{{ comment.createdAt | date:'dd/MM/yyyy HH:mm' }}</small>
+                </div>
+                <p class="mb-0 mt-1">{{ comment.text }}</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </ng-container>
+      
+      <ng-template #noComments>
+        <p class="text-muted fst-italic">
+          <i class="fas fa-info-circle me-1"></i>Aucun commentaire pour le moment.
+        </p>
+      </ng-template>
 
-    <textarea [(ngModel)]="newCommentText"
-              class="form-control"
-              rows="3"
-              placeholder="Ajouter un commentaire..."></textarea>
+      <div class="comment-form mt-3">
+        <label for="newComment" class="form-label fw-semibold">
+          <i class="fas fa-comment-dots me-1"></i>Ajouter un commentaire
+        </label>
+        <textarea [(ngModel)]="newCommentText"
+                  id="newComment"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Écrivez votre commentaire ici..."></textarea>
+      </div>
+    </div>
+
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-secondary" (click)="activeModal.close()">Fermer</button>
-    <button class="btn btn-primary" (click)="addComment()">Ajouter</button>
+    <button class="btn btn-secondary" (click)="activeModal.close()">
+      <i class="fas fa-times me-1"></i>Fermer
+    </button>
+    <button class="btn btn-primary" (click)="addComment()">
+      <i class="fas fa-paper-plane me-1"></i>Ajouter
+    </button>
   </div>
 </ng-container>

@@ -2,8 +2,7 @@
   <h2 class="mb-4 text-center text-primary">Mes Tâches Assignées</h2>
 
   <!-- Message d'information -->
-  <div *ngIf="hasOverdueTasksWithoutReason"
-       class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div *ngIf="hasOverdueTasksWithoutReason" class="alert alert-warning alert-dismissible fade show" role="alert">
     <i class="bi bi-exclamation-triangle-fill me-2"></i>
     Vous avez des tâches en retard sans cause indiquée.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -18,8 +17,7 @@
             <div class="d-flex justify-content-between align-items-start mb-3">
               <div>
                 <h5 class="card-title fw-bold mb-1">{{ task.title }}</h5>
-                <div
-                class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                   <span class="badge bg-secondary">
                     <i class="bi bi-folder me-1"></i>{{ getProjectName(task) }}
                   </span>
@@ -30,8 +28,7 @@
                 </div>
               </div>
 
-              <span class="badge fs-6 px-3 py-2"
-                    [ngClass]="{
+              <span class="badge fs-6 px-3 py-2" [ngClass]="{
                       'bg-success': getTaskStatus(task) === 'Terminée',
                       'bg-danger': getTaskStatus(task) === 'En retard',
                       'bg-info': getTaskStatus(task) === 'Planifiée',
@@ -39,14 +36,27 @@
                     }">
                 {{ getTaskStatus(task) }}
               </span>
-              
+
 
             </div>
             <!-- Après le badge de statut -->
 
-            <!-- Description -->
-            <p *ngIf="task.description" class="card-text mb-3">{{ task.description }}</p>
+            <!-- ✅ DESCRIPTION DE LA TÂCHE -->
+            <div *ngIf="task.description" class="mt-3 mb-3">
+              <h6 class="mb-2">
+                <i class="bi bi-align-left me-2"></i>Description
+              </h6>
+              <div class="alert alert-light border">
+                <p class="mb-0" style="white-space: pre-line;">{{ task.description }}</p>
+              </div>
+            </div>
 
+            <!-- Message si pas de description -->
+            <div *ngIf="!task.description" class="mt-3 mb-3">
+              <p class="text-muted fst-italic small">
+                <i class="bi bi-info-circle me-1"></i>Aucune description fournie
+              </p>
+            </div>
             <!-- SECTION FICHIERS -->
             <div class="mt-3">
               <h6 class="mb-2">
@@ -61,25 +71,22 @@
               <div *ngIf="task.attachments && task.attachments.length > 0; else noFiles">
                 <div class="attachments-container mb-3">
                   <div *ngFor="let attachment of task.attachments; let i = index"
-                       class="attachment-item mb-2 p-2 border rounded bg-light">
+                    class="attachment-item mb-2 p-2 border rounded bg-light">
                     <div class="d-flex justify-content-between align-items-center">
                       <div>
                         <i class="bi bi-file-earmark me-2"></i>
                         <strong>{{ getFileName(attachment.name) }}</strong>
                         <small *ngIf="attachment.size" class="text-muted ms-2">
-  ({{ formatFileSize(attachment.size) }})
-</small>
+                          ({{ formatFileSize(attachment.size) }})
+                        </small>
                       </div>
                       <div>
-                        <a [href]="getFileUrl(task.id, attachment.name)"
-                           target="_blank"
-                           class="btn btn-sm btn-primary me-1"
-                           [title]="'Télécharger ' + attachment.name">
+                        <a [href]="getFileUrl(task.id, attachment.name)" target="_blank"
+                          class="btn btn-sm btn-primary me-1" [title]="'Télécharger ' + attachment.name">
                           <i class="bi bi-download"></i>
                         </a>
-                        <button class="btn btn-sm btn-danger"
-                                (click)="deleteAttachment(task, i)"
-                                title="Supprimer le fichier">
+                        <button class="btn btn-sm btn-danger" (click)="deleteAttachment(task, i)"
+                          title="Supprimer le fichier">
                           <i class="bi bi-trash"></i>
                         </button>
                       </div>
@@ -101,12 +108,9 @@
                     </h6>
 
                     <div class="mb-3">
-                      <input type="file"
-                             #fileInput
-                             class="form-control"
-                             (change)="onFileSelected($event, task)"
-                             accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt"
-                             [disabled]="uploadingFile[task.id]">
+                      <input type="file" #fileInput class="form-control" (change)="onFileSelected($event, task)"
+                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                        [disabled]="uploadingFile[task.id]">
                     </div>
 
                     <div *ngIf="uploadingFile[task.id]" class="alert alert-info">
@@ -140,8 +144,7 @@
               <!-- Liste des commentaires -->
               <div *ngIf="task.comments && task.comments.length > 0; else noComments">
                 <div class="comments-container" style="max-height: 200px; overflow-y: auto;">
-                  <div *ngFor="let comment of task.comments"
-                       class="comment-item mb-2 p-2 border rounded bg-light">
+                  <div *ngFor="let comment of task.comments" class="comment-item mb-2 p-2 border rounded bg-light">
                     <div class="d-flex justify-content-between">
                       <strong class="text-primary">{{ comment.username }}</strong>
                       <small class="text-muted">
@@ -160,15 +163,9 @@
               <!-- Formulaire d'ajout de commentaire -->
               <div class="mt-3">
                 <div class="input-group">
-                  <input type="text"
-                         [(ngModel)]="task.newComment"
-                         (keyup.enter)="addComment(task)"
-                         class="form-control"
-                         placeholder="Ajouter un commentaire..."
-                         aria-label="Commentaire">
-                  <button class="btn btn-primary"
-                          (click)="addComment(task)"
-                          [disabled]="!task.newComment?.trim()">
+                  <input type="text" [(ngModel)]="task.newComment" (keyup.enter)="addComment(task)" class="form-control"
+                    placeholder="Ajouter un commentaire..." aria-label="Commentaire">
+                  <button class="btn btn-primary" (click)="addComment(task)" [disabled]="!task.newComment?.trim()">
                     <i class="bi bi-send"></i>
                   </button>
                 </div>
@@ -200,13 +197,8 @@
               <!-- Mode édition -->
               <div *ngIf="isEditingDelay[task.id]" class="mb-3">
                 <div class="form-floating">
-                  <textarea
-                    id="delayReason-{{ task.id }}"
-                    [(ngModel)]="task.editingDelayReason"
-                    class="form-control"
-                    placeholder="Expliquez la cause du retard..."
-                    rows="3"
-                    style="min-height: 100px;"></textarea>
+                  <textarea id="delayReason-{{ task.id }}" [(ngModel)]="task.editingDelayReason" class="form-control"
+                    placeholder="Expliquez la cause du retard..." rows="3" style="min-height: 100px;"></textarea>
                   <label for="delayReason-{{ task.id }}">Cause du retard</label>
                 </div>
                 <div class="d-flex gap-2 mt-3">

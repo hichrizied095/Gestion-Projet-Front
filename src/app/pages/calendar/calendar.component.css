@@ -1,9 +1,203 @@
-:host {
-  display: block;
-  padding: 2rem;
+/* ========== VARIABLES ========== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
-.full-calendar {
-  max-width: 1000px;
-  margin: 0 auto;
+.calendar-page {
+  background-color: #f8fafc;
+  min-height: calc(100vh - 70px);
+}
+
+/* ========== PAGE TITLE ========== */
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========== STATISTICS CARDS ========== */
+.stat-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.bg-primary-soft { background-color: rgba(102, 126, 234, 0.1); }
+.bg-success-soft { background-color: rgba(16, 185, 129, 0.1); }
+.bg-danger-soft { background-color: rgba(239, 68, 68, 0.1); }
+.bg-purple-soft { background-color: rgba(139, 92, 246, 0.1); }
+
+.text-purple { color: #8b5cf6; }
+.bg-purple { background-color: #8b5cf6; }
+.bg-warning-custom { background-color: #f97316; }
+
+/* ========== LEGEND ========== */
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ========== CALENDAR STYLES ========== */
+.calendar-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FullCalendar Custom Styles */
+::ng-deep .fc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+::ng-deep .fc .fc-toolbar-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+::ng-deep .fc .fc-button-primary {
+  background: var(--primary-gradient);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .fc .fc-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+::ng-deep .fc .fc-button-primary:not(:disabled):active,
+::ng-deep .fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+::ng-deep .fc .fc-daygrid-day-number {
+  font-weight: 600;
+  color: #1a202c;
+  padding: 0.5rem;
+}
+
+::ng-deep .fc .fc-col-header-cell {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  padding: 1rem 0.5rem;
+  border: none;
+}
+
+::ng-deep .fc .fc-daygrid-day {
+  transition: background-color 0.2s ease;
+}
+
+::ng-deep .fc .fc-daygrid-day:hover {
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+::ng-deep .fc .fc-daygrid-day.fc-day-today {
+  background-color: rgba(102, 126, 234, 0.1) !important;
+}
+
+::ng-deep .fc .fc-daygrid-day.today-cell {
+  background-color: rgba(102, 126, 234, 0.15) !important;
+  border: 2px solid #667eea;
+}
+
+::ng-deep .fc-event {
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left-width: 4px !important;
+}
+
+::ng-deep .fc-event:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+::ng-deep .fc-event-title {
+  font-weight: 600;
+}
+
+/* ========== BUTTONS ========== */
+.btn-primary-gradient {
+  background: var(--primary-gradient);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.btn-primary-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .stat-card h3 {
+    font-size: 1.5rem;
+  }
+  
+  ::ng-deep .fc .fc-toolbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  ::ng-deep .fc .fc-toolbar-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+[data-aos] {
+  animation-duration: 0.6s;
 }

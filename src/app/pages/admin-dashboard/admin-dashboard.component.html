@@ -12,7 +12,7 @@
   <div class="dashboard-content">
 
     <!-- ========================================
-         HEADER MODERN
+         HEADER SIMPLIFIÉ
          ======================================== -->
     <header class="dashboard-header-modern">
       <div class="header-glass">
@@ -33,16 +33,16 @@
             <i class="bi bi-arrow-clockwise" [class.spinning]="isLoading"></i>
             {{ isLoading ? 'Chargement' : 'Actualiser' }}
           </button>
-          <button class="btn-modern btn-export" (click)="exportReport()">
-            <i class="bi bi-download"></i>
-            Exporter
+          <button class="btn-modern btn-stats" routerLink="/statistics">
+            <i class="bi bi-graph-up"></i>
+            Statistiques
           </button>
         </div>
       </div>
     </header>
 
     <!-- ========================================
-         STATS CARDS MODERN
+         STATS CARDS (4 CARTES SIMPLES)
          ======================================== -->
     <section class="stats-section-modern">
       <div class="stats-grid-modern">
@@ -69,10 +69,6 @@
                   <i class="bi bi-check-circle-fill"></i>
                   {{ stats.approvedUsers }} approuvés
                 </span>
-                <span class="detail-chip">
-                  <i class="bi bi-shield-fill-check"></i>
-                  {{ roleStats.Admin }} admins
-                </span>
               </div>
             </div>
           </div>
@@ -85,12 +81,6 @@
               <div class="stat-icon-modern">
                 <i class="bi bi-kanban-fill"></i>
               </div>
-              <div class="stat-trend">
-                <span class="trend-badge trend-success">
-                  <i class="bi bi-arrow-up"></i>
-                  {{ stats.activeProjects }}
-                </span>
-              </div>
             </div>
             <div class="stat-body-modern">
               <div class="stat-number">{{ stats.totalProjects }}</div>
@@ -98,7 +88,7 @@
               <div class="stat-details-modern">
                 <span class="detail-chip">
                   <i class="bi bi-graph-up"></i>
-                  {{ stats.overallProgress }}% progression
+                  {{ stats.activeProjects }} en cours
                 </span>
               </div>
             </div>
@@ -140,7 +130,7 @@
               <div class="stat-icon-modern">
                 <i class="bi bi-calendar-event-fill"></i>
               </div>
-              <div class="stat-trend">
+              <div class="stat-trend" *ngIf="stats.todayMeetings > 0">
                 <span class="trend-badge trend-warning">
                   <i class="bi bi-clock-fill"></i>
                   {{ stats.todayMeetings }}
@@ -149,11 +139,11 @@
             </div>
             <div class="stat-body-modern">
               <div class="stat-number">{{ stats.upcomingMeetings }}</div>
-              <div class="stat-label">Réunions</div>
+              <div class="stat-label">Réunions à venir</div>
               <div class="stat-details-modern">
                 <span class="detail-chip">
-                  <i class="bi bi-list-check"></i>
-                  {{ stats.todayTasks }} tâches aujourd'hui
+                  <i class="bi bi-calendar-check"></i>
+                  Cette semaine
                 </span>
               </div>
             </div>
@@ -164,206 +154,93 @@
     </section>
 
     <!-- ========================================
-         QUICK ACTIONS & ALERTS
+         ACTIONS RAPIDES
          ======================================== -->
-    <div class="content-grid-modern">
-
-      <!-- Pending Users Alert -->
-      <div class="alert-card-modern" *ngIf="pendingUsers.length > 0">
-        <div class="alert-glass">
-          <div class="alert-header-modern">
-            <div class="alert-icon-wrapper">
-              <i class="bi bi-bell-fill"></i>
-            </div>
-            <div class="alert-title">
-              <h3>Utilisateurs en attente</h3>
-              <span class="alert-count">{{ pendingUsers.length }} action(s) requise(s)</span>
-            </div>
-          </div>
-
-          <div class="pending-list-modern">
-            <div class="pending-item-modern" *ngFor="let user of pendingUsers.slice(0, 3)">
-              <div class="pending-avatar">
-                <i class="bi bi-person-circle"></i>
-              </div>
-              <div class="pending-info">
-                <h4>{{ user.username }}</h4>
-                <p>
-                  <span class="role-tag" [class]="'role-' + user.role.toLowerCase()">
-                    {{ user.role }}
-                  </span>
-                </p>
-              </div>
-              <div class="pending-actions">
-                <button class="btn-icon btn-success" (click)="approveUser(user.id); $event.stopPropagation()">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-                <button class="btn-icon btn-danger" (click)="rejectUser(user.id); $event.stopPropagation()">
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="alert-footer" *ngIf="pendingUsers.length > 3">
-            <button class="btn-link-modern" (click)="navigateTo('/admin/users')">
-              Voir tous les {{ pendingUsers.length }} utilisateurs
-              <i class="bi bi-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="actions-card-modern">
-        <div class="actions-glass">
-          <div class="actions-header">
-            <h3>
-              <i class="bi bi-lightning-charge-fill"></i>
-              Actions rapides
-            </h3>
-          </div>
-          <div class="actions-grid">
-            <div class="action-item-modern" *ngFor="let action of quickActions"
-                 (click)="navigateTo(action.route)">
-              <div class="action-icon-modern" [style.background]="'linear-gradient(135deg, ' + action.color + '40, ' + action.color + '10)'">
-                <i class="bi" [ngClass]="action.icon" [style.color]="action.color"></i>
-              </div>
-              <div class="action-text">
-                <h4>{{ action.title }}</h4>
-                <p>{{ action.description }}</p>
-              </div>
-              <div class="action-badge" *ngIf="action.count">
-                <span [style.background]="action.color">{{ action.count }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ========================================
-         CHARTS SECTION
-         ======================================== -->
-    <section class="charts-section-modern">
+    <section class="quick-actions-section">
       <div class="section-header-modern">
         <h2>
-          <i class="bi bi-bar-chart-fill"></i>
-          Analytiques
+          <i class="bi bi-lightning-charge-fill"></i>
+          Actions Rapides
         </h2>
       </div>
-
-      <div class="charts-grid-modern">
-
-        <!-- Chart 1: Role Distribution -->
-        <div class="chart-card-modern chart-small">
-          <div class="chart-glass">
-            <div class="chart-header-modern">
-              <h3>Répartition des rôles</h3>
-              <span class="chart-badge">{{ stats.totalUsers }} users</span>
+      <div class="quick-actions-grid">
+        <div class="action-card-modern" *ngFor="let action of quickActions" (click)="navigateTo(action.route)">
+          <div class="action-glass">
+            <div class="action-icon-wrapper" [style.background]="action.color + '20'" [style.color]="action.color">
+              <i class="bi" [ngClass]="action.icon"></i>
             </div>
-            <div class="chart-container-modern">
-              <canvas #roleChartCanvas baseChart
-                [data]="roleChartData"
-                [options]="roleChartOptions"
-                [type]="'doughnut'">
-              </canvas>
+            <div class="action-content">
+              <h3>{{ action.title }}</h3>
+              <p>{{ action.description }}</p>
             </div>
-            <div class="chart-legend-modern">
-              <div class="legend-item-modern">
-                <span class="legend-dot dot-red"></span>
-                <span>Admin</span>
-                <strong>{{ roleStats.Admin }}</strong>
-              </div>
-              <div class="legend-item-modern">
-                <span class="legend-dot dot-orange"></span>
-                <span>Manager</span>
-                <strong>{{ roleStats.Manager }}</strong>
-              </div>
-              <div class="legend-item-modern">
-                <span class="legend-dot dot-green"></span>
-                <span>Membre</span>
-                <strong>{{ roleStats.Member }}</strong>
-              </div>
+            <div class="action-arrow">
+              <i class="bi bi-arrow-right-circle-fill"></i>
+            </div>
+            <div class="action-count" *ngIf="action.count !== undefined && action.count > 0">
+              <span class="count-badge">{{ action.count }}</span>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Chart 2: Task Status -->
-        <div class="chart-card-modern chart-large">
-          <div class="chart-glass">
-            <div class="chart-header-modern">
-              <h3>Statut des tâches</h3>
-              <span class="chart-badge">{{ stats.totalTasks }} tâches</span>
+   <!-- ========================================
+         UTILISATEURS EN ATTENTE (SECTION CORRIGÉE)
+         ======================================== -->
+    <section class="pending-section-modern" *ngIf="pendingUsers.length > 0">
+      <div class="alert-card-modern-large">
+        <div class="alert-glass-large">
+          <div class="alert-header-large">
+            <div class="alert-icon-wrapper-large">
+              <i class="bi bi-bell-fill"></i>
             </div>
-            <div class="chart-container-modern">
-              <canvas #taskStatusChartCanvas baseChart
-                [data]="taskStatusChartData"
-                [options]="taskStatusChartOptions"
-                [type]="'bar'">
-              </canvas>
+            <div class="alert-title-large">
+              <h2>Utilisateurs en attente d'approbation</h2>
+              <span class="alert-count-large">{{ pendingUsers.length }} utilisateur(s) en attente</span>
             </div>
           </div>
-        </div>
 
-        <!-- Chart 3: Monthly Activity -->
-        <div class="chart-card-modern chart-large">
-          <div class="chart-glass">
-            <div class="chart-header-modern">
-              <h3>Tendances mensuelles</h3>
-              <span class="chart-badge">6 mois</span>
-            </div>
-            <div class="chart-container-modern">
-              <canvas #monthlyTasksChartCanvas baseChart
-                [data]="monthlyTasksChartData"
-                [options]="monthlyTasksChartOptions"
-                [type]="'line'">
-              </canvas>
-            </div>
-          </div>
-        </div>
-
-        <!-- Chart 4: Project Progress -->
-        <div class="chart-card-modern chart-small">
-          <div class="chart-glass">
-            <div class="chart-header-modern">
-              <h3>Top projets</h3>
-              <span class="chart-badge">5 actifs</span>
-            </div>
-            <div class="projects-list-modern">
-              <div class="project-item-modern" *ngFor="let project of projectStats">
-                <div class="project-info-modern">
-                  <h4>{{ project.name }}</h4>
-                  <span>{{ project.completed }}/{{ project.tasks }} tâches</span>
-                </div>
-                <div class="project-progress-modern">
-                  <div class="progress-ring">
-                    <svg width="60" height="60">
-                      <circle class="progress-ring-circle-bg" cx="30" cy="30" r="25"></circle>
-                      <circle class="progress-ring-circle"
-                              cx="30" cy="30" r="25"
-                              [style.strokeDashoffset]="157 - (157 * project.progress / 100)"
-                              [ngClass]="{
-                                'progress-high': project.progress >= 80,
-                                'progress-medium': project.progress >= 50 && project.progress < 80,
-                                'progress-low': project.progress < 50
-                              }">
-                      </circle>
-                      <text x="30" y="35" class="progress-text">{{ project.progress }}%</text>
-                    </svg>
-                  </div>
+          <div class="pending-grid-modern">
+            <div class="pending-item-modern" *ngFor="let user of pendingUsers">
+              <div class="pending-avatar-modern">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="pending-info-modern">
+                <h3>{{ user.username }}</h3>
+                <div class="user-meta">
+                  <span class="role-tag" [class]="'role-' + user.role.toLowerCase()">
+                    <i class="bi bi-shield-fill-check"></i>
+                    {{ user.role }}
+                  </span>
+                  <!-- ✅ SUPPRIMÉ: getDaysAgo(user.createdAt) -->
+                  <span class="date-tag">
+                    <i class="bi bi-clock"></i>
+                    En attente d'approbation
+                  </span>
                 </div>
               </div>
+              <div class="pending-actions-modern">
+                <button class="btn-icon-modern btn-success-modern" 
+                        (click)="approveUser(user.id); $event.stopPropagation()"
+                        title="Approuver">
+                  <i class="bi bi-check-lg"></i>
+                  <span>Approuver</span>
+                </button>
+                <button class="btn-icon-modern btn-danger-modern" 
+                        (click)="rejectUser(user.id); $event.stopPropagation()"
+                        title="Rejeter">
+                  <i class="bi bi-x-lg"></i>
+                  <span>Rejeter</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
     <!-- ========================================
-         ACTIVITY & TASKS
+         FIL D'ACTIVITÉ & TÂCHES RÉCENTES
          ======================================== -->
     <section class="feed-section-modern">
       <div class="feed-grid-modern">
@@ -416,14 +293,13 @@
                 <i class="bi bi-list-check"></i>
                 Tâches récentes
               </h3>
-              <button class="btn-link-modern" (click)="navigateTo('/mes-taches')">
+              <button class="btn-link-modern" routerLink="/mes-taches">
                 Voir tout
                 <i class="bi bi-arrow-right"></i>
               </button>
             </div>
             <div class="tasks-list-modern">
-              <div class="task-item-modern" *ngFor="let task of recentTasks"
-                   (click)="navigateTo('/tasks/' + task.id)">
+              <div class="task-item-modern" *ngFor="let task of recentTasks">
                 <div class="task-check">
                   <div class="checkbox-modern" [class.checked]="task.isCompleted">
                     <i class="bi" [ngClass]="task.isCompleted ? 'bi-check-lg' : ''"></i>

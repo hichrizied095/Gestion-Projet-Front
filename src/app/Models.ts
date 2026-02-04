@@ -26,6 +26,7 @@ export interface TaskItemDto {
   id: number;
   title: string;
   description?: string;
+  percentage?: number;
   columnId: number;
   isCompleted: boolean;
   startDate: Date;

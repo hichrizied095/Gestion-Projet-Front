@@ -2,156 +2,168 @@
 
 <div class="columns-container">
   <div *ngFor="let column of columnsWithTasks" class="column-card">
-    <h3>{{ column.name }}</h3>
 
-    <!-- Progression -->
-    <div class="progress-container" *ngIf="column.tasks.length > 0">
-      <div class="progress-bar">
-        <div
-          class="progress-fill"
-          [style.width.%]="getCompletionPercentage(column.tasks)"
-        ></div>
+    <!-- ============================================
+         EN-TÊTE DE COLONNE AVEC INFO DE POIDS
+         ============================================ -->
+    <div class="column-header">
+      <h3>{{ column.name }}</h3>
+
+      <!-- Progression avec système de poids -->
+      <div class="progress-container" *ngIf="column.tasks.length > 0">
+        <div class="progress-bar">
+          <div class="progress-fill" [class.progress-success]="getCompletionPercentage(column.tasks) === 100"
+            [class.progress-warning]="getCompletionPercentage(column.tasks) > 0 && getCompletionPercentage(column.tasks) < 100"
+            [class.progress-danger]="getCompletionPercentage(column.tasks) === 0"
+            [style.width.%]="getCompletionPercentage(column.tasks)"></div>
+        </div>
+        <small class="completion-text">
+          {{ getCompletionPercentage(column.tasks) }}% complété
+        </small>
+
+        <!-- ✅ NOUVEAU: Indicateur de poids total -->
+        <div class="weight-indicator mt-2">
+          <small [class.text-danger]="isOverweighted(column.tasks)"
+            [class.text-success]="getTotalWeight(column.tasks) === 100"
+            [class.text-warning]="getTotalWeight(column.tasks) > 0 && getTotalWeight(column.tasks) < 100"
+            [class.text-muted]="getTotalWeight(column.tasks) === 0">
+
+            <i class="fas fa-weight-hanging me-1"></i>
+
+            <strong>Poids total : {{ getTotalWeight(column.tasks) }}%</strong>
+
+            <!-- Alerte surcharge -->
+            <span *ngIf="isOverweighted(column.tasks)" class="ms-1">
+              ⚠️ <strong>Surcharge!</strong>
+            </span>
+
+            <!-- Poids restant -->
+            <span *ngIf="getTotalWeight(column.tasks) < 100" class="ms-1">
+              ({{ getRemainingWeight(column.tasks) }}% disponible)
+            </span>
+
+            <!-- Colonne complète -->
+            <span *ngIf="getTotalWeight(column.tasks) === 100 && !isOverweighted(column.tasks)" class="ms-1">
+              ✅ <strong>Complet</strong>
+            </span>
+          </small>
+        </div>
+
+        <!-- 📘 Bouton Gantt -->
+        <button class="btn btn-outline-primary btn-sm mt-2 w-100" (click)="openGanttModal(column.tasks)">
+          📊 Voir le diagramme de Gantt
+        </button>
       </div>
-      <small>{{ getCompletionPercentage(column.tasks) }}% complété</small>
 
-      <!-- 🔘 Bouton Gantt -->
-      <button
-        class="btn btn-outline-primary btn-sm mt-2"
-        (click)="openGanttModal(column.tasks)"
-      >
-        📊 Voir le diagramme de Gantt
-      </button>
+      <!-- Message si colonne vide -->
+      <div *ngIf="column.tasks.length === 0" class="empty-column-message">
+        <small class="text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          Aucune tâche dans cette colonne
+        </small>
+      </div>
     </div>
 
-    <!-- Liste des tâches avec DND -->
-    <ul
-      cdkDropList
-      [cdkDropListData]="column.tasks"
-      [cdkDropListConnectedTo]="connectedDropListsIds"
-      [id]="'list-' + column.id"
-      class="task-list"
-      (cdkDropListDropped)="onDrop($event, column.id)"
-    >
-      <li
-        *ngFor="let task of column.tasks"
-        cdkDrag
-        class="task-item"
-        (click)="openTaskDetails(task)"
-      >
-        <button
-          (click)="deleteTask(task.id); $event.stopPropagation()"
-          class="btn btn-sm btn-danger float-end"
-          title="Supprimer la tâche"
-        >
-          ❌
+    <!-- ============================================
+         LISTE DES TÂCHES AVEC DND
+         ============================================ -->
+    <ul cdkDropList [cdkDropListData]="column.tasks" [cdkDropListConnectedTo]="connectedDropListsIds"
+      [id]="'list-' + column.id" class="task-list" (cdkDropListDropped)="onDrop($event, column.id)">
+
+      <li *ngFor="let task of column.tasks" cdkDrag class="task-item" (click)="openTaskDetails(task)">
+
+        <!-- Bouton supprimer -->
+        <button (click)="deleteTask(task.id); $event.stopPropagation()" class="btn btn-sm btn-danger float-end"
+          title="Supprimer la tâche">
+          ✕
         </button>
 
+        <!-- Titre et checkbox -->
         <label (click)="$event.stopPropagation()">
-          <input
-            type="checkbox"
-            [checked]="task.isCompleted"
-            (change)="toggleTaskCompletion(task)"
-          />
+          <input type="checkbox" [checked]="task.isCompleted" (change)="toggleTaskCompletion(task)" />
           <span [class.completed]="task.isCompleted">{{ task.title }}</span>
+
+          <!-- Badge de poids de la tâche (NOUVEAU) -->
+          <span class="badge bg-info ms-2" *ngIf="task.percentage && task.percentage > 0">
+            {{ task.percentage }}%
+          </span>
+
           <small *ngIf="task.assignedUserName" class="text-muted d-block">
             👤 Assignée à : {{ task.assignedUserName }}
           </small>
         </label>
 
-        <!-- Upload fichier -->
         <!-- Section fichier -->
-<div class="file-section" (click)="$event.stopPropagation()">
+        <div class="file-section" (click)="$event.stopPropagation()">
+          <!-- Bouton upload -->
+          <div *ngIf="!task.filePath">
+            <input type="file" #fileInput style="display: none" (change)="uploadFile($event, task.id)" />
+            <button class="btn btn-sm btn-outline-secondary" (click)="fileInput.click(); $event.stopPropagation()">
+              📎 Joindre un fichier
+            </button>
+          </div>
 
-  <!-- Bouton upload -->
-  <div *ngIf="!task.filePath">
-    <input
-      type="file"
-      #fileInput
-      style="display: none"
-      (change)="uploadFile($event, task.id)"
-    />
-    <button
-      class="btn btn-sm btn-outline-secondary"
-      (click)="fileInput.click(); $event.stopPropagation()"
-    >
-      📎 Joindre un fichier
-    </button>
-  </div>
-
-  <!-- Fichier existant -->
-  <div *ngIf="task.filePath" class="file-preview">
-    <a
-      [href]="getFileUrl(task.id)"
-      target="_blank"
-      class="btn btn-sm btn-link"
-      [title]="getFileName(task)"
-    >
-      📄 {{ getFileName(task) }}
-    </a>
-    <button
-      class="btn btn-sm btn-outline-danger ms-2"
-      (click)="deleteFile(task.id); $event.stopPropagation()"
-    >
-      ❌
-    </button>
-  </div>
-</div>
+          <!-- Fichier existant -->
+          <div *ngIf="task.filePath" class="file-preview">
+            <a [href]="getFileUrl(task.id)" target="_blank" class="btn btn-sm btn-link" [title]="getFileName(task)">
+              📄 {{ getFileName(task) }}
+            </a>
+            <button class="btn btn-sm btn-outline-danger ms-2" (click)="deleteFile(task.id); $event.stopPropagation()">
+              ✕
+            </button>
+          </div>
+        </div>
 
         <!-- Statut -->
-        <span
-          class="status-badge"
-          [ngClass]="{
+        <span class="status-badge" [ngClass]="{
             'badge-planifiee': getTaskStatus(task) === 'Planifiée',
             'badge-en-cours': getTaskStatus(task) === 'En cours',
             'badge-terminee': getTaskStatus(task) === 'Terminée',
             'badge-en-retard': getTaskStatus(task) === 'En retard'
-          }"
-        >
+          }">
           {{ getTaskStatus(task) }}
         </span>
 
-        <span *ngIf="task.updated" class="saved-feedback">✔</span>
+        <span *ngIf="task.updated" class="saved-feedback">✓</span>
       </li>
     </ul>
 
-    <!-- Ajouter une tâche -->
+    <!-- ============================================
+         AJOUTER UNE TÂCHE
+         ============================================ -->
     <div class="add-task-form">
       <button class="btn btn-primary w-100" (click)="openAddTaskModal(column.id)">
         ➕ Ajouter une tâche
       </button>
     </div>
 
-    <!-- Supprimer colonne -->
+    <!-- ============================================
+         SUPPRIMER COLONNE
+         ============================================ -->
     <button class="delete-btn" (click)="deleteColumn(column.id)">
       🗑️ Supprimer la colonne
     </button>
   </div>
 </div>
 
-<!-- Ajouter colonne -->
+<!-- ============================================
+     AJOUTER COLONNE
+     ============================================ -->
 <div class="add-column-form mt-3">
   <input [(ngModel)]="newColumnName" placeholder="Nouvelle colonne" />
   <button (click)="addColumn()">➕ Ajouter</button>
 </div>
 
-<!-- 🔶 Modale unique pour le diagramme de Gantt -->
-<div
-  class="modal fade"
-  id="ganttModal"
-  tabindex="-1"
-  aria-labelledby="ganttModalLabel"
-  aria-hidden="true"
->
+<!-- ============================================
+     MODALE GANTT
+     ============================================ -->
+<div class="modal fade" id="ganttModal" tabindex="-1" aria-labelledby="ganttModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="ganttModalLabel">Diagramme de Gantt</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Fermer"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer">
+        </button>
       </div>
       <div class="modal-body">
         <app-gantt-modal [tasks]="selectedTasks"></app-gantt-modal>
