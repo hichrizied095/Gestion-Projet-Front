@@ -156,8 +156,6 @@ getTaskStatus(task: TaskItem): string {
     ? new Date(task.dueDate).toISOString().split('T')[0] 
     : null;
 
-  //console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
-
   // ✅ Comparer les chaînes de dates (AAAA-MM-JJ)
   
   // 1. En retard si aujourd'hui > échéance
@@ -165,12 +163,12 @@ getTaskStatus(task: TaskItem): string {
     return 'En retard';
   }
 
-  // 2. En cours si aujourd'hui >= début
+  // 2. En cours si aujourd'hui >= début (inclut aujourd'hui)
   if (startDateStr && todayStr >= startDateStr) {
     return 'En cours';
   }
 
-  // 3. Planifiée si pas encore commencée
+  // 3. Planifiée si pas encore commencée (commence dans le futur)
   return 'Planifiée';
 }
 

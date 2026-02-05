@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskItem, TaskItemService } from '../../services/task-item.service';
 import { MeetingService } from '../../services/meeting.service';
+import { AuthService } from '../../services/auth.service';
 import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -29,7 +30,8 @@ export class CalendarComponent implements OnInit {
 
   constructor(
     private taskService: TaskItemService,
-    private meetingService: MeetingService
+    private meetingService: MeetingService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -39,9 +41,17 @@ export class CalendarComponent implements OnInit {
   loadCalendarData(): void {
     this.isLoading = true;
     
-    // Charger les tâches et réunions en parallèle
+    // ✅ Récupérer l'ID de l'utilisateur connecté
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      console.error('❌ Utilisateur non connecté');
+      this.isLoading = false;
+      return;
+    }
+    
+    // ✅ Charger les tâches filtrées par rôle et les réunions en parallèle
     forkJoin({
-      tasks: this.taskService.getAllTasks(),
+      tasks: this.taskService.getCalendarTasks(userId),
       meetings: this.meetingService.getAll()
     }).subscribe({
       next: ({ tasks, meetings }) => {
@@ -177,7 +187,7 @@ export class CalendarComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Erreur lors du chargement du calendrier:', err);
+        console.error('❌ Erreur lors du chargement du calendrier:', err);
         this.isLoading = false;
       }
     });

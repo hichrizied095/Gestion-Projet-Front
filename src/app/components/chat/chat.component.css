@@ -243,6 +243,70 @@
   transition: transform 0.3s ease;
 }
 
+/* ✅ NOUVEAU: Styles pour messages non lus */
+.user-item.unread {
+  background: linear-gradient(135deg, 
+    rgba(139, 92, 246, 0.15), 
+    rgba(139, 92, 246, 0.05)
+  );
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.user-item.unread .user-name {
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* ✅ NOUVEAU: Dernier message */
+.last-message {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.user-item.unread .last-message {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ✅ NOUVEAU: Badge de notification */
+.badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+  }
+}
+
+.badge.bg-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.badge.bg-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.rounded-pill {
+  border-radius: 50px !important;
+}
+
 /* =========== FENÊTRE DE CHAT =========== */
 .chat-window {
   flex: 1;

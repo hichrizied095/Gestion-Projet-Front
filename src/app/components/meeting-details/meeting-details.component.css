@@ -1,253 +1,258 @@
-/* FILE: meeting-details.component.css */
-.meeting-details-container {
-  background-color: #f8f9fa;
+/* ================================================ */
+/* MEETING DETAILS - DESIGN SIMPLE & ÉPURÉ */
+/* ================================================ */
+
+.meeting-details-page {
   min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 2rem;
 }
 
-.meeting-details-card {
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.meeting-header {
-  background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
-}
-
-.meeting-icon {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.status-bar {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-}
-
-/* Informations Grid */
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.info-item {
-  padding: 0.75rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  transition: all 0.3s ease;
-}
-
-.info-item:hover {
-  background-color: #e9ecef;
-  transform: translateY(-2px);
-}
-
-.info-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #6c757d;
-  margin-bottom: 0.25rem;
-}
-
-.info-value {
-  display: block;
-  font-weight: 600;
-  color: #212529;
-}
-
-/* Participants */
-.participants-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.participant-card {
+/* ============ LOADING ============ */
+.loading-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 1rem;
+  justify-content: center;
+  min-height: 50vh;
+  color: #666;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* ============ CONTAINER ============ */
+.meeting-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ============ HEADER ============ */
+.page-header {
   background: white;
-  border-radius: 10px;
-  border: 1px solid #e9ecef;
-  transition: all 0.3s ease;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.participant-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.participant-card.current-user {
-  border: 2px solid #198754;
-  background-color: rgba(25, 135, 84, 0.05);
-}
-
-.participant-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.btn-back {
+  background: #6c757d;
   color: white;
-  display: flex;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin-right: 1rem;
-  position: relative;
+  gap: 0.5rem;
+  transition: background 0.2s;
 }
 
-.current-user-badge {
-  position: absolute;
-  bottom: -5px;
-  right: -5px;
-  background: #198754;
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  border: 2px solid white;
+.btn-back:hover {
+  background: #5a6268;
 }
 
-.participant-info {
+.page-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* ============ SECTIONS ============ */
+.info-section,
+.participants-section,
+.tasks-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h2,
+.participants-section h2,
+.tasks-section h2 {
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* ============ INFO ROWS ============ */
+.info-row {
+  display: flex;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #666;
+  min-width: 150px;
+  flex-shrink: 0;
+}
+
+.info-row .value {
+  color: #333;
   flex: 1;
 }
 
-.participant-name {
-  font-weight: 600;
-  color: #212529;
-  margin-bottom: 0.25rem;
-}
-
-/* Statistiques */
-.stats-grid {
+/* ============ PARTICIPANTS ============ */
+.participants-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.stat-item {
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
-}
-
-.stat-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-number {
-  color: #3a7bd5;
-}
-
-.stat-icon {
-  opacity: 0.8;
-}
-
-/* Décisions/Tâches */
-.decision-card {
-  transition: all 0.3s ease;
-  border: 1px solid #e9ecef;
-}
-
-.decision-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.task-metadata {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
 
-.metadata-item {
-  padding: 0.5rem;
-  background-color: #f8f9fa;
+.participant-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
   border-radius: 6px;
-  border-left: 3px solid #3a7bd5;
+  border: 1px solid #e9ecef;
 }
 
-/* Boutons d'action */
-.btn {
-  border-radius: 8px;
-  padding: 0.5rem 1.5rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.participant-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #6c757d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .meeting-header {
-    text-align: center;
-  }
-
-  .participants-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .task-metadata {
-    grid-template-columns: 1fr;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.meeting-details-card {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Badges */
-.badge {
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
+.participant-name {
+  color: #333;
   font-weight: 500;
 }
 
-.status-badge {
-  font-size: 0.75rem;
+/* ============ TASKS ============ */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.task-card {
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.task-number {
+  background: #6c757d;
+  color: white;
   padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
-/* Progress bar */
-.progress {
-  border-radius: 10px;
-  overflow: hidden;
+.task-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: #ffc107;
+  color: white;
 }
 
-.progress-bar {
-  border-radius: 10px;
+.task-status.completed {
+  background: #28a745;
 }
 
-/* Chargement */
-.loading-spinner {
-  width: 4rem;
-  height: 4rem;
+.task-title {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-info .info-row {
+  padding: 0.5rem 0;
+}
+
+.task-info .label {
+  min-width: 180px;
+}
+
+/* ============ EMPTY STATE ============ */
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* ============ ALERT ============ */
+.alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .meeting-details-page {
+    padding: 1rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .info-row .label {
+    min-width: auto;
+  }
+
+  .participants-list {
+    grid-template-columns: 1fr;
+  }
+
+  .task-info .label {
+    min-width: auto;
+  }
 }

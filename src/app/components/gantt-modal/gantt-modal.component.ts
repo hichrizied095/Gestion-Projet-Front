@@ -12,8 +12,9 @@ import {
 import Gantt from 'frappe-gantt';
 import { TaskItem } from '../../services/task-item.service';
 
-// ✅ Déclaration pour html2canvas (optionnel)
-declare var html2canvas: any;
+import * as html2canvas_ from 'html2canvas';
+const html2canvas = (html2canvas_ as any).default || html2canvas_;
+import { jsPDF } from 'jspdf';
 
 @Component({
   selector: 'app-gantt-modal',
@@ -230,17 +231,13 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
     if (!this.ganttContainer?.nativeElement) return;
 
     try {
-      if (typeof html2canvas === 'undefined') {
-        alert('Pour exporter en image, installez html2canvas:\nnpm install html2canvas');
-        return;
-      }
-
       const element = this.ganttContainer.nativeElement;
-      const canvas = await html2canvas(element, {
+      const canvas = await (html2canvas as any)(element, {
         scale: 2,
         backgroundColor: '#ffffff',
-        logging: false
-      });
+        logging: false,
+        useCORS: true // ✅ Utile si images externes
+      } as any);
 
       const link = document.createElement('a');
       const projectName = this.projectTitle || 'gantt';
@@ -256,10 +253,28 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
   }
 
-  // ✅ NOUVEAU: Export PDF
-  exportAsPDF(): void {
-    alert('Pour exporter en PDF, installez:\nnpm install jspdf html2canvas');
-    console.log('📄 Export PDF - Nécessite jsPDF');
+  async exportAsPDF(): Promise<void> {
+    if (!this.ganttContainer?.nativeElement) return;
+
+    try {
+      const element = this.ganttContainer.nativeElement;
+      const canvas = await (html2canvas as any)(element, { scale: 2 } as any);
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdf = new jsPDF('l', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      const projectName = this.projectTitle || 'gantt';
+      pdf.save(`${projectName}_export.pdf`);
+      console.log('✅ PDF exporté');
+    } catch (error) {
+      console.error('❌ Erreur export PDF:', error);
+      alert('Erreur lors de l\'export PDF.');
+    }
   }
 
   // ✅ AMÉLIORÉ: Impression
@@ -422,7 +437,14 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
         console.warn('❌ Date invalide:', date);
         return null;
       }
-      return parsedDate.toISOString().split('T')[0];
+      
+      // ✅ CORRECTION: Utiliser la date locale au lieu de UTC
+      // pour éviter les décalages de fuseau horaire
+      const year = parsedDate.getFullYear();
+      const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(parsedDate.getDate()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}`;
     } catch (error) {
       console.warn('❌ Erreur de parsing de date:', date, error);
       return null;
@@ -631,23 +653,27 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
     if (!task) return 'Planifiée';
     if (task.isCompleted) return 'Terminée';
 
+    // Normaliser les dates pour comparer uniquement le jour, mois, année
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const startDate = task.startDate ? new Date(task.startDate) : null;
     const dueDate = task.dueDate ? new Date(task.dueDate) : null;
 
-    if (dueDate) {
-      dueDate.setHours(0, 0, 0, 0);
-      if (today > dueDate) return 'En retard';
+    if (startDate) startDate.setHours(0, 0, 0, 0);
+    if (dueDate) dueDate.setHours(0, 0, 0, 0);
+
+    // 1. D'abord vérifier si la tâche est en retard
+    if (dueDate && today > dueDate) {
+      return 'En retard';
     }
 
+    // 2. Vérifier si la tâche a commencé
     if (startDate) {
-      startDate.setHours(0, 0, 0, 0);
-      if (today >= startDate) {
-        if (dueDate && today <= dueDate) return 'En cours';
-        return 'En cours';
+      if (today < startDate) {
+        return 'Planifiée';
       }
+      return 'En cours';
     }
 
     return 'Planifiée';

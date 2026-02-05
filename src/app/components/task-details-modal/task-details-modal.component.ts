@@ -71,15 +71,33 @@ export class TaskDetailsModalComponent implements OnInit {
   }
 
   getTaskStatus(): string {
-    if (!this.task) return '';
-    const now = new Date();
-    const start = this.task.startDate ? new Date(this.task.startDate) : null;
-    const due = this.task.dueDate ? new Date(this.task.dueDate) : null;
-
+    if (!this.task) return 'Planifiée';
     if (this.task.isCompleted) return 'Terminée';
-    if (start && start > now) return 'Planifiée';
-    if (due && due < now) return 'En retard';
-    return 'En cours';
+
+    // ✅ Aujourd'hui en AAAA-MM-JJ (ignore l'heure)
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // ✅ Parser les dates en ignorant la timezone
+    const startDateStr = this.task.startDate 
+      ? new Date(this.task.startDate).toISOString().split('T')[0] 
+      : null;
+    
+    const dueDateStr = this.task.dueDate 
+      ? new Date(this.task.dueDate).toISOString().split('T')[0] 
+      : null;
+
+    // 1. En retard si aujourd'hui > échéance
+    if (dueDateStr && todayStr > dueDateStr) {
+      return 'En retard';
+    }
+
+    // 2. En cours si aujourd'hui >= début (inclut aujourd'hui)
+    if (startDateStr && todayStr >= startDateStr) {
+      return 'En cours';
+    }
+
+    // 3. Planifiée si pas encore commencée
+    return 'Planifiée';
   }
 
   formatDateForInput(dateString: string): string {

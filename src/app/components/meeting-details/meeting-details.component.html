@@ -1,476 +1,101 @@
-<!-- FILE: meeting-details.component.html -->
-<div class="container py-4 meeting-details-container">
-
-  <!-- Bouton retour -->
-  <button class="btn btn-outline-secondary mb-4" (click)="navigateBack()">
-    <i class="bi bi-arrow-left"></i> Retour aux réunions
-  </button>
-
-  <!-- Chargement -->
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary loading-spinner" role="status">
-      <span class="visually-hidden">Chargement...</span>
-    </div>
-    <p class="mt-3 text-muted">Chargement des détails de la réunion...</p>
+<div class="meeting-details-page">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border" role="status"></div>
+    <p>Chargement...</p>
   </div>
 
-  <!-- Erreur -->
-  <div *ngIf="error && !isLoading" class="alert alert-danger alert-dismissible fade show" role="alert">
-    <div class="d-flex align-items-center">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      <span>{{ error }}</span>
-    </div>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <!-- Error -->
+  <div *ngIf="error && !isLoading" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle"></i>
+    {{ error }}
   </div>
 
-  <!-- Contenu de la réunion -->
-  <div *ngIf="!isLoading && meeting" class="card meeting-details-card shadow-sm border-0">
+  <!-- Content -->
+  <div *ngIf="!isLoading && meeting" class="meeting-container">
 
-    <!-- En-tête avec fond coloré -->
-    <div class="meeting-header card-header bg-primary text-white py-4 border-0 rounded-top">
-      <div class="d-flex justify-content-between align-items-start">
-        <div class="flex-grow-1">
-          <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="meeting-icon bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-              <i class="bi bi-calendar-event fs-4"></i>
-            </div>
-            <div>
-              <h1 class="h2 mb-1 fw-bold">{{ meeting.projectTitle }}</h1>
-              <div class="d-flex align-items-center gap-3 flex-wrap">
-                <span class="meeting-date-badge badge bg-light text-dark fs-6 py-2 px-3">
-                  <i class="bi bi-calendar me-2"></i>
-                  {{ meeting.meetingDate | date:'dd MMMM yyyy' }}
-                </span>
-                <span class="badge bg-white text-primary fs-6 py-2 px-3">
-                  <i class="bi bi-clock me-2"></i>
-                  {{ meeting.startTime | slice:0:5 }} - {{ meeting.endTime | slice:0:5 }}
-                </span>
-                <span class="badge bg-white text-primary fs-6 py-2 px-3">
-                  <i class="bi bi-hourglass-split me-2"></i>
-                  {{ formatDuration(meeting.durationMinutes) }}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="d-flex align-items-center gap-2 text-white-75">
-            <i class="bi bi-info-circle"></i>
-            <small>Réunion #{{ meeting.id }} • Projet ID: {{ meeting.projectId }}</small>
-          </div>
-        </div>
+    <!-- Header Simple -->
+    <div class="page-header">
+      <button class="btn-back" (click)="navigateBack()">
+        <i class="bi bi-arrow-left"></i>
+        Retour
+      </button>
+      <h1>Détails de la Réunion</h1>
+    </div>
 
-        <!-- Badges de rôle -->
-        <div class="d-flex flex-column gap-2 align-items-end">
-          <span *ngIf="auth.isAdmin()" class="badge bg-danger role-badge fs-6 py-2 px-3">
-            <i class="bi bi-shield-check me-1"></i> Administrateur
-          </span>
-          <span *ngIf="auth.getCurrentUserId() === meeting.projectOwnerId"
-                class="badge bg-light text-dark role-badge fs-6 py-2 px-3">
-            <i class="bi bi-star-fill me-1"></i> Chef de projet
-          </span>
-          <span *ngIf="isParticipant()"
-                class="badge bg-success role-badge fs-6 py-2 px-3">
-            <i class="bi bi-person-check me-1"></i> Participant
-          </span>
-          <span *ngIf="isTaskAssigned()"
-                class="badge bg-warning text-dark role-badge fs-6 py-2 px-3">
-            <i class="bi bi-card-checklist me-1"></i> Assigné à une tâche
-          </span>
+    <!-- Informations Principales -->
+    <div class="info-section">
+      <h2>Informations Générales</h2>
+      <div class="info-row">
+        <span class="label">Projet :</span>
+        <span class="value">{{ meeting.projectTitle }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Date :</span>
+        <span class="value">{{ meeting.meetingDate | date:'EEEE dd MMMM yyyy' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Heure :</span>
+        <span class="value">{{ meeting.startTime | slice:0:5 }} - {{ meeting.endTime | slice:0:5 }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Durée :</span>
+        <span class="value">{{ meeting.durationMinutes }} minutes</span>
+      </div>
+    </div>
+
+    <!-- Participants -->
+    <div class="participants-section">
+      <h2>Participants ({{ meeting.attendees?.length || 0 }})</h2>
+      <div *ngIf="!meeting.attendees || meeting.attendees.length === 0" class="empty-message">
+        Aucun participant
+      </div>
+      <div *ngIf="meeting.attendees && meeting.attendees.length > 0" class="participants-list">
+        <div *ngFor="let attendee of meeting.attendees" class="participant-item">
+          <div class="participant-avatar">{{ getInitials(attendee) }}</div>
+          <span class="participant-name">{{ attendee.username || attendee }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Contenu principal -->
-    <div class="card-body p-0">
-
-      <!-- Barre d'état -->
-      <div class="status-bar px-4 py-3 bg-light border-bottom">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <span class="fw-bold me-2">Statut :</span>
-            <span *ngIf="isMeetingPast()" class="badge bg-secondary fs-6 py-2 px-3">
-              <i class="bi bi-check-circle me-1"></i> Terminée
-            </span>
-            <span *ngIf="!isMeetingPast()" class="badge bg-success fs-6 py-2 px-3">
-              <i class="bi bi-clock me-1"></i> À venir
-            </span>
-            <span class="ms-3 text-muted">
-              <i class="bi bi-calendar-check me-1"></i>
-              {{ getDaysRemaining() }}
-            </span>
-          </div>
-          <div class="text-muted">
-            <small>
-              <i class="bi bi-clock-history me-1"></i>
-              Dernière mise à jour : {{ meeting.updatedAt | date:'dd/MM/yyyy HH:mm' }}
-            </small>
-          </div>
-        </div>
+    <!-- Tâches Concernées -->
+    <div class="tasks-section">
+      <h2>Tâches Concernées ({{ tasks.length || 0 }})</h2>
+      <div *ngIf="!tasks || tasks.length === 0" class="empty-message">
+        Aucune tâche associée
       </div>
-
-      <!-- Grille d'informations -->
-      <div class="p-4">
-        <div class="row g-4 mb-5">
-
-          <!-- Carte: Informations générales -->
-          <div class="col-xl-4 col-lg-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-header bg-transparent border-bottom py-3">
-                <h5 class="mb-0">
-                  <i class="bi bi-info-circle text-primary me-2"></i>
-                  Informations générales
-                </h5>
-              </div>
-              <div class="card-body">
-                <div class="info-grid">
-                  <div class="info-item">
-                    <span class="info-label">ID Réunion</span>
-                    <span class="info-value">#{{ meeting.id }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Projet</span>
-                    <span class="info-value text-truncate">{{ meeting.projectTitle }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Date</span>
-                    <span class="info-value">{{ meeting.meetingDate | date:'EEEE dd MMMM yyyy' }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Heure</span>
-                    <span class="info-value">
-                      <i class="bi bi-clock me-1"></i>
-                      {{ meeting.startTime | slice:0:5 }} - {{ meeting.endTime | slice:0:5 }}
-                    </span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Durée</span>
-                    <span class="info-value">{{ formatDuration(meeting.durationMinutes) }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Créée le</span>
-                    <span class="info-value">{{ meeting.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-label">Propriétaire</span>
-                    <span class="info-value">
-                      <i class="bi bi-person-circle me-1"></i>
-                      Chef de projet
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div *ngIf="tasks && tasks.length > 0" class="tasks-list">
+        <div *ngFor="let task of tasks; let i = index" class="task-card">
+          <div class="task-header">
+            <span class="task-number">#{{ i + 1 }}</span>
+            <span class="task-status" [class.completed]="isTaskCompleted(task)">
+              {{ getTaskStatus(task) }}
+            </span>
           </div>
 
-          <!-- Carte: Participants -->
-          <div class="col-xl-4 col-lg-6">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                  <i class="bi bi-people text-primary me-2"></i>
-                  Participants
-                </h5>
-                <span class="badge bg-primary fs-6 py-2 px-3">
-                  {{ meeting.attendees?.length || 0 }}
-                </span>
-              </div>
-              <div class="card-body">
-                <div *ngIf="!meeting.attendees || meeting.attendees.length === 0"
-                     class="text-center py-5 text-muted">
-                  <i class="bi bi-people display-4 opacity-25 mb-3"></i>
-                  <p class="h5 mb-2">Aucun participant</p>
-                  <p class="small">Ajoutez des participants à cette réunion</p>
-                </div>
+          <h3 class="task-title">{{ task.title }}</h3>
 
-                <div *ngIf="meeting.attendees && meeting.attendees.length > 0"
-                     class="participants-list">
-                  <div class="participants-count mb-3">
-                    <small class="text-muted">{{ getParticipantsCountText() }}</small>
-                  </div>
-
-                  <div class="participants-grid">
-                    <div *ngFor="let attendee of meeting.attendees; let i = index"
-                         class="participant-card" [ngClass]="{'current-user': isCurrentUser(attendee)}">
-                      <div class="participant-avatar">
-                        {{ getInitials(attendee) }}
-                        <span *ngIf="isCurrentUser(attendee)" class="current-user-badge">
-                          <i class="bi bi-person-fill-check"></i>
-                        </span>
-                      </div>
-                      <div class="participant-info">
-                        <div class="participant-name">{{ attendee }}</div>
-                        <div class="participant-role small text-muted">
-                          <span *ngIf="i === 0" class="badge bg-info bg-opacity-10 text-info">Organisateur</span>
-                          <span *ngIf="!isCurrentUser(attendee)" class="badge bg-secondary bg-opacity-10 text-secondary">Participant</span>
-                          <span *ngIf="isCurrentUser(attendee)" class="badge bg-success bg-opacity-10 text-success">Vous</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Statistiques des participants -->
-                <div *ngIf="meeting.attendees && meeting.attendees.length > 0" class="mt-4 pt-3 border-top">
-                  <div class="row text-center">
-                    <div class="col-6 border-end">
-                      <div class="stat-number">{{ countCurrentUserParticipants() }}</div>
-                      <div class="stat-label">Dont vous</div>
-                    </div>
-                    <div class="col-6">
-                      <div class="stat-number">{{ meeting.attendees.length }}</div>
-                      <div class="stat-label">Total</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div class="task-info">
+            <div class="info-row">
+              <span class="label">Description :</span>
+              <span class="value">{{ task.description || 'Aucune description' }}</span>
             </div>
-          </div>
-
-          <!-- Carte: Statistiques -->
-          <div class="col-xl-4">
-            <div class="card h-100 border-0 shadow-sm">
-              <div class="card-header bg-transparent border-bottom py-3">
-                <h5 class="mb-0">
-                  <i class="bi bi-graph-up text-primary me-2"></i>
-                  Statistiques
-                </h5>
-              </div>
-              <div class="card-body">
-                <div class="stats-grid">
-                  <div class="stat-item text-center p-3 rounded-3 bg-light">
-                    <div class="stat-icon mb-2">
-                      <i class="bi bi-card-checklist fs-2 text-primary"></i>
-                    </div>
-                    <div class="stat-number fs-3 fw-bold">{{ meeting.decisions?.length || 0 }}</div>
-                    <div class="stat-label text-muted">Décisions/Tâches</div>
-                  </div>
-
-                  <div class="stat-item text-center p-3 rounded-3 bg-light">
-                    <div class="stat-icon mb-2">
-                      <i class="bi bi-people fs-2 text-success"></i>
-                    </div>
-                    <div class="stat-number fs-3 fw-bold">{{ meeting.attendees?.length || 0 }}</div>
-                    <div class="stat-label text-muted">Participants</div>
-                  </div>
-
-                  <div class="stat-item text-center p-3 rounded-3 bg-light">
-                    <div class="stat-icon mb-2">
-                      <i class="bi bi-clock-history fs-2 text-warning"></i>
-                    </div>
-                    <div class="stat-number fs-3 fw-bold">{{ meeting.durationMinutes }}</div>
-                    <div class="stat-label text-muted">Minutes</div>
-                  </div>
-
-                  <div class="stat-item text-center p-3 rounded-3 bg-light">
-                    <div class="stat-icon mb-2">
-                      <i class="bi bi-calendar-check fs-2 text-info"></i>
-                    </div>
-                    <div class="stat-number fs-3 fw-bold">{{ getCompletedTasksCount() }}</div>
-                    <div class="stat-label text-muted">Tâches terminées</div>
-                  </div>
-                </div>
-
-                <!-- Progression des tâches -->
-                <div class="mt-4 pt-3 border-top">
-                  <h6 class="fw-bold mb-3">Progression des tâches</h6>
-                  <div class="progress" style="height: 10px;">
-                    <div class="progress-bar bg-success"
-                         [style.width.%]="getTaskCompletionPercentage()"
-                         role="progressbar">
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between mt-2">
-                    <small class="text-muted">{{ getCompletedTasksCount() }} sur {{ meeting.decisions?.length || 0 }} terminées</small>
-                    <small class="fw-bold">{{ getTaskCompletionPercentage() }}%</small>
-                  </div>
-                </div>
-              </div>
+            <div class="info-row">
+              <span class="label">Assigné à :</span>
+              <span class="value">{{ task.assignedUsername || 'Non assigné' }}</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Section: Décisions/Tâches -->
-        <div class="row mb-5">
-          <div class="col-12">
-            <div class="card border-0 shadow-sm">
-              <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 class="mb-0">
-                    <i class="bi bi-card-checklist text-primary me-2"></i>
-                    Décisions & Tâches discutées
-                  </h5>
-                  <small class="text-muted">Tâches assignées et discutées lors de cette réunion</small>
-                </div>
-                <div>
-                  <span class="badge bg-info fs-6 py-2 px-3">
-                    {{ meeting.decisions?.length || 0 }} tâche(s)
-                  </span>
-                  <button class="btn btn-sm btn-outline-primary ms-2" (click)="exportTasks()">
-                    <i class="bi bi-download me-1"></i> Exporter
-                  </button>
-                </div>
-              </div>
-              <div class="card-body">
-                <div *ngIf="!meeting.decisions || meeting.decisions.length === 0"
-                     class="text-center py-5 text-muted">
-                  <i class="bi bi-card-checklist display-4 opacity-25 mb-3"></i>
-                  <p class="h5 mb-2">Aucune décision enregistrée</p>
-                  <p class="small">Les tâches discutées dans cette réunion apparaîtront ici</p>
-                </div>
-
-                <div *ngIf="meeting.decisions && meeting.decisions.length > 0"
-                     class="row g-4">
-                  <div *ngFor="let decision of meeting.decisions; let i = index"
-                       class="col-xl-4 col-lg-6">
-                    <div class="decision-card card h-100 border-0 shadow-sm hover-shadow">
-                      <div class="card-body position-relative">
-                        <!-- Badge de statut -->
-                        <div class="position-absolute top-0 end-0 m-3">
-                          <span class="status-badge badge"
-                                [ngClass]="{
-                                  'bg-success': decision.isCompleted,
-                                  'bg-warning': !decision.isCompleted && !isOverdue(decision),
-                                  'bg-danger': !decision.isCompleted && isOverdue(decision)
-                                }">
-                            {{ getTaskStatusText(decision) }}
-                          </span>
-                        </div>
-
-                        <!-- Numéro de tâche -->
-                        <div class="task-number mb-3">
-                          <span class="badge bg-primary bg-opacity-10 text-primary fs-6 py-2 px-3">
-                            <i class="bi bi-hash me-1"></i> Tâche #{{ i + 1 }}
-                          </span>
-                        </div>
-
-                        <!-- Titre et description -->
-                        <h6 class="card-title fw-bold mb-2">
-                          {{ decision.title || decision }}
-                        </h6>
-                        <p class="card-text text-muted small mb-3">
-                          {{ decision.description || 'Aucune description disponible' }}
-                        </p>
-
-                        <!-- Métadonnées -->
-                        <div class="task-metadata">
-                          <div class="metadata-item">
-                            <i class="bi bi-person me-1 text-muted"></i>
-                            <small class="text-muted">Assigné à :</small>
-                            <strong class="d-block">{{ decision.assignedTo || decision.owner || 'Non assigné' }}</strong>
-                          </div>
-                          <div class="metadata-item">
-                            <i class="bi bi-calendar me-1 text-muted"></i>
-                            <small class="text-muted">Échéance :</small>
-                            <strong class="d-block" [ngClass]="{'text-danger': isOverdue(decision)}">
-                              {{ decision.dueDate | date:'dd/MM/yyyy' }}
-                              <span *ngIf="isOverdue(decision)" class="badge bg-danger bg-opacity-10 text-danger ms-1">
-                                En retard
-                              </span>
-                            </strong>
-                          </div>
-                          <div class="metadata-item">
-                            <i class="bi bi-clock me-1 text-muted"></i>
-                            <small class="text-muted">Créée le :</small>
-                            <strong class="d-block">{{ decision.createdAt | date:'dd/MM/yyyy' }}</strong>
-                          </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="mt-4 pt-3 border-top">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <a *ngIf="decision.taskId"
-                               [routerLink]="['/tasks', decision.taskId]"
-                               class="btn btn-sm btn-outline-primary">
-                              <i class="bi bi-arrow-right me-1"></i> Voir la tâche
-                            </a>
-                            <div class="task-actions">
-                              <button *ngIf="decision.isCompleted"
-                                      class="btn btn-sm btn-success disabled">
-                                <i class="bi bi-check-circle me-1"></i> Terminée
-                              </button>
-                              <button *ngIf="!decision.isCompleted && isTaskAssignedToCurrentUser(decision)"
-                                      class="btn btn-sm btn-warning"
-                                      (click)="markTaskAsComplete(decision)">
-                                <i class="bi bi-check me-1"></i> Marquer comme terminée
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="info-row">
+              <span class="label">Échéance :</span>
+              <span class="value">{{ task.dueDate | date:'dd/MM/yyyy' }}</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Section: Actions rapides -->
-        <div class="row">
-          <div class="col-12">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h5 class="mb-1">Actions rapides</h5>
-                    <small class="text-muted">Gérez cette réunion avec les actions disponibles</small>
-                  </div>
-
-                  <div class="d-flex gap-3 flex-wrap">
-                    <!-- Boutons d'action -->
-                    <button class="btn btn-outline-secondary" (click)="navigateBack()">
-                      <i class="bi bi-arrow-left me-2"></i> Retour
-                    </button>
-
-                    <button class="btn btn-outline-primary" (click)="shareMeeting()">
-                      <i class="bi bi-share me-2"></i> Partager
-                    </button>
-
-                    <button class="btn btn-outline-info" (click)="addToCalendar()">
-                      <i class="bi bi-calendar-plus me-2"></i> Ajouter au calendrier
-                    </button>
-
-                    <button *ngIf="canEdit"
-                            class="btn btn-outline-warning"
-                            (click)="navigateToEdit()">
-                      <i class="bi bi-pencil me-2"></i> Modifier
-                    </button>
-
-                    <button *ngIf="canDelete"
-                            class="btn btn-outline-danger"
-                            (click)="deleteMeeting()">
-                      <i class="bi bi-trash me-2"></i> Supprimer
-                    </button>
-
-                    <button class="btn btn-primary" (click)="generateReport()">
-                      <i class="bi bi-printer me-2"></i> Exporter le rapport
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Informations supplémentaires -->
-                <div class="mt-4 pt-3 border-top">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="d-flex align-items-center">
-                        <i class="bi bi-info-circle text-muted me-2"></i>
-                        <small class="text-muted">
-                          Réunion créée le {{ meeting.createdAt | date:'dd/MM/yyyy à HH:mm' }}
-                        </small>
-                      </div>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                      <small class="text-muted">
-                        <i class="bi bi-clock-history me-1"></i>
-                        ID de suivi: MEET-{{ meeting.id.toString().padStart(6, '0') }}
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="info-row">
+              <span class="label">Poids dans le projet :</span>
+              <span class="value">{{ getTaskWeight(i) }}%</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>

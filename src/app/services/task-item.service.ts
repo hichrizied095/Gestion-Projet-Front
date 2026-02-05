@@ -110,4 +110,9 @@ getTaskComments(taskId: number): Observable<CommentDto[]> {
     return this.http.get<CommentDto[]>(`http://localhost:5279/api/Comments/by-task/${taskId}`);
   }
 
+  // ✅ NOUVEAU: Récupérer les tâches filtrées pour le calendrier selon le rôle
+  getCalendarTasks(userId: number): Observable<TaskItem[]> {
+    return this.http.get<TaskItem[]>(`${this.apiUrl}/calendar/${userId}`);
+  }
+
 }
