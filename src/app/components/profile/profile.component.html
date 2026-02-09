@@ -20,53 +20,123 @@
     <!-- Profil -->
     <div *ngIf="userProfile" class="row g-4">
       
-      <!-- Colonne gauche - Carte profil -->
+      <!-- ========================================
+           COLONNE GAUCHE - CARTE PROFIL
+           ======================================== -->
       <div class="col-lg-4">
         <div class="profile-card">
+          
+          <!-- ✅ PHOTO DE PROFIL -->
           <div class="profile-avatar">
-            <div class="avatar-circle-large">{{ getInitials() }}</div>
+            <div *ngIf="!profilePicturePreview" class="avatar-circle-large">
+              {{ getInitials() }}
+            </div>
+            <img *ngIf="profilePicturePreview" [src]="profilePicturePreview" alt="Photo de profil" class="avatar-image-large">
+            
+            <!-- Bouton modifier photo (mode édition) -->
+            <div *ngIf="isEditingProfile" class="avatar-edit-overlay">
+              <input 
+                type="file" 
+                id="profilePictureInput" 
+                accept="image/*"
+                (change)="onProfilePictureSelected($event)"
+                style="display: none"
+              />
+              <label for="profilePictureInput" class="btn btn-light btn-sm">
+                <i class="fas fa-camera"></i> Changer
+              </label>
+              <button *ngIf="profilePictureFile" type="button" class="btn btn-danger btn-sm ms-2" (click)="removeProfilePicture()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
           </div>
 
+          <!-- Informations utilisateur -->
           <div class="profile-info text-center">
             <h3 class="profile-name">{{ userProfile.username }}</h3>
-            <div class="profile-role">
+            
+            <div class="profile-role mb-3">
               <span class="badge" [ngClass]="getRoleBadgeClass()">
                 <i class="fas" [ngClass]="getRoleIcon()"></i>
                 {{ userProfile.role }}
               </span>
             </div>
 
-            <div class="profile-status mt-3">
-              <span *ngIf="userProfile.isApproved" class="badge bg-success">
-                <i class="fas fa-check-circle me-1"></i>Compte approuvé
+            <div class="profile-email mb-2" *ngIf="userProfile.email">
+              <i class="fas fa-envelope text-muted me-2"></i>
+              <small>{{ userProfile.email }}</small>
+            </div>
+
+            <div class="profile-department mb-2" *ngIf="userProfile.department">
+              <i class="fas fa-building text-muted me-2"></i>
+              <small>{{ userProfile.department }}</small>
+            </div>
+
+            <div class="profile-job-title mb-3" *ngIf="userProfile.jobTitle">
+              <i class="fas fa-id-badge text-muted me-2"></i>
+              <small>{{ userProfile.jobTitle }}</small>
+            </div>
+
+            <div class="profile-status">
+              <span *ngIf="userProfile.isApproved && userProfile.isActive" class="badge bg-success">
+                <i class="fas fa-check-circle me-1"></i>Compte actif
               </span>
               <span *ngIf="!userProfile.isApproved" class="badge bg-warning text-dark">
-                <i class="fas fa-clock me-1"></i>En attente
+                <i class="fas fa-clock me-1"></i>En attente d'approbation
+              </span>
+              <span *ngIf="userProfile.isActive === false" class="badge bg-danger">
+                <i class="fas fa-ban me-1"></i>Compte désactivé
               </span>
             </div>
           </div>
 
-          <div class="profile-stats">
+          <!-- Statistiques -->
+          <div class="profile-stats mt-4">
             <div class="stat-item">
-              <i class="fas fa-shield-alt"></i>
+              <i class="fas fa-tasks text-primary"></i>
               <div>
-                <span class="stat-label">Rôle</span>
-                <span class="stat-value">{{ userProfile.role }}</span>
+                <span class="stat-value">{{ userProfile.totalTasksCompleted || 0 }}</span>
+                <span class="stat-label">Tâches complétées</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-project-diagram text-success"></i>
+              <div>
+                <span class="stat-value">{{ userProfile.totalProjectsCreated || 0 }}</span>
+                <span class="stat-label">Projets créés</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-calendar-alt text-info"></i>
+              <div>
+                <span class="stat-label">Membre depuis</span>
+                <span class="stat-value-small">{{ formatDate(userProfile.createdAt) }}</span>
+              </div>
+            </div>
+            <div class="stat-item" *ngIf="userProfile.lastLoginDate">
+              <i class="fas fa-sign-in-alt text-warning"></i>
+              <div>
+                <span class="stat-label">Dernière connexion</span>
+                <span class="stat-value-small">{{ formatDate(userProfile.lastLoginDate) }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Colonne droite - Formulaires -->
+      <!-- ========================================
+           COLONNE DROITE - FORMULAIRES
+           ======================================== -->
       <div class="col-lg-8">
         
-        <!-- Carte: Informations -->
+        <!-- ========================================
+             CARTE 1: INFORMATIONS PERSONNELLES
+             ======================================== -->
         <div class="settings-card mb-4">
           <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
               <h5 class="mb-0">
-                <i class="fas fa-user-cog me-2"></i>Informations du profil
+                <i class="fas fa-user-cog me-2"></i>Informations personnelles
               </h5>
               <button *ngIf="!isEditingProfile" class="btn btn-primary btn-sm" (click)="toggleEditProfile()">
                 <i class="fas fa-edit me-1"></i>Modifier
@@ -77,9 +147,10 @@
           <div class="card-body">
             <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
               
-              <div class="form-group mb-4">
+              <!-- Nom d'utilisateur -->
+              <div class="form-group mb-3">
                 <label class="form-label">
-                  <i class="fas fa-user me-2"></i>Nom d'utilisateur
+                  <i class="fas fa-user me-2"></i>Nom d'utilisateur <span class="text-danger">*</span>
                 </label>
                 <input type="text" class="form-control" formControlName="username" [readonly]="!isEditingProfile"
                   [class.is-invalid]="profileForm.get('username')?.invalid && profileForm.get('username')?.touched">
@@ -91,25 +162,85 @@
                 </div>
               </div>
 
+              <!-- Email -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <i class="fas fa-envelope me-2"></i>Email
+                </label>
+                <input type="email" class="form-control" formControlName="email" [readonly]="!isEditingProfile"
+                  placeholder="votre.email@exemple.com"
+                  [class.is-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                <div class="invalid-feedback" *ngIf="profileForm.get('email')?.errors?.['email']">
+                  Format d'email invalide
+                </div>
+              </div>
+
+              <!-- Téléphone -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <i class="fas fa-phone me-2"></i>Téléphone
+                </label>
+                <input type="tel" class="form-control" formControlName="phoneNumber" [readonly]="!isEditingProfile"
+                  placeholder="+216 XX XXX XXX"
+                  [class.is-invalid]="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched">
+                <div class="invalid-feedback" *ngIf="profileForm.get('phoneNumber')?.errors?.['pattern']">
+                  Numéro de téléphone invalide (8-15 chiffres)
+                </div>
+              </div>
+
+              <!-- Département -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <i class="fas fa-building me-2"></i>Département
+                </label>
+                <input type="text" class="form-control" formControlName="department" [readonly]="!isEditingProfile"
+                  placeholder="Ex: IT, RH, Finance...">
+              </div>
+
+              <!-- Poste -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <i class="fas fa-id-badge me-2"></i>Poste
+                </label>
+                <input type="text" class="form-control" formControlName="jobTitle" [readonly]="!isEditingProfile"
+                  placeholder="Ex: Développeur, Manager...">
+              </div>
+
+              <!-- Biographie -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <i class="fas fa-comment-dots me-2"></i>Biographie
+                </label>
+                <textarea class="form-control" formControlName="bio" [readonly]="!isEditingProfile" rows="3"
+                  placeholder="Quelques mots sur vous..." maxlength="500"></textarea>
+                <small class="text-muted">Maximum 500 caractères</small>
+              </div>
+
+              <!-- Rôle (NON MODIFIABLE) -->
               <div class="form-group mb-4">
                 <label class="form-label">
                   <i class="fas fa-shield-alt me-2"></i>Rôle
                 </label>
-                <input type="text" class="form-control" [value]="userProfile.role" readonly>
+                <div class="input-group">
+                  <input type="text" class="form-control" [value]="userProfile.role" readonly>
+                  <span class="input-group-text">
+                    <i class="fas fa-lock text-muted"></i>
+                  </span>
+                </div>
                 <small class="text-muted">
                   <i class="fas fa-info-circle me-1"></i>Seul un administrateur peut modifier votre rôle
                 </small>
               </div>
 
               <div *ngIf="isEditingProfile" class="form-actions">
-                <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || loading">
+                <button type="submit" class="btn btn-success" [disabled]="profileForm.invalid || loading || isUploadingImage">
                   <i class="fas fa-save me-1"></i>
-                  <span *ngIf="!loading">Enregistrer</span>
-                  <span *ngIf="loading">
+                  <span *ngIf="!loading && !isUploadingImage">Enregistrer</span>
+                  <span *ngIf="loading || isUploadingImage">
                     <span class="spinner-border spinner-border-sm me-1"></span>Enregistrement...
                   </span>
                 </button>
-                <button type="button" class="btn btn-secondary" (click)="toggleEditProfile()" [disabled]="loading">
+                <button type="button" class="btn btn-secondary" (click)="toggleEditProfile()" [disabled]="loading || isUploadingImage">
                   <i class="fas fa-times me-1"></i>Annuler
                 </button>
               </div>
@@ -117,7 +248,65 @@
           </div>
         </div>
 
-        <!-- Carte: Mot de passe -->
+        <!-- ========================================
+             CARTE 2: PRÉFÉRENCES
+             ======================================== -->
+        <div class="settings-card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-cog me-2"></i>Préférences
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <form [formGroup]="profileForm">
+              
+              <div class="row">
+                <!-- Langue -->
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">
+                    <i class="fas fa-language me-2"></i>Langue
+                  </label>
+                  <select class="form-select" formControlName="preferredLanguage" [disabled]="!isEditingProfile">
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ar">🇹🇳 العربية</option>
+                  </select>
+                </div>
+
+                <!-- Thème -->
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">
+                    <i class="fas fa-palette me-2"></i>Thème
+                  </label>
+                  <select class="form-select" formControlName="theme" [disabled]="!isEditingProfile">
+                    <option value="light">☀️ Clair</option>
+                    <option value="dark">🌙 Sombre</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Notifications -->
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="emailNotif" formControlName="emailNotifications" [disabled]="!isEditingProfile">
+                <label class="form-check-label" for="emailNotif">
+                  <i class="fas fa-envelope me-2"></i>Notifications par email
+                </label>
+              </div>
+
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="pushNotif" formControlName="pushNotifications" [disabled]="!isEditingProfile">
+                <label class="form-check-label" for="pushNotif">
+                  <i class="fas fa-bell me-2"></i>Notifications push
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ========================================
+             CARTE 3: SÉCURITÉ (MOT DE PASSE)
+             ======================================== -->
         <div class="settings-card">
           <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { Notification } from '../../Models';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,10 @@ import { Notification } from '../../Models';
 export class NavbarComponent implements OnInit, OnDestroy {
   username: string | null = null;
   role: string | null = null;
+    profilePicture: string | null = null;
+      userInitials: string = '?';
+
+
 
   notifications: any[] = [];
   chatNotifications: any[] = [];
@@ -23,17 +28,53 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private notificationService: NotificationService,
+        private userService: UserService, // ✅ NOUVEAU
+
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.username = this.authService.getCurrentUsername();
     this.role = this.authService.getRole();
+    this.loadUserProfile();
 
     this.loadNotifications();
     this.startSignalRConnections();
   }
-
+ loadUserProfile(): void {
+    const userId = this.authService.getCurrentUserId();
+    
+    if (userId) {
+      this.userService.getUserById(userId).subscribe({
+        next: (user) => {
+          // Récupérer la photo de profil
+          this.profilePicture = user.profilePicture || null;
+          
+          // Calculer les initiales
+          if (user.username) {
+            const names = user.username.split(' ');
+            if (names.length >= 2) {
+              this.userInitials = names[0][0].toUpperCase() + names[1][0].toUpperCase();
+            } else {
+              this.userInitials = user.username.substring(0, 2).toUpperCase();
+            }
+          }
+        },
+        error: (err) => {
+          console.error('❌ Erreur chargement profil:', err);
+          // Utiliser les initiales du username
+          if (this.username) {
+            this.userInitials = this.username.substring(0, 2).toUpperCase();
+          }
+        }
+      });
+    } else {
+      // Fallback si pas d'userId
+      if (this.username) {
+        this.userInitials = this.username.substring(0, 2).toUpperCase();
+      }
+    }
+  }
   loadNotifications(): void {
     this.notificationService.loadSavedNotifications();
 

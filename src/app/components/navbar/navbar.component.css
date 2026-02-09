@@ -15,7 +15,7 @@
   color: #212529 !important; /* FORCE le texte noir */
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   margin-top: 10px;
   display: none;
 }
@@ -135,7 +135,8 @@
 }
 
 /* Ajustement pour les icônes */
-.fa-bell, .fa-comment-dots {
+.fa-bell,
+.fa-comment-dots {
   font-size: 1.3rem;
   color: white !important;
 }
@@ -156,17 +157,39 @@
 
 /* Animation pour les nouvelles notifications */
 @keyframes bell-ring {
-  0% { transform: rotate(0deg); }
-  10% { transform: rotate(15deg); }
-  20% { transform: rotate(-15deg); }
-  30% { transform: rotate(10deg); }
-  40% { transform: rotate(-10deg); }
-  50% { transform: rotate(5deg); }
-  60% { transform: rotate(-5deg); }
-  70% { transform: rotate(3deg); }
-  80% { transform: rotate(-3deg); }
-  90% { transform: rotate(1deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(15deg);
+  }
+  20% {
+    transform: rotate(-15deg);
+  }
+  30% {
+    transform: rotate(10deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+  70% {
+    transform: rotate(3deg);
+  }
+  80% {
+    transform: rotate(-3deg);
+  }
+  90% {
+    transform: rotate(1deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .fa-bell.new-notification {
@@ -209,4 +232,136 @@
 .empty-state p {
   margin: 0;
   font-size: 0.95rem;
+}
+/* ========================================
+   STYLES POUR LA PHOTO DE PROFIL NAVBAR
+   ======================================== */
+
+/* Bouton utilisateur avec photo */
+.user-profile-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px !important;
+  border-radius: 50px !important;
+  transition: all 0.3s ease;
+}
+
+.user-profile-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Container de l'avatar dans la navbar */
+.user-avatar-navbar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: border-color 0.3s ease;
+}
+
+.user-profile-btn:hover .user-avatar-navbar {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Photo de profil */
+.profile-picture-navbar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Initiales si pas de photo */
+.avatar-initials-navbar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+/* Infos utilisateur */
+.user-info-navbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.username-navbar {
+  font-weight: 500;
+  font-size: 14px;
+  color: white;
+}
+
+.role-badge-navbar {
+  font-size: 10px;
+  padding: 2px 8px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-avatar-navbar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .username-navbar {
+    display: none; /* Cacher le nom sur mobile */
+  }
+
+  .user-info-navbar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Animation au chargement */
+.user-avatar-navbar {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hover effect sur la photo */
+.profile-picture-navbar {
+  transition: transform 0.3s ease;
+}
+
+.user-profile-btn:hover .profile-picture-navbar {
+  transform: scale(1.1);
+}
+
+/* Styles existants pour le reste de la navbar */
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
 }

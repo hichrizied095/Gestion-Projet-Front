@@ -8,7 +8,7 @@
 
     <div class="collapse navbar-collapse" id="navbarContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <li *ngIf="role === 'Admin' || role === 'Manager'" class="nav-item">
           <a class="nav-link" routerLink="/projects" routerLinkActive="active">
             <i class="fas fa-folder-open me-1"></i>Projets
           </a>
@@ -38,7 +38,6 @@
             <i class="fas fa-tachometer-alt me-1"></i>Dashboard Admin
           </a>
         </li>
-        <!-- ✅ NOUVEAU: STATISTIQUES (ADMIN UNIQUEMENT) -->
         <li *ngIf="role === 'Admin'" class="nav-item">
           <a class="nav-link" routerLink="/statistics" routerLinkActive="active">
             <i class="fas fa-chart-bar me-1"></i>Statistiques
@@ -66,13 +65,11 @@
             </div>
 
             <div class="dropdown-body">
-              <!-- État vide -->
               <div *ngIf="notifications.length === 0" class="empty-state">
                 <i class="fas fa-bell-slash"></i>
                 <p>Aucune notification</p>
               </div>
 
-              <!-- Liste des notifications -->
               <div *ngFor="let notif of notifications" class="dropdown-item notification-item"
                 [class.unread]="!notif.isRead" (click)="markNotificationAsRead(notif)">
                 <div class="d-flex justify-content-between align-items-start mb-2">
@@ -143,13 +140,11 @@
             </div>
 
             <div class="dropdown-body">
-              <!-- État vide -->
               <div *ngIf="chatNotifications.length === 0" class="empty-state">
                 <i class="fas fa-comment-slash"></i>
                 <p>Aucun nouveau message</p>
               </div>
 
-              <!-- Liste des messages -->
               <div *ngFor="let msg of chatNotifications" class="dropdown-item" [class.unread]="!msg.isRead"
                 (click)="markChatAsRead(msg)">
                 <div class="d-flex align-items-start">
@@ -188,20 +183,32 @@
           </div>
         </div>
 
-        <!-- 👤 UTILISATEUR -->
+        <!-- ✅ UTILISATEUR AVEC PHOTO DE PROFIL -->
         <div class="dropdown">
-          <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown"
+          <button class="btn btn-outline-light dropdown-toggle user-profile-btn" type="button" id="userDropdown"
             data-bs-toggle="dropdown">
-            <i class="fas fa-user me-2"></i>
-            <span>{{ username || 'Utilisateur' }}</span>
-            <span *ngIf="role" class="badge ms-2" [ngClass]="{
-                    'bg-danger': role === 'Admin',
-                    'bg-primary': role === 'Manager',
-                    'bg-secondary': role === 'Member'
-                  }">
-              {{ role }}
+
+            <!-- ✅ PHOTO DE PROFIL OU INITIALES -->
+            <div class="user-avatar-navbar">
+              <img *ngIf="profilePicture" [src]="profilePicture" alt="Photo de profil" class="profile-picture-navbar">
+              <div *ngIf="!profilePicture" class="avatar-initials-navbar">
+                {{ userInitials }}
+              </div>
+            </div>
+
+            <!-- NOM ET RÔLE -->
+            <span class="user-info-navbar">
+              <span class="username-navbar">{{ username || 'Utilisateur' }}</span>
+              <span *ngIf="role" class="badge role-badge-navbar" [ngClass]="{
+                'bg-danger': role === 'Admin',
+                'bg-primary': role === 'Manager',
+                'bg-secondary': role === 'Member'
+              }">
+                {{ role }}
+              </span>
             </span>
           </button>
+
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <li>
               <a class="dropdown-item" routerLink="/profile">

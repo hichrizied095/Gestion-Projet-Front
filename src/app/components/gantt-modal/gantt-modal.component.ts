@@ -410,10 +410,23 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
         let finalStartDate = startDate;
         let finalDueDate = dueDate;
 
-        if (finalStartDate && finalDueDate && new Date(finalDueDate) <= new Date(finalStartDate)) {
-          const end = new Date(finalStartDate);
+        // ✅ IMPORTANT: Ajouter 1 jour à la date de fin pour l'inclure visuellement
+        if (finalDueDate) {
+          const end = new Date(finalDueDate);
           end.setDate(end.getDate() + 1);
-          finalDueDate = end.toISOString().split('T')[0];
+          
+          // Reformater en YYYY-MM-DD
+          const year = end.getFullYear();
+          const month = String(end.getMonth() + 1).padStart(2, '0');
+          const day = String(end.getDate()).padStart(2, '0');
+          finalDueDate = `${year}-${month}-${day}`;
+        }
+
+        // Si start > end après ajout, ajuster
+        if (finalStartDate && finalDueDate && new Date(finalDueDate) <= new Date(finalStartDate)) {
+            const end = new Date(finalStartDate);
+            end.setDate(end.getDate() + 1);
+            finalDueDate = end.toISOString().split('T')[0];
         }
 
         return {
@@ -653,24 +666,27 @@ export class GanttModalComponent implements OnChanges, AfterViewInit, OnDestroy 
     if (!task) return 'Planifiée';
     if (task.isCompleted) return 'Terminée';
 
-    // Normaliser les dates pour comparer uniquement le jour, mois, année
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Helper pour format YYYY-MM-DD
+    const toDateString = (date: Date | string) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
-    const startDate = task.startDate ? new Date(task.startDate) : null;
-    const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+    const todayStr = toDateString(new Date());
+    const dueDateStr = task.dueDate ? toDateString(task.dueDate) : null;
+    const startDateStr = task.startDate ? toDateString(task.startDate) : null;
 
-    if (startDate) startDate.setHours(0, 0, 0, 0);
-    if (dueDate) dueDate.setHours(0, 0, 0, 0);
-
-    // 1. D'abord vérifier si la tâche est en retard
-    if (dueDate && today > dueDate) {
+    // 1. En retard seulement si aujourd'hui est STRICTEMENT après l'échéance
+    if (dueDateStr && todayStr > dueDateStr) {
       return 'En retard';
     }
 
     // 2. Vérifier si la tâche a commencé
-    if (startDate) {
-      if (today < startDate) {
+    if (startDateStr) {
+      if (todayStr < startDateStr) {
         return 'Planifiée';
       }
       return 'En cours';

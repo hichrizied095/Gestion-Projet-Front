@@ -1,40 +1,227 @@
-<div class="container mt-4">
-  <h2>Gestion des utilisateurs</h2>
+<div class="user-management-wrapper">
 
-  <div *ngIf="isLoading" class="text-center">
-    <div class="spinner-border"></div>
+  <!-- Header Section -->
+  <div class="management-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fas fa-users-cog"></i>
+      </div>
+      <div class="header-text">
+        <h1>Gestion des Utilisateurs</h1>
+        <p>Gérez les accès, les rôles et l'approbation des comptes</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadUsers()" [disabled]="isLoading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+        Actualiser
+      </button>
+    </div>
   </div>
 
-  <table class="table table-striped mt-3" *ngIf="!isLoading">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nom d'utilisateur</th>
-        <th>Rôle</th>
-        <th>Changer le rôle</th>
-        <th>Supprimer</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td><span class="badge bg-info text-dark">{{ user.role }}</span></td>
-        <td>
-          <select
-  class="form-select"
-  [value]="user.role"
-  (change)="updateUserRole(user, $event)"
->
-  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-</select>
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-modern"></div>
+    <p>Chargement des utilisateurs...</p>
+  </div>
 
+  <div *ngIf="!isLoading" class="management-content">
 
-        </td>
-        <td>
-          <button class="btn btn-sm btn-danger" (click)="deleteUser(user.id!)">🗑️</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <!-- SECTION 1: UTILISATEURS EN ATTENTE -->
+    <div class="content-section" *ngIf="pendingUsers.length > 0">
+      <div class="section-badge warning">
+        <i class="fas fa-clock"></i>
+        {{ pendingUsers.length }} En attente d'approbation
+      </div>
+      <div class="table-container shadow-sm">
+        <table class="management-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Rôle Demandé</th>
+              <th>Coordonnées</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of pendingUsers">
+              <td>
+                <div class="user-info">
+                  <div class="avatar-circle">
+                    {{ user.username.charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">{{ user.username }}</span>
+                    <span class="user-id">ID: #{{ user.id }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getRoleBadgeClass(user.role || 'Member')">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td>
+                <div class="contact-info">
+                  <div *ngIf="user.email"><i class="fas fa-envelope"></i> {{ user.email }}</div>
+                  <div *ngIf="user.department"><i class="fas fa-building"></i> {{ user.department }}</div>
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="action-buttons">
+                  <button class="btn-action approve" (click)="openModal(user, 'approve')" title="Approuver">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button class="btn-action reject" (click)="openModal(user, 'reject')" title="Rejeter">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 2: UTILISATEURS APPROUVÉS -->
+    <div class="content-section">
+      <div class="section-title">
+        <i class="fas fa-user-check"></i>
+        Utilisateurs Approuvés
+      </div>
+      <div class="table-container shadow-sm">
+        <table class="management-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Dernière connexion</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of approvedUsers">
+              <td>
+                <div class="user-info">
+                  <div class="avatar-circle" [class.inactive]="user.isActive === false">
+                    {{ user.username.charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">{{ user.username }}</span>
+                    <span class="user-email">{{ user.email || 'Pas d\'email' }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="role-selector" (click)="openModal(user, 'changeRole')">
+                  <span class="badge" [ngClass]="getRoleBadgeClass(user.role || 'Member')">
+                    {{ user.role }}
+                  </span>
+                  <i class="fas fa-edit ms-1 edit-icon"></i>
+                </div>
+              </td>
+              <td>
+                <span class="status-indicator" [ngClass]="getStatusBadgeClass(user.isActive)">
+                  {{ getStatusText(user.isActive) }}
+                </span>
+              </td>
+              <td>
+                <span class="date-text">{{ formatDate(user.lastLoginDate) }}</span>
+              </td>
+              <td class="text-end">
+                <div class="action-buttons">
+                  <button *ngIf="user.isActive !== false" class="btn-action deactivate"
+                    (click)="openModal(user, 'deactivate')" title="Désactiver">
+                    <i class="fas fa-user-slash"></i>
+                  </button>
+                  <button *ngIf="user.isActive === false" class="btn-action activate"
+                    (click)="openModal(user, 'activate')" title="Activer">
+                    <i class="fas fa-user-check"></i>
+                  </button>
+                  <button class="btn-action delete" (click)="openModal(user, 'delete')" title="Supprimer">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================
+     MODALS OVERLAY
+     ======================================== -->
+<div class="modal-overlay" *ngIf="modalAction" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <!-- Modal Header -->
+    <div class="modal-header" [ngClass]="modalAction">
+      <div class="modal-icon">
+        <i class="fas" [ngClass]="{
+          'fa-check-circle': modalAction === 'approve',
+          'fa-times-circle': modalAction === 'reject',
+          'fa-user-check': modalAction === 'activate',
+          'fa-user-slash': modalAction === 'deactivate',
+          'fa-trash-alt': modalAction === 'delete',
+          'fa-user-edit': modalAction === 'changeRole'
+        }"></i>
+      </div>
+      <h3>
+        {{ modalAction === 'approve' ? 'Approuver l\'utilisateur' :
+        modalAction === 'reject' ? 'Rejeter l\'utilisateur' :
+        modalAction === 'activate' ? 'Activer le compte' :
+        modalAction === 'deactivate' ? 'Désactiver le compte' :
+        modalAction === 'delete' ? 'Supprimer l\'utilisateur' : 'Modifier le rôle'
+        }}
+      </h3>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <p *ngIf="modalAction !== 'changeRole'">
+        Êtes-vous sûr de vouloir {{
+        modalAction === 'approve' ? 'approuver' :
+        modalAction === 'reject' ? 'rejeter' :
+        modalAction === 'activate' ? 'activer' :
+        modalAction === 'deactivate' ? 'désactiver' : 'supprimer'
+        }} l'utilisateur <strong>{{ selectedUser?.username }}</strong> ?
+      </p>
+
+      <div *ngIf="modalAction === 'deactivate'" class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        L'utilisateur ne pourra plus se connecter à l'application.
+      </div>
+
+      <div *ngIf="modalAction === 'changeRole'" class="role-update-form">
+        <label class="form-label">Sélectionnez le nouveau rôle pour <strong>{{ selectedUser?.username
+            }}</strong></label>
+        <div class="role-options">
+          <div class="role-option" *ngFor="let role of roles" [class.active]="newRole === role"
+            (click)="newRole = role">
+            <div class="role-radio"></div>
+            <div class="role-desc">
+              <span class="role-name">{{ role }}</span>
+              <small class="role-info">{{
+                role === 'Admin' ? 'Accès complet au système' :
+                role === 'Manager' ? 'Peut gérer les projets' : 'Accès utilisateur standard'
+                }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+      <button class="btn-confirm" [ngClass]="modalAction" (click)="confirmAction()">
+        {{ modalAction === 'changeRole' ? 'Enregistrer' : 'Confirmer' }}
+      </button>
+    </div>
+
+  </div>
 </div>

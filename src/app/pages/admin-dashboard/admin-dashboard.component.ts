@@ -58,6 +58,13 @@ export class AdminDashboardComponent implements OnInit {
       color: '#3B82F6'
     },
     {
+      title: 'Gérer les comptes',
+      description: 'Activer ou désactiver les comptes',
+      icon: 'bi-person-check',
+      route: '/admin/users',
+      color: '#6366F1'
+    },
+    {
       title: 'Voir les statistiques',
       description: 'Graphiques et analyses détaillées',
       icon: 'bi-graph-up',
@@ -210,6 +217,44 @@ export class AdminDashboardComponent implements OnInit {
       error: (err: any) => {
         console.error('❌ Erreur rejet:', err);
         alert('Erreur lors du rejet de l\'utilisateur');
+      }
+    });
+  }
+
+  // ✅ NOUVEAU: Activer un compte utilisateur
+  activateUser(userId: number): void {
+    if (!confirm('Êtes-vous sûr de vouloir activer ce compte utilisateur ?')) {
+      return;
+    }
+
+    this.userService.activateUser(userId).subscribe({
+      next: () => {
+        console.log('✅ Compte activé');
+        alert('Le compte utilisateur a été activé avec succès');
+        this.refreshDashboard();
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur activation:', err);
+        alert('Erreur lors de l\'activation du compte');
+      }
+    });
+  }
+
+  // ✅ NOUVEAU: Désactiver un compte utilisateur
+  deactivateUser(userId: number): void {
+    if (!confirm('Êtes-vous sûr de vouloir désactiver ce compte utilisateur ? L\'utilisateur ne pourra plus se connecter.')) {
+      return;
+    }
+
+    this.userService.deactivateUser(userId).subscribe({
+      next: () => {
+        console.log('✅ Compte désactivé');
+        alert('Le compte utilisateur a été désactivé avec succès');
+        this.refreshDashboard();
+      },
+      error: (err: any) => {
+        console.error('❌ Erreur désactivation:', err);
+        alert('Erreur lors de la désactivation du compte');
       }
     });
   }

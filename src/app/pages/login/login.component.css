@@ -45,18 +45,23 @@
 }
 
 .auth-branding::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
   animation: pulse 15s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -227,6 +232,49 @@
   color: #a0aec0;
 }
 
+/* ✅ NOUVEAU: Error text */
+.error-text {
+  display: block;
+  color: var(--error-color);
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ✅ NOUVEAU: Hint text */
+.hint-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.hint-text i {
+  font-size: 11px;
+}
+
+/* ✅ NOUVEAU: Success message */
+.success-message {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-radius: 12px;
+  color: var(--success-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.success-message i {
+  font-size: 18px;
+}
+
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -337,7 +385,7 @@
 }
 
 .divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;

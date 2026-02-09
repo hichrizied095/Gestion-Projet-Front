@@ -336,39 +336,50 @@ getTaskStatus(task: TaskItem): string {
   if (!task) return 'Planifiée';
   if (task.isCompleted) return 'Terminée';
 
-  // ✅ Aujourd'hui en AAAA-MM-JJ (ignore l'heure)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // ✅ CORRECTION TIMEZONE: Utiliser la date locale au lieu de UTC
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  // ✅ Parser les dates en ignorant la timezone
+  // ✅ Extraire les dates locales (pas UTC)
   const startDateStr = task.startDate 
-    ? new Date(task.startDate).toISOString().split('T')[0] 
+    ? (() => {
+        const d = new Date(task.startDate);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      })()
     : null;
   
   const dueDateStr = task.dueDate 
-    ? new Date(task.dueDate).toISOString().split('T')[0] 
+    ? (() => {
+        const d = new Date(task.dueDate);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      })()
     : null;
 
-  //console.log('📅', task.title, '| Today:', todayStr, '| Start:', startDateStr, '| Due:', dueDateStr);
-
-  // ✅ Comparer les chaînes de dates (AAAA-MM-JJ)
-  
-  // 1. En retard si aujourd'hui > échéance
+  // En retard si aujourd'hui > échéance
   if (dueDateStr && todayStr > dueDateStr) {
     return 'En retard';
   }
 
-  // 2. En cours si aujourd'hui >= début
+  // En cours si aujourd'hui >= début
   if (startDateStr && todayStr >= startDateStr) {
     return 'En cours';
   }
 
-  // 3. Planifiée si pas encore commencée
+  // Planifiée si pas encore commencée
   return 'Planifiée';
 }
   isTaskOverdue(task: TaskItem): boolean {
     if (task.isCompleted) return false;
+    
+    // ✅ Utiliser la date locale sans heure
     const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    
     const due = task.dueDate ? new Date(task.dueDate) : null;
+    if (due) {
+      due.setHours(0, 0, 0, 0);
+    }
+    
     return due ? now > due : false;
   }
 

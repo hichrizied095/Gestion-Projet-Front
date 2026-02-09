@@ -74,29 +74,36 @@ export class TaskDetailsModalComponent implements OnInit {
     if (!this.task) return 'Planifiée';
     if (this.task.isCompleted) return 'Terminée';
 
-    // ✅ Aujourd'hui en AAAA-MM-JJ (ignore l'heure)
-    const todayStr = new Date().toISOString().split('T')[0];
+    // ✅ CORRECTION TIMEZONE: Utiliser la date locale au lieu de UTC
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    // ✅ Parser les dates en ignorant la timezone
+    // ✅ Extraire les dates locales (pas UTC)
     const startDateStr = this.task.startDate 
-      ? new Date(this.task.startDate).toISOString().split('T')[0] 
+      ? (() => {
+          const d = new Date(this.task.startDate);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        })()
       : null;
     
     const dueDateStr = this.task.dueDate 
-      ? new Date(this.task.dueDate).toISOString().split('T')[0] 
+      ? (() => {
+          const d = new Date(this.task.dueDate);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        })()
       : null;
 
-    // 1. En retard si aujourd'hui > échéance
+    // En retard si aujourd'hui > échéance
     if (dueDateStr && todayStr > dueDateStr) {
       return 'En retard';
     }
 
-    // 2. En cours si aujourd'hui >= début (inclut aujourd'hui)
+    // En cours si aujourd'hui >= début (inclut aujourd'hui)
     if (startDateStr && todayStr >= startDateStr) {
       return 'En cours';
     }
 
-    // 3. Planifiée si pas encore commencée
+    // Planifiée si pas encore commencée
     return 'Planifiée';
   }
 
@@ -303,16 +310,32 @@ export class TaskDetailsModalComponent implements OnInit {
 
 /**
  * Calcule le pourcentage de temps écoulé entre startDate et dueDate
- * @returns Pourcentage (0-100+)
+ * @returns Pourcentage (0-100) - plafonné à 100% à la date d'échéance
  */
 getTimeProgress(): number {
   if (!this.task || !this.task.startDate || !this.task.dueDate) {
     return 0;
   }
 
+  // ✅ Utiliser les dates sans l'heure pour éviter les problèmes de timezone
   const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
   const start = new Date(this.task.startDate);
+  start.setHours(0, 0, 0, 0);
+  
   const due = new Date(this.task.dueDate);
+  due.setHours(0, 0, 0, 0);
+
+  // Si on est à ou après la date d'échéance, retourner 100%
+  if (now >= due) {
+    return 100;
+  }
+
+  // Si on est avant le début, retourner 0%
+  if (now < start) {
+    return 0;
+  }
 
   // Temps total (en millisecondes)
   const totalTime = due.getTime() - start.getTime();
@@ -320,11 +343,11 @@ getTimeProgress(): number {
   // Temps écoulé (en millisecondes)
   const elapsedTime = now.getTime() - start.getTime();
 
-  // Pourcentage
+  // Pourcentage (entre 0 et 100)
   const progress = (elapsedTime / totalTime) * 100;
 
-  // Arrondir à l'entier
-  return Math.max(0, Math.round(progress));
+  // Arrondir à l'entier et s'assurer que c'est entre 0 et 100
+  return Math.min(100, Math.max(0, Math.round(progress)));
 }
 
 /**
@@ -336,9 +359,16 @@ getTimeRemainingText(): string {
   }
 
   const progress = this.getTimeProgress();
+  
+  // ✅ Utiliser les dates sans l'heure
   const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
   const due = new Date(this.task.dueDate);
+  due.setHours(0, 0, 0, 0);
+  
   const start = new Date(this.task.startDate);
+  start.setHours(0, 0, 0, 0);
 
   // Si la tâche est terminée
   if (this.task.isCompleted) {
@@ -348,11 +378,11 @@ getTimeRemainingText(): string {
   // Si la tâche n'a pas encore commencé
   if (now < start) {
     const daysUntilStart = Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return `⏳ Commence dans ${daysUntilStart} jour${daysUntilStart > 1 ? 's' : ''}`;
+    return `⏳ Commence ${daysUntilStart === 0 ? 'aujourd\'hui' : daysUntilStart === 1 ? 'demain' : `dans ${daysUntilStart} jours`}`;
   }
 
-  // Si la tâche est en retard
-  if (progress > 100) {
+  // Si la tâche est en retard (après l'échéance)
+  if (now > due) {
     const daysOverdue = Math.ceil((now.getTime() - due.getTime()) / (1000 * 60 * 60 * 24));
     return `⚠️ En retard de ${daysOverdue} jour${daysOverdue > 1 ? 's' : ''}`;
   }

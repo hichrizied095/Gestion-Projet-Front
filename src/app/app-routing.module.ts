@@ -13,6 +13,7 @@ import { MyTasksComponent } from './pages/my-tasks/my-tasks.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { AdminGuard } from './guards/admin.guard';
+import { ManagerGuard } from './guards/manager.guard';
 import { ChatComponent } from './components/chat/chat.component';
 import { MeetingCreateComponent } from './components/meeting-create/meeting-create.component';
 import { MeetingDetailsComponent } from './components/meeting-details/meeting-details.component';
@@ -25,8 +26,8 @@ const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [authGuard] },
-    { path: 'projects', component: ProjectsComponent, canActivate: [authGuard] },
-    { path: 'projects/:id/columns', component: ProjectColumnsComponent, canActivate: [authGuard] },
+    { path: 'projects', component: ProjectsComponent, canActivate: [authGuard, ManagerGuard] },
+    { path: 'projects/:id/columns', component: ProjectColumnsComponent, canActivate: [authGuard, ManagerGuard] },
     { path: 'add-user', component: UserCreateComponent },
     { path: 'calendar', component: CalendarComponent, canActivate: [authGuard] },
     { path: 'projects/:id/participants', component: UserTasksComponent,canActivate: [authGuard] },

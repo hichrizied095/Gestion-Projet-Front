@@ -201,3 +201,137 @@
 [data-aos] {
   animation-duration: 0.6s;
 }
+/* ========================================
+   PANNEAU DE DÉTAILS DU JOUR
+   ======================================== */
+
+/* Conteneur principal */
+.day-details-panel {
+  animation: slideUp 0.3s ease-out;
+  margin-top: 2rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* En-tête avec gradient */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Liste des événements */
+.events-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.events-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.events-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.events-list::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.events-list::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}
+
+/* Carte d'événement */
+.event-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.event-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: inherit;
+}
+
+.event-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* Détails de l'événement */
+.event-details {
+  padding: 0.75rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+}
+
+.event-details .row {
+  margin: 0;
+}
+
+.event-details small {
+  display: block;
+  line-height: 1.6;
+}
+
+/* Badges personnalisés */
+.badge {
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+/* Message vide */
+.text-center.text-muted {
+  padding: 3rem 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-item {
+    padding: 1rem !important;
+  }
+  
+  .events-list {
+    max-height: 400px;
+  }
+  
+  .event-details .row {
+    flex-direction: column;
+  }
+  
+  .event-details .col-md-6 {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Scroll smooth */
+#day-details-section {
+  scroll-margin-top: 20px;
+}
+
+/* Animation du bouton fermer */
+.card-header .btn {
+  transition: all 0.2s ease;
+}
+
+.card-header .btn:hover {
+  transform: rotate(90deg);
+}

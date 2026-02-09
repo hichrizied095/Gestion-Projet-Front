@@ -18,6 +18,7 @@ export interface UserWithLastMessage {
   id: number;
   username: string;
   email?: string;
+  profilePicture?: string;
   lastMessage?: string; // ✅ Dernier message de la conversation
   lastMessageTime?: string; // ✅ Heure du dernier message
   unreadCount: number; // ✅ Nombre de messages non lus

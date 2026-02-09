@@ -807,3 +807,143 @@
   color: white;
   transform: translateY(-2px);
 }
+
+/* ========================================
+   STYLES POUR LES PHOTOS DE PROFIL DANS LE CHAT
+   ======================================== */
+
+/* Avatar dans la liste des conversations */
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid #e2e8f0;
+}
+
+.user-avatar .avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar .avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Avatar dans l'en-tête du chat */
+.header-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid #667eea;
+}
+
+.header-avatar .avatar-image-header {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-avatar .avatar-initials-header {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Avatar dans les messages */
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid #e2e8f0;
+}
+
+.message-avatar .avatar-image-small {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.message-avatar .avatar-initials-small {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Messages item avec avatar */
+.message-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: flex-end;
+}
+
+.message-item.me {
+  flex-direction: row-reverse;
+}
+
+.message-item.me .message-avatar {
+  border-color: #667eea;
+}
+
+.message-item.other .message-avatar {
+  border-color: #e2e8f0;
+}
+
+/* Animation au survol des avatars */
+.user-avatar:hover,
+.header-avatar:hover,
+.message-avatar:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Conversation active */
+.user-item.active .user-avatar {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Statut en ligne (optionnel) */
+.header-avatar {
+  position: relative;
+}
+
+.header-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: #48bb78;
+  border: 2px solid white;
+  border-radius: 50%;
+}

@@ -8,26 +8,43 @@
       <li *ngFor="let conversation of conversations" (click)="selectUser(conversation)"
         [class.active]="conversation === selectedUser" [class.unread]="conversation.unreadCount > 0"
         class="p-2 user-item">
-        <div class="d-flex justify-content-between align-items-start">
-          <div class="flex-grow-1">
-            <!-- ✅ Nom de l'utilisateur en gras si messages non lus -->
-            <div class="user-name" [class.fw-bold]="conversation.unreadCount > 0">
-              {{ conversation.username }}
-            </div>
-            <!-- ✅ Aperçu du dernier message -->
-            <div class="last-message text-muted small">
-              {{ truncateMessage(conversation.lastMessage) }}
+        <div class="d-flex align-items-start gap-3">
+          
+          <!-- ✅ PHOTO DE PROFIL OU INITIALES -->
+          <div class="user-avatar">
+            <img *ngIf="conversation.profilePicture" 
+                 [src]="conversation.profilePicture" 
+                 alt="Photo de {{ conversation.username }}" 
+                 class="avatar-image">
+            <div *ngIf="!conversation.profilePicture" class="avatar-initials">
+              {{ getUserInitials(conversation.username) }}
             </div>
           </div>
-          <div class="d-flex flex-column align-items-end">
-            <!-- ✅ Heure du dernier message -->
-            <small class="text-muted timestamp">
-              {{ conversation.lastMessageTime | date: 'shortTime' }}
-            </small>
-            <!-- ✅ Badge de messages non lus pour cette conversation -->
-            <span *ngIf="conversation.unreadCount > 0" class="badge bg-primary rounded-pill mt-1">
-              {{ conversation.unreadCount }}
-            </span>
+
+          <!-- Informations utilisateur -->
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <!-- Nom de l'utilisateur en gras si messages non lus -->
+                <div class="user-name" [class.fw-bold]="conversation.unreadCount > 0">
+                  {{ conversation.username }}
+                </div>
+                <!-- Aperçu du dernier message -->
+                <div class="last-message text-muted small">
+                  {{ truncateMessage(conversation.lastMessage) }}
+                </div>
+              </div>
+              <div class="d-flex flex-column align-items-end">
+                <!-- Heure du dernier message -->
+                <small class="text-muted timestamp">
+                  {{ conversation.lastMessageTime | date: 'shortTime' }}
+                </small>
+                <!-- Badge de messages non lus -->
+                <span *ngIf="conversation.unreadCount > 0" class="badge bg-primary rounded-pill mt-1">
+                  {{ conversation.unreadCount }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </li>
@@ -37,42 +54,85 @@
   <!-- Fenêtre de discussion -->
   <div class="chat-window">
     <ng-container *ngIf="selectedUser; else noUser">
-      <!-- En-tête -->
-      <div class="chat-header border-bottom p-2">
-        <h6>💬 Discussion avec {{ selectedUser.username }}</h6>
+      
+      <!-- ✅ EN-TÊTE AVEC PHOTO -->
+      <div class="chat-header border-bottom p-3 d-flex align-items-center gap-3">
+        <!-- Photo de profil de l'utilisateur sélectionné -->
+        <div class="header-avatar">
+          <img *ngIf="selectedUser.profilePicture" 
+               [src]="selectedUser.profilePicture" 
+               alt="Photo de {{ selectedUser.username }}" 
+               class="avatar-image-header">
+          <div *ngIf="!selectedUser.profilePicture" class="avatar-initials-header">
+            {{ getUserInitials(selectedUser.username) }}
+          </div>
+        </div>
+        <div>
+          <h6 class="mb-0">{{ selectedUser.username }}</h6>
+          <small class="text-muted">💬 Discussion en cours</small>
+        </div>
       </div>
 
-      <!-- Messages avec référence pour auto-scroll -->
+      <!-- Messages avec photos -->
       <div class="chat-messages" #messagesContainer>
         <div *ngFor="let msg of messages" class="message-item"
           [ngClass]="{ 'me': msg.senderId === currentUserId, 'other': msg.senderId !== currentUserId }">
-          <div class="message-meta">
-            <strong>{{ msg.senderId === currentUserId ? 'Moi' : msg.senderName || selectedUser.username }}</strong>
-            <span class="timestamp">{{ msg.sentAt | date: 'shortTime' }}</span>
-            <!-- ✅ Indicateur de lecture pour mes messages -->
-            <span *ngIf="msg.senderId === currentUserId" class="message-status" [class.read]="msg.isRead">
-              <span *ngIf="msg.isRead" title="Lu">✓✓</span>
-              <span *ngIf="!msg.isRead" title="Envoyé">✓</span>
-            </span>
+          
+          <!-- ✅ PHOTO DE PROFIL POUR LES MESSAGES DE L'AUTRE UTILISATEUR -->
+          <div *ngIf="msg.senderId !== currentUserId" class="message-avatar">
+            <img *ngIf="selectedUser.profilePicture" 
+                 [src]="selectedUser.profilePicture" 
+                 alt="Photo" 
+                 class="avatar-image-small">
+            <div *ngIf="!selectedUser.profilePicture" class="avatar-initials-small">
+              {{ getUserInitials(msg.senderName || selectedUser.username) }}
+            </div>
           </div>
-          <div class="message-bubble">
-            {{ msg.content }}
+
+          <div class="message-content">
+            <div class="message-meta">
+              <strong>{{ msg.senderId === currentUserId ? 'Moi' : msg.senderName || selectedUser.username }}</strong>
+              <span class="timestamp">{{ msg.sentAt | date: 'shortTime' }}</span>
+              <!-- Indicateur de lecture pour mes messages -->
+              <span *ngIf="msg.senderId === currentUserId" class="message-status" [class.read]="msg.isRead">
+                <span *ngIf="msg.isRead" title="Lu">✓✓</span>
+                <span *ngIf="!msg.isRead" title="Envoyé">✓</span>
+              </span>
+            </div>
+            <div class="message-bubble">
+              {{ msg.content }}
+            </div>
+          </div>
+
+          <!-- ✅ PHOTO DE PROFIL POUR MES MESSAGES -->
+          <div *ngIf="msg.senderId === currentUserId" class="message-avatar">
+            <img *ngIf="currentUserProfilePicture" 
+                 [src]="currentUserProfilePicture" 
+                 alt="Ma photo" 
+                 class="avatar-image-small">
+            <div *ngIf="!currentUserProfilePicture" class="avatar-initials-small">
+              {{ getUserInitials(currentUserName || 'Moi') }}
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Saisie -->
-      <div class="chat-input border-top p-2 d-flex">
+      <div class="chat-input border-top p-2 d-flex align-items-center gap-2">
         <input [(ngModel)]="newMessage" type="text" class="form-control" placeholder="Écrire un message..."
           (keyup.enter)="sendMessage()" />
-        <button class="btn btn-primary ms-2" (click)="sendMessage()">Envoyer</button>
+        <button class="btn btn-primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </div>
     </ng-container>
 
     <!-- Aucun utilisateur sélectionné -->
     <ng-template #noUser>
-      <div class="p-3 text-muted text-center">
-        💭 Sélectionnez une conversation pour commencer.
+      <div class="p-5 text-muted text-center d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+        <i class="fas fa-comments fa-4x mb-3 text-secondary"></i>
+        <h5>Sélectionnez une conversation</h5>
+        <p>Choisissez un utilisateur dans la liste pour commencer à discuter</p>
       </div>
     </ng-template>
   </div>

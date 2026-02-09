@@ -44,45 +44,212 @@
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+          
+          <!-- ✅ SECTION PHOTO DE PROFIL (OPTIONNEL) -->
+          <div class="form-section-title">
+            <i class="fas fa-camera"></i>
+            <span>Photo de profil (optionnel)</span>
+          </div>
+
+          <div class="profile-picture-section">
+            <div class="picture-preview">
+              <!-- Aperçu par défaut -->
+              <div class="default-avatar" *ngIf="!profilePicturePreview">
+                <i class="fas fa-user"></i>
+              </div>
+              
+              <!-- Aperçu de l'image sélectionnée -->
+              <div class="selected-avatar" *ngIf="profilePicturePreview">
+                <img [src]="profilePicturePreview" alt="Aperçu">
+                <button type="button" class="btn-remove-pic" (click)="removeProfilePicture()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="picture-actions">
+              <input 
+                type="file" 
+                id="profilePictureInput" 
+                accept="image/*"
+                (change)="onProfilePictureSelected($event)"
+                style="display: none"
+              />
+              <label for="profilePictureInput" class="btn-select-pic">
+                <i class="fas fa-upload"></i>
+                Choisir une image
+              </label>
+              <small class="hint-text">
+                <i class="fas fa-info-circle"></i>
+                JPG, PNG, GIF - Max 5 MB
+              </small>
+            </div>
+          </div>
+
+          <!-- SECTION 1: INFORMATIONS DE CONNEXION -->
+          <div class="form-section-title">
+            <i class="fas fa-lock"></i>
+            <span>Informations de connexion</span>
+          </div>
+
           <div class="form-group">
             <label for="username" class="form-label">
               <i class="fas fa-user"></i>
-              Nom d'utilisateur
+              Nom d'utilisateur <span class="required">*</span>
             </label>
-            <input id="username" class="form-input" formControlName="username" type="text"
-              placeholder="Choisissez un nom d'utilisateur" required />
+            <input 
+              id="username" 
+              class="form-input" 
+              formControlName="username" 
+              type="text"
+              placeholder="Choisissez un nom d'utilisateur" 
+              required 
+            />
+            <small class="error-text" *ngIf="hasError('username', 'required')">
+              Le nom d'utilisateur est requis
+            </small>
+            <small class="error-text" *ngIf="hasError('username', 'minlength')">
+              Minimum 3 caractères
+            </small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password" class="form-label">
+                <i class="fas fa-lock"></i>
+                Mot de passe <span class="required">*</span>
+              </label>
+              <input 
+                id="password" 
+                class="form-input" 
+                formControlName="password" 
+                type="password"
+                placeholder="Créez un mot de passe sécurisé" 
+                required 
+              />
+              <small class="error-text" *ngIf="hasError('password', 'minlength')">
+                Minimum 6 caractères
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword" class="form-label">
+                <i class="fas fa-lock"></i>
+                Confirmer <span class="required">*</span>
+              </label>
+              <input 
+                id="confirmPassword" 
+                class="form-input" 
+                formControlName="confirmPassword" 
+                type="password"
+                placeholder="Confirmez votre mot de passe" 
+                required 
+              />
+            </div>
+          </div>
+
+          <!-- SECTION 2: INFORMATIONS PROFESSIONNELLES -->
+          <div class="form-section-title">
+            <i class="fas fa-briefcase"></i>
+            <span>Informations professionnelles</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="role" class="form-label">
+                <i class="fas fa-user-tag"></i>
+                Rôle <span class="required">*</span>
+              </label>
+              <select class="form-select" id="role" formControlName="role" required>
+                <option value="Member">👤 Membre</option>
+                <option value="Manager">👥 Chef de projet</option>
+                <option value="Admin">🔐 Administrateur</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="department" class="form-label">
+                <i class="fas fa-building"></i>
+                Département
+              </label>
+              <input 
+                id="department" 
+                class="form-input" 
+                formControlName="department" 
+                type="text"
+                placeholder="Ex: IT, RH, Finance..." 
+              />
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="password" class="form-label">
-              <i class="fas fa-lock"></i>
-              Mot de passe
+            <label for="jobTitle" class="form-label">
+              <i class="fas fa-id-badge"></i>
+              Poste
             </label>
-            <input id="password" class="form-input" formControlName="password" type="password"
-              placeholder="Créez un mot de passe sécurisé" required />
+            <input 
+              id="jobTitle" 
+              class="form-input" 
+              formControlName="jobTitle" 
+              type="text"
+              placeholder="Ex: Développeur, Manager, Administrateur..." 
+            />
           </div>
 
-          <div class="form-group">
-            <label for="confirmPassword" class="form-label">
-              <i class="fas fa-lock"></i>
-              Confirmer le mot de passe
-            </label>
-            <input id="confirmPassword" class="form-input" formControlName="confirmPassword" type="password"
-              placeholder="Confirmez votre mot de passe" required />
+          <!-- SECTION 3: COORDONNÉES (OPTIONNEL) -->
+          <div class="form-section-title">
+            <i class="fas fa-address-card"></i>
+            <span>Coordonnées (optionnel)</span>
           </div>
 
-          <div class="form-group">
-            <label for="role" class="form-label">
-              <i class="fas fa-user-tag"></i>
-              Rôle
-            </label>
-            <select class="form-select" id="role" formControlName="role" required>
-              <option value="Member">👤 Membre</option>
-              <option value="Manager">👥 Chef de projet</option>
-              <option value="Admin">🔐 Administrateur</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email" class="form-label">
+                <i class="fas fa-envelope"></i>
+                Email
+              </label>
+              <input 
+                id="email" 
+                class="form-input" 
+                formControlName="email" 
+                type="email"
+                placeholder="votre.email@exemple.com" 
+              />
+              <small class="error-text" *ngIf="hasError('email', 'email')">
+                Format d'email invalide
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber" class="form-label">
+                <i class="fas fa-phone"></i>
+                Téléphone
+              </label>
+              <input 
+                id="phoneNumber" 
+                class="form-input" 
+                formControlName="phoneNumber" 
+                type="tel"
+                placeholder="+216 XX XXX XXX" 
+              />
+              <small class="error-text" *ngIf="hasError('phoneNumber', 'pattern')">
+                Format invalide (8-15 chiffres)
+              </small>
+            </div>
           </div>
 
+          <!-- MESSAGES -->
+          <div class="success-message" *ngIf="successMessage">
+            <i class="fas fa-check-circle"></i>
+            {{ successMessage }}
+          </div>
+
+          <div class="error-message" *ngIf="errorMessage">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ errorMessage }}
+          </div>
+
+          <!-- BOUTON SUBMIT -->
           <div class="terms-checkbox">
             <label class="checkbox-label">
               <input type="checkbox" required />
@@ -90,10 +257,20 @@
             </label>
           </div>
 
-          <button class="btn-submit" type="submit" [disabled]="registerForm.invalid"
-            [class.disabled]="registerForm.invalid">
-            <i class="fas fa-user-plus me-2"></i>
-            S'inscrire
+          <button 
+            class="btn-submit" 
+            type="submit" 
+            [disabled]="registerForm.invalid || isUploadingImage"
+            [class.disabled]="registerForm.invalid || isUploadingImage"
+          >
+            <span *ngIf="!isUploadingImage">
+              <i class="fas fa-user-plus me-2"></i>
+              S'inscrire
+            </span>
+            <span *ngIf="isUploadingImage">
+              <i class="fas fa-spinner fa-spin me-2"></i>
+              Inscription en cours...
+            </span>
           </button>
         </form>
 

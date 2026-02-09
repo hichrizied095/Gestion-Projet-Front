@@ -103,12 +103,17 @@ getRemainingWeight(tasks: TaskItem[]): number {
     });
   }
 
+  // ✅ Vérifie si une tâche est en retard (indépendamment de son statut)
+  // Une tâche est en retard APRÈS sa date d'échéance, pas le jour même
   isLate(task: TaskItem): boolean {
-  if (task.dueDate && task.isCompleted === false) {
-    return new Date(task.dueDate) < new Date();
+    if (!task.dueDate || task.isCompleted) {
+      return false;
+    }
+    const todayStr = new Date().toISOString().split('T')[0];
+    const dueDateStr = new Date(task.dueDate).toISOString().split('T')[0];
+    // ✅ CORRECTION: >= au lieu de > pour que le jour d'échéance soit "en cours"
+    return todayStr > dueDateStr;  // En retard seulement APRÈS l'échéance
   }
-  return false;
-}
 
 
   prolongTask(task: TaskItem): void {
@@ -142,33 +147,52 @@ updateDueDateFromEvent(task: TaskItem, event: Event): void {
 
 getTaskStatus(task: TaskItem): string {
   if (!task) return 'Planifiée';
+  
+  // ✅ PRIORITÉ 1: Si la tâche est terminée
   if (task.isCompleted) return 'Terminée';
 
-  // ✅ Aujourd'hui en AAAA-MM-JJ (ignore l'heure)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // ✅ PRIORITÉ 2: Utiliser columnId si disponible (reflète l'état réel)
+  // columnId 1 = À faire, 2 = En cours, 3 = Terminé
+  if (task.columnId) {
+    switch (task.columnId) {
+      case 1:
+        return 'Planifiée';  // Colonne "À faire"
+      case 2:
+        return 'En cours';   // Colonne "En cours" - priorité sur le retard
+      case 3:
+        return 'Terminée';   // Colonne "Terminé"
+    }
+  }
 
-  // ✅ Parser les dates en ignorant la timezone
+  // ✅ PRIORITÉ 3: Fallback sur les dates - CORRECTION TIMEZONE
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
   const startDateStr = task.startDate 
-    ? new Date(task.startDate).toISOString().split('T')[0] 
+    ? (() => {
+        const d = new Date(task.startDate);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      })()
     : null;
   
   const dueDateStr = task.dueDate 
-    ? new Date(task.dueDate).toISOString().split('T')[0] 
+    ? (() => {
+        const d = new Date(task.dueDate);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      })()
     : null;
 
-  // ✅ Comparer les chaînes de dates (AAAA-MM-JJ)
-  
-  // 1. En retard si aujourd'hui > échéance
+  // En retard seulement APRÈS l'échéance (pas le jour même)
   if (dueDateStr && todayStr > dueDateStr) {
     return 'En retard';
   }
 
-  // 2. En cours si aujourd'hui >= début (inclut aujourd'hui)
+  // En cours si aujourd'hui >= début
   if (startDateStr && todayStr >= startDateStr) {
     return 'En cours';
   }
 
-  // 3. Planifiée si pas encore commencée (commence dans le futur)
+  // Planifiée par défaut
   return 'Planifiée';
 }
 

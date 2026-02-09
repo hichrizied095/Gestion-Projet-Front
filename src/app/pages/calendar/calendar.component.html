@@ -122,5 +122,114 @@
         <full-calendar [options]="calendarOptions"></full-calendar>
       </div>
     </div>
+
+    <!-- ✅ NOUVEAU: Panneau de détails du jour -->
+    <div *ngIf="showDayDetails" id="day-details-section" class="day-details-panel mt-4 card border-0 shadow-sm rounded-4 overflow-hidden" data-aos="fade-up">
+      <div class="card-header bg-gradient-primary text-white p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h5 class="mb-0">
+              <i class="fas fa-calendar-day me-2"></i>
+              {{ selectedDateStr }}
+            </h5>
+            <small class="opacity-75">{{ dayEvents.length }} événement(s)</small>
+          </div>
+          <button class="btn btn-light btn-sm" (click)="closeDayDetails()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body p-4">
+        <!-- Aucun événement -->
+        <div *ngIf="dayEvents.length === 0" class="text-center text-muted py-5">
+          <i class="fas fa-calendar-times fa-3x mb-3 opacity-50"></i>
+          <p class="mb-0">Aucun événement prévu ce jour</p>
+        </div>
+
+        <!-- Liste des événements -->
+        <div *ngIf="dayEvents.length > 0" class="events-list">
+          <div *ngFor="let event of dayEvents; let i = index" class="event-item mb-3 p-3 rounded-3 border-start border-4"
+            [style.border-color]="event.backgroundColor">
+            
+            <!-- En-tête de l'événement -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="flex-grow-1">
+                <h6 class="mb-1 fw-bold">
+                  <span *ngIf="event.type === 'task'">📋</span>
+                  <span *ngIf="event.type === 'meeting'">🎯</span>
+                  {{ event.title }}
+                </h6>
+                <span class="badge me-2" [style.background-color]="event.backgroundColor">
+                  {{ event.type === 'task' ? 'Tâche' : 'Réunion' }}
+                </span>
+                <span *ngIf="event.status" class="badge bg-light text-dark">
+                  {{ event.status }}
+                </span>
+              </div>
+              <div *ngIf="event.startTime" class="text-end">
+                <small class="text-primary fw-bold">
+                  <i class="fas fa-clock me-1"></i>
+                  {{ event.startTime }}
+                  <span *ngIf="event.endTime"> - {{ event.endTime }}</span>
+                </small>
+              </div>
+            </div>
+
+            <!-- Détails de la tâche -->
+            <div *ngIf="event.type === 'task'" class="event-details mt-2">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <i class="fas fa-folder me-1"></i>
+                    <strong>Projet:</strong> {{ event.project }}
+                  </small>
+                </div>
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <i class="fas fa-user me-1"></i>
+                    <strong>Assigné à:</strong> {{ event.assignedUser }}
+                  </small>
+                </div>
+              </div>
+              <div *ngIf="event.description" class="mt-2">
+                <small class="text-muted">
+                  <i class="fas fa-align-left me-1"></i>
+                  <strong>Description:</strong>
+                </small>
+                <p class="mb-0 mt-1 text-secondary small">{{ event.description }}</p>
+              </div>
+            </div>
+
+            <!-- Détails de la réunion -->
+            <div *ngIf="event.type === 'meeting'" class="event-details mt-2">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <i class="fas fa-folder me-1"></i>
+                    <strong>Projet:</strong> {{ event.project }}
+                  </small>
+                </div>
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <i class="fas fa-users me-1"></i>
+                    <strong>Participants:</strong> {{ event.attendees }}
+                  </small>
+                </div>
+              </div>
+              <div *ngIf="event.duration" class="mt-2">
+                <small class="text-muted">
+                  <i class="fas fa-hourglass-half me-1"></i>
+                  <strong>Durée:</strong> {{ event.duration }} minutes
+                </small>
+              </div>
+            </div>
+
+            <!-- Séparateur entre événements -->
+            <hr *ngIf="i < dayEvents.length - 1" class="my-3 opacity-25">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

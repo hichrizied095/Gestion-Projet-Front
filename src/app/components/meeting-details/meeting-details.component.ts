@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MeetingService } from '../../services/meeting.service';
 import { AuthService } from '../../services/auth.service';
-import { TaskItemService } from '../../services/task-item.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-meeting-details',
@@ -13,14 +11,13 @@ import { forkJoin } from 'rxjs';
 })
 export class MeetingDetailsComponent implements OnInit {
   meeting: any;
-  tasks: any[] = []; // Tâches complètes avec leur poids
+  tasks: any[] = [];  // ✅ Maintenant rempli directement depuis decisionsDetails
   isLoading = true;
   error = '';
 
   constructor(
     private route: ActivatedRoute,
     private meetingService: MeetingService,
-    private taskService: TaskItemService,
     public auth: AuthService,
     private router: Router
   ) {}
@@ -42,46 +39,31 @@ export class MeetingDetailsComponent implements OnInit {
         this.meeting = data;
         console.log('✅ Réunion chargée:', this.meeting);
         
-        // Charger les détails complets des tâches si elles ont des IDs
-        if (this.meeting.decisions && this.meeting.decisions.length > 0) {
-          this.loadTasksDetails();
+        // ✅ CORRECTION: Utiliser decisionsDetails au lieu de decisions
+        if (this.meeting.decisionsDetails && this.meeting.decisionsDetails.length > 0) {
+          this.tasks = this.meeting.decisionsDetails.map((decision: any) => ({
+            id: decision.taskId,
+            title: decision.taskTitle,
+            description: decision.description || 'Aucune description',
+            assignedUsername: decision.owner,
+            dueDate: decision.dueDate,
+            percentage: decision.percentage || 0,  // ✅ Poids
+            isCompleted: decision.isCompleted,  // ✅ Statut
+            columnId: decision.columnId,  // ✅ Colonne
+            assignedUserId: decision.assignedUserId
+          }));
+          
+          console.log('✅ Tâches chargées depuis decisionsDetails:', this.tasks);
         } else {
-          this.isLoading = false;
+          console.warn('⚠️ Pas de decisionsDetails, anciennes données?');
+          this.tasks = [];
         }
+        
+        this.isLoading = false;
       },
       error: (err: any) => {
         console.error('❌ Erreur chargement réunion:', err);
         this.error = 'Impossible de charger les détails de la réunion';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  loadTasksDetails(): void {
-    // Récupérer les IDs des tâches depuis les décisions
-    const taskIds = this.meeting.decisions
-      .map((d: any) => d.taskId || d.id)
-      .filter((id: any) => id != null);
-
-    if (taskIds.length === 0) {
-      this.isLoading = false;
-      return;
-    }
-
-    // Charger les détails de toutes les tâches en parallèle
-    const taskRequests = taskIds.map((taskId: number) => 
-      this.taskService.getTaskDetails(taskId)
-    );
-
-    forkJoin(taskRequests).subscribe({
-      next: (tasks) => {
-        this.tasks = tasks as any[];
-        console.log('✅ Tâches chargées avec détails:', this.tasks);
-        this.isLoading = false;
-      },
-      error: (err: any) => {
-        console.error('❌ Erreur chargement tâches:', err);
-        // Continuer même si les tâches ne se chargent pas
         this.isLoading = false;
       }
     });
@@ -92,7 +74,6 @@ export class MeetingDetailsComponent implements OnInit {
   }
 
   getInitials(attendee: any): string {
-    // Gérer les cas où attendee est un objet ou une string
     const name = typeof attendee === 'string' ? attendee : (attendee?.username || '');
     if (!name) return '??';
     return name
@@ -103,37 +84,68 @@ export class MeetingDetailsComponent implements OnInit {
       .substring(0, 2);
   }
 
-  // Retourne le poids de la tâche (percentage)
+  // ✅ CORRECTION: Utiliser directement task.percentage
   getTaskWeight(index: number): number {
-    // Utiliser les tâches complètes chargées
     if (!this.tasks || index >= this.tasks.length) {
       return 0;
     }
     
     const task = this.tasks[index];
     const weight = task.percentage || 0;
-    console.log('📊 Poids de la tâche #' + (index + 1) + ':', weight);
+    //console.log('📊 Poids de la tâche #' + (index + 1) + ':', weight);
     
     return weight;
   }
 
-  // Retourne le statut de la tâche basé sur columnId
   getTaskStatus(task: any): string {
-    // columnId 1 = À faire, 2 = En cours, 3 = Terminé
-    if (!task || !task.columnId) {
-      return 'Inconnu';
-    }
+    if (!task) return 'Planifiée';
     
-    switch (task.columnId) {
-      case 1:
-        return 'À faire';
-      case 2:
-        return 'En cours';
-      case 3:
-        return 'Terminée';
-      default:
-        return task.isCompleted ? 'Terminée' : 'En cours';
+    // ✅ PRIORITÉ 1: Si la tâche est terminée
+    if (task.isCompleted) return 'Terminée';
+
+    // ✅ PRIORITÉ 2: Utiliser columnId si disponible (reflète l'état réel)
+    // columnId 1 = À faire, 2 = En cours, 3 = Terminé
+    if (task.columnId) {
+      switch (task.columnId) {
+        case 1:
+          return 'Planifiée';  // Colonne "À faire"
+        case 2:
+          return 'En cours';   // Colonne "En cours" - priorité sur le retard
+        case 3:
+          return 'Terminée';   // Colonne "Terminé"
+      }
     }
+
+    // ✅ PRIORITÉ 3: Fallback sur les dates - CORRECTION TIMEZONE
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    const startDateStr = task.startDate 
+      ? (() => {
+          const d = new Date(task.startDate);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        })()
+      : null;
+    
+    const dueDateStr = task.dueDate 
+      ? (() => {
+          const d = new Date(task.dueDate);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        })()
+      : null;
+
+    // En retard seulement APRÈS l'échéance (pas le jour même)
+    if (dueDateStr && todayStr > dueDateStr) {
+      return 'En retard';
+    }
+
+    // En cours si aujourd'hui >= début
+    if (startDateStr && todayStr >= startDateStr) {
+      return 'En cours';
+    }
+
+    // Planifiée par défaut
+    return 'Planifiée';
   }
 
   // Vérifie si la tâche est terminée

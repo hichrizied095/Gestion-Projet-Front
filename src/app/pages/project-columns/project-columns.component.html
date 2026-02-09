@@ -114,15 +114,23 @@
           </div>
         </div>
 
-        <!-- Statut -->
-        <span class="status-badge" [ngClass]="{
-            'badge-planifiee': getTaskStatus(task) === 'Planifiée',
-            'badge-en-cours': getTaskStatus(task) === 'En cours',
-            'badge-terminee': getTaskStatus(task) === 'Terminée',
-            'badge-en-retard': getTaskStatus(task) === 'En retard'
-          }">
-          {{ getTaskStatus(task) }}
-        </span>
+        <!-- Statut avec indicateur de retard -->
+        <div class="status-container">
+          <span class="status-badge" [ngClass]="{
+              'badge-planifiee': getTaskStatus(task) === 'Planifiée',
+              'badge-en-cours': getTaskStatus(task) === 'En cours',
+              'badge-terminee': getTaskStatus(task) === 'Terminée',
+              'badge-en-retard': getTaskStatus(task) === 'En retard'
+            }">
+            {{ getTaskStatus(task) }}
+          </span>
+
+          <!-- ✅ NOUVEAU: Indicateur de retard pour tâches en cours -->
+          <span *ngIf="isLate(task) && getTaskStatus(task) === 'En cours'" class="badge bg-warning text-dark ms-1"
+            title="Cette tâche est en retard">
+            ⚠️ En retard
+          </span>
+        </div>
 
         <span *ngIf="task.updated" class="saved-feedback">✓</span>
       </li>
