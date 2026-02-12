@@ -44,6 +44,7 @@
     "@angular-devkit/build-angular": "^19.1.7",
     "@angular/cli": "^19.1.7",
     "@angular/compiler-cli": "^19.1.0",
+    "@ngx-env/builder": "^21.0.1",
     "@types/frappe-gantt": "^0.9.0",
     "@types/html2canvas": "^0.5.35",
     "@types/jasmine": "~5.1.0",

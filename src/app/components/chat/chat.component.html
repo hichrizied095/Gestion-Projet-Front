@@ -9,13 +9,11 @@
         [class.active]="conversation === selectedUser" [class.unread]="conversation.unreadCount > 0"
         class="p-2 user-item">
         <div class="d-flex align-items-start gap-3">
-          
+
           <!-- ✅ PHOTO DE PROFIL OU INITIALES -->
           <div class="user-avatar">
-            <img *ngIf="conversation.profilePicture" 
-                 [src]="conversation.profilePicture" 
-                 alt="Photo de {{ conversation.username }}" 
-                 class="avatar-image">
+            <img *ngIf="conversation.profilePicture" [src]="conversation.profilePicture"
+              alt="Photo de {{ conversation.username }}" class="avatar-image">
             <div *ngIf="!conversation.profilePicture" class="avatar-initials">
               {{ getUserInitials(conversation.username) }}
             </div>
@@ -54,15 +52,13 @@
   <!-- Fenêtre de discussion -->
   <div class="chat-window">
     <ng-container *ngIf="selectedUser; else noUser">
-      
+
       <!-- ✅ EN-TÊTE AVEC PHOTO -->
       <div class="chat-header border-bottom p-3 d-flex align-items-center gap-3">
         <!-- Photo de profil de l'utilisateur sélectionné -->
         <div class="header-avatar">
-          <img *ngIf="selectedUser.profilePicture" 
-               [src]="selectedUser.profilePicture" 
-               alt="Photo de {{ selectedUser.username }}" 
-               class="avatar-image-header">
+          <img *ngIf="selectedUser.profilePicture" [src]="selectedUser.profilePicture"
+            alt="Photo de {{ selectedUser.username }}" class="avatar-image-header">
           <div *ngIf="!selectedUser.profilePicture" class="avatar-initials-header">
             {{ getUserInitials(selectedUser.username) }}
           </div>
@@ -77,13 +73,11 @@
       <div class="chat-messages" #messagesContainer>
         <div *ngFor="let msg of messages" class="message-item"
           [ngClass]="{ 'me': msg.senderId === currentUserId, 'other': msg.senderId !== currentUserId }">
-          
+
           <!-- ✅ PHOTO DE PROFIL POUR LES MESSAGES DE L'AUTRE UTILISATEUR -->
           <div *ngIf="msg.senderId !== currentUserId" class="message-avatar">
-            <img *ngIf="selectedUser.profilePicture" 
-                 [src]="selectedUser.profilePicture" 
-                 alt="Photo" 
-                 class="avatar-image-small">
+            <img *ngIf="selectedUser.profilePicture" [src]="selectedUser.profilePicture" alt="Photo"
+              class="avatar-image-small">
             <div *ngIf="!selectedUser.profilePicture" class="avatar-initials-small">
               {{ getUserInitials(msg.senderName || selectedUser.username) }}
             </div>
@@ -106,10 +100,8 @@
 
           <!-- ✅ PHOTO DE PROFIL POUR MES MESSAGES -->
           <div *ngIf="msg.senderId === currentUserId" class="message-avatar">
-            <img *ngIf="currentUserProfilePicture" 
-                 [src]="currentUserProfilePicture" 
-                 alt="Ma photo" 
-                 class="avatar-image-small">
+            <img *ngIf="currentUserProfilePicture" [src]="currentUserProfilePicture" alt="Ma photo"
+              class="avatar-image-small">
             <div *ngIf="!currentUserProfilePicture" class="avatar-initials-small">
               {{ getUserInitials(currentUserName || 'Moi') }}
             </div>
@@ -129,7 +121,8 @@
 
     <!-- Aucun utilisateur sélectionné -->
     <ng-template #noUser>
-      <div class="p-5 text-muted text-center d-flex flex-column align-items-center justify-content-center" style="height: 100%;">
+      <div class="p-5 text-muted text-center d-flex flex-column align-items-center justify-content-center"
+        style="height: 100%;">
         <i class="fas fa-comments fa-4x mb-3 text-secondary"></i>
         <h5>Sélectionnez une conversation</h5>
         <p>Choisissez un utilisateur dans la liste pour commencer à discuter</p>
